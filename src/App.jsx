@@ -117,6 +117,39 @@ const CineChatter = () => {
       console.log('Saving featured images:', images);
       await window.storage.set('cine-chatter-featured-images', JSON.stringify(images));
       setFeaturedImages(images);
+
+      // Create articles for Untold Stories that have title and description
+      const newArticles = [];
+      images.forEach(story => {
+        if (story.articleTitle && story.articleDescription && story.image) {
+          // Check if this article already exists
+          const existingArticle = articles.find(a => a.id === `untold-story-${story.id}`);
+
+          if (!existingArticle) {
+            // Create new article from Untold Story
+            const article = {
+              id: `untold-story-${story.id}`,
+              title: story.articleTitle,
+              content: story.articleDescription,
+              category: story.link || 'hollywood-movies',
+              image: story.image,
+              status: 'published',
+              source: 'Untold Stories',
+              createdAt: new Date().toISOString(),
+              updatedAt: new Date().toISOString()
+            };
+            newArticles.push(article);
+          }
+        }
+      });
+
+      // Add new articles to the articles list
+      if (newArticles.length > 0) {
+        const updatedArticles = [...articles, ...newArticles];
+        await saveArticles(updatedArticles);
+        console.log(`Created ${newArticles.length} articles from Untold Stories`);
+      }
+
       console.log('Featured images saved successfully');
     } catch (error) {
       console.error('Failed to save featured images:', error);
@@ -373,6 +406,7 @@ const CineChatter = () => {
     const articleData = {
       id: editingArticle ? editingArticle.id : Date.now(),
       ...formInputs,
+      source: editingArticle ? editingArticle.source : 'New Article',
       createdAt: editingArticle ? editingArticle.createdAt : new Date().toISOString(),
       updatedAt: new Date().toISOString()
     };
@@ -901,6 +935,9 @@ const CineChatter = () => {
               <button onClick={() => setShowFeaturedManager(true)} className="bg-red-600 text-white px-3 sm:px-4 py-2 rounded-lg hover:bg-red-700 flex items-center gap-2 whitespace-nowrap text-sm sm:text-base flex-1 sm:flex-initial justify-center">
                 <Upload className="w-4 h-4" />Untold Stories
               </button>
+              <button onClick={() => alert('Coming Soon...')} className="bg-red-600 text-white px-3 sm:px-4 py-2 rounded-lg hover:bg-red-700 flex items-center gap-2 whitespace-nowrap text-sm sm:text-base flex-1 sm:flex-initial justify-center">
+                <Settings className="w-4 h-4" />Agent
+              </button>
               <button onClick={() => setShowArticleForm(true)} className="bg-red-600 text-white px-3 sm:px-4 py-2 rounded-lg hover:bg-red-700 flex items-center gap-2 whitespace-nowrap text-sm sm:text-base flex-1 sm:flex-initial justify-center">
                 <Plus className="w-4 h-4" />New Article
               </button>
@@ -916,47 +953,83 @@ const CineChatter = () => {
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Title</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Description</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Category</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Source</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {articles.length === 0 ? (
-                  <tr><td colSpan="6" className="px-6 py-8 text-center text-gray-400">No articles yet</td></tr>
-                ) : (
-                  articles
+                {(() => {
+                  // Combine admin articles and sheet articles
+                  const allArticles = [...articles, ...sheetArticles];
+
+                  if (allArticles.length === 0) {
+                    return <tr><td colSpan="7" className="px-6 py-8 text-center text-gray-400">No articles yet</td></tr>;
+                  }
+
+                  return allArticles
                     .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
-                    .map(article => (
-                    <tr key={article.id} className="hover:bg-gray-50">
-                      <td className="px-6 py-4">
-                        {article.image ? (
-                          <img src={article.image} alt="" className="w-16 h-16 object-cover rounded" />
-                        ) : (
-                          <div className="w-16 h-16 bg-gray-200 rounded flex items-center justify-center text-gray-400 text-xs">No image</div>
-                        )}
-                      </td>
-                      <td className="px-6 py-4">
-                        <span className="font-semibold text-gray-900">{article.title}</span>
-                      </td>
-                      <td className="px-6 py-4 max-w-xs">
-                        <p className="text-sm text-gray-600 line-clamp-2">{article.content}</p>
-                      </td>
-                      <td className="px-6 py-4 text-sm whitespace-nowrap">{categories.find(c => c.id === article.category)?.name}</td>
-                      <td className="px-6 py-4">
-                        <span className={`px-2 py-1 text-xs font-semibold rounded-full ${article.status === 'published' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}`}>
-                          {article.status}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4">
-                        <div className="flex gap-2">
-                          <button onClick={() => setSelectedArticle(article)} className="text-blue-600 hover:text-blue-800" title="View"><Eye className="w-5 h-5" /></button>
-                          <button onClick={() => { setEditingArticle(article); setFormInputs(article); setShowArticleForm(true); }} className="text-green-600 hover:text-green-800" title="Edit"><Edit2 className="w-5 h-5" /></button>
-                          <button onClick={() => { if (window.confirm('Delete this article?')) saveArticles(articles.filter(a => a.id !== article.id)); }} className="text-red-600 hover:text-red-800" title="Delete"><Trash2 className="w-5 h-5" /></button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))
-                )}
+                    .map(article => {
+                      // Truncate title to first 4 words
+                      const titleWords = (article.title || '').split(' ');
+                      const truncatedTitle = titleWords.slice(0, 4).join(' ') + (titleWords.length > 4 ? '...' : '');
+
+                      // Truncate description to first 4 words
+                      const words = (article.content || '').split(' ');
+                      const truncatedDesc = words.slice(0, 4).join(' ') + (words.length > 4 ? '...' : '');
+
+                      // Determine source display
+                      const sourceDisplay = article.source === 'google-sheets' ? 'Integration Setting' :
+                                          article.source === 'untold-story' ? 'Untold Stories' :
+                                          article.source === 'agent' ? 'Agent' : 'New Article';
+
+                      // Check if editable (only admin articles can be edited)
+                      const isEditable = article.source !== 'google-sheets' && articles.some(a => a.id === article.id);
+
+                      return (
+                        <tr key={article.id} className="hover:bg-gray-50">
+                          <td className="px-6 py-4">
+                            {article.image ? (
+                              <img src={article.image} alt="" className="w-16 h-16 object-cover rounded" />
+                            ) : (
+                              <div className="w-16 h-16 bg-gray-200 rounded flex items-center justify-center text-gray-400 text-xs">No image</div>
+                            )}
+                          </td>
+                          <td className="px-6 py-4">
+                            <span className="font-semibold text-gray-900">{truncatedTitle}</span>
+                          </td>
+                          <td className="px-6 py-4 max-w-xs">
+                            <p className="text-sm text-gray-600">{truncatedDesc}</p>
+                          </td>
+                          <td className="px-6 py-4 text-sm whitespace-nowrap">{categories.find(c => c.id === article.category)?.name}</td>
+                          <td className="px-6 py-4 text-sm whitespace-nowrap">
+                            <span className="px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">
+                              {sourceDisplay}
+                            </span>
+                          </td>
+                          <td className="px-6 py-4">
+                            <span className={`px-2 py-1 text-xs font-semibold rounded-full ${article.status === 'published' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}`}>
+                              {article.status}
+                            </span>
+                          </td>
+                          <td className="px-6 py-4">
+                            <div className="flex gap-2">
+                              <button onClick={() => setSelectedArticle(article)} className="text-blue-600 hover:text-blue-800" title="View"><Eye className="w-5 h-5" /></button>
+                              {isEditable && (
+                                <>
+                                  <button onClick={() => { setEditingArticle(article); setFormInputs(article); setShowArticleForm(true); }} className="text-green-600 hover:text-green-800" title="Edit"><Edit2 className="w-5 h-5" /></button>
+                                  <button onClick={() => { if (window.confirm('Delete this article?')) saveArticles(articles.filter(a => a.id !== article.id)); }} className="text-red-600 hover:text-red-800" title="Delete"><Trash2 className="w-5 h-5" /></button>
+                                </>
+                              )}
+                              {!isEditable && (
+                                <span className="text-gray-400 text-xs">View only</span>
+                              )}
+                            </div>
+                          </td>
+                        </tr>
+                      );
+                    });
+                })()}
               </tbody>
             </table>
             </div>
