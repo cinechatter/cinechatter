@@ -47,21 +47,18 @@ const CineChatter = () => {
   const [currentTreasureIndex, setCurrentTreasureIndex] = useState(0);
   const [selectedTreasureArticle, setSelectedTreasureArticle] = useState(null);
   const [newsletterEmail, setNewsletterEmail] = useState('');
-  const [rssFeedItems, setRssFeedItems] = useState([]);
-  const [loadingRss, setLoadingRss] = useState(false);
   
   // Google Sheets Integration
   const [sheetsEnabled, setSheetsEnabled] = useState(false);
   const [sheetUrl, setSheetUrl] = useState('');
   const [sheetStatus, setSheetStatus] = useState('not-connected');
-  const [dataSource, setDataSource] = useState('admin-only');
+  const [dataSource, setDataSource] = useState('sheets-only');
   const [sheetArticles, setSheetArticles] = useState([]);
   const [showIntegrationSettings, setShowIntegrationSettings] = useState(false);
 
   useEffect(() => {
     loadArticles();
     loadFeaturedImages();
-    loadRssFeed();
   }, []);
 
   // Close dropdowns when clicking outside
@@ -81,145 +78,6 @@ const CineChatter = () => {
     };
   }, [hollywoodOpen, bollywoodOpen, moreOpen]);
 
-  const loadRssFeed = async () => {
-    // Set default items immediately so something shows up
-    const defaultItems = [
-      {
-        id: 1,
-        title: 'Box Office: Latest Weekend Top Performers',
-        link: 'https://www.hollywoodreporter.com',
-        description: 'Breaking down the biggest box office winners from this weekend including new releases and holdovers continuing their impressive runs...',
-        pubDate: new Date().toISOString(),
-        source: 'Hollywood Reporter'
-      },
-      {
-        id: 2,
-        title: 'Streaming Wars Heat Up with New Platform Launches',
-        link: 'https://variety.com',
-        description: 'Major studios announce new streaming initiatives as competition intensifies in the digital entertainment space...',
-        pubDate: new Date(Date.now() - 86400000).toISOString(),
-        source: 'Variety'
-      },
-      {
-        id: 3,
-        title: 'Award Season Predictions: Early Frontrunners Emerge',
-        link: 'https://deadline.com',
-        description: 'Industry insiders weigh in on the films and performances generating the most buzz for upcoming awards ceremonies...',
-        pubDate: new Date(Date.now() - 172800000).toISOString(),
-        source: 'Deadline'
-      },
-      {
-        id: 4,
-        title: 'Television Ratings: Hits and Misses of the Season',
-        link: 'https://www.imdb.com',
-        description: 'A comprehensive look at which shows are dominating the ratings and which have failed to connect with audiences...',
-        pubDate: new Date(Date.now() - 259200000).toISOString(),
-        source: 'IMDb'
-      },
-      {
-        id: 5,
-        title: 'Celebrity News: Red Carpet Highlights and Exclusive Interviews',
-        link: 'https://variety.com',
-        description: 'The latest celebrity sightings, fashion moments, and exclusive behind-the-scenes interviews from major entertainment events...',
-        pubDate: new Date(Date.now() - 345600000).toISOString(),
-        source: 'Variety'
-      }
-    ];
-
-    // Check if we have cached items, otherwise use defaults
-    try {
-      const result = await window.storage.get('cine-chatter-rss-feed');
-      if (result) {
-        const cached = JSON.parse(result.value);
-        // Check if cache is less than 1 hour old
-        const cacheTime = await window.storage.get('cine-chatter-rss-cache-time');
-        if (cacheTime && (Date.now() - parseInt(cacheTime.value)) < 3600000) {
-          setRssFeedItems(cached);
-          console.log('Using cached RSS feed (less than 1 hour old)');
-          return;
-        }
-      }
-      setRssFeedItems(defaultItems);
-    } catch (error) {
-      console.log('Using default RSS items');
-      setRssFeedItems(defaultItems);
-    }
-
-    // Try to fetch real RSS feeds from multiple sources
-    try {
-      setLoadingRss(true);
-      
-      const rssFeeds = [
-        { url: 'https://www.hollywoodreporter.com/feed/', source: 'Hollywood Reporter' },
-        { url: 'https://variety.com/feed/', source: 'Variety' },
-        { url: 'https://deadline.com/feed/', source: 'Deadline' },
-        { url: 'https://ew.com/feed/', source: 'Entertainment Weekly' },
-        { url: 'https://www.imdb.com/news/rss/', source: 'IMDb' },
-        { url: 'https://editorial.rottentomatoes.com/feed/', source: 'Rotten Tomatoes' }
-      ];
-
-      const allFeedItems = [];
-      
-      // Fetch from multiple sources
-      for (const feed of rssFeeds) {
-        try {
-          const apiUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(feed.url)}&count=5`;
-          const response = await fetch(apiUrl);
-          const data = await response.json();
-          
-          if (data.status === 'ok' && data.items && data.items.length > 0) {
-            const feedItems = data.items.slice(0, 3).map((item, index) => ({
-              id: Date.now() + Math.random() * 10000 + index,
-              title: item.title,
-              link: item.link,
-              description: item.description?.replace(/<[^>]*>/g, '').substring(0, 200) + '...',
-              pubDate: item.pubDate,
-              source: feed.source
-            }));
-            
-            allFeedItems.push(...feedItems);
-            console.log(`Fetched ${feedItems.length} items from ${feed.source}`);
-          }
-        } catch (error) {
-          console.log(`Failed to fetch from ${feed.source}:`, error);
-        }
-        
-        // Small delay between requests to avoid rate limiting
-        await new Promise(resolve => setTimeout(resolve, 300));
-      }
-      
-      if (allFeedItems.length > 0) {
-        // Sort by date and take top 15
-        const sortedItems = allFeedItems
-          .sort((a, b) => new Date(b.pubDate) - new Date(a.pubDate))
-          .slice(0, 15);
-        
-        console.log(`Successfully loaded ${sortedItems.length} RSS feed items from multiple sources`);
-        setRssFeedItems(sortedItems);
-        
-        // Cache the results with timestamp
-        await window.storage.set('cine-chatter-rss-feed', JSON.stringify(sortedItems));
-        await window.storage.set('cine-chatter-rss-cache-time', Date.now().toString());
-      } else {
-        console.log('No RSS items fetched, keeping defaults');
-      }
-    } catch (error) {
-      console.error('Error fetching RSS feeds:', error);
-    } finally {
-      setLoadingRss(false);
-    }
-  };
-
-  const saveRssFeed = async (items) => {
-    try {
-      console.log('Saving RSS feed:', items);
-      await window.storage.set('cine-chatter-rss-feed', JSON.stringify(items));
-      setRssFeedItems(items);
-      console.log('RSS feed saved successfully');
-    } catch (error) {
-      console.error('Failed to save RSS feed:', error);
-    }
-  };
 
   const loadArticles = async () => {
     try {
@@ -818,42 +676,52 @@ const CineChatter = () => {
             <p className="text-gray-500">Use the menu above to explore different categories</p>
           </div>
 
-          {/* Latest Articles Section - Combined with RSS Feed */}
+          {/* Latest Articles Section */}
           <div className="p-8 mb-8 bg-white border-b-2 border-gray-300">
-            <div className="flex justify-between items-center mb-6">
+            <div className="mb-6">
               <h2 className="text-3xl font-bold">Latest Articles</h2>
-              <button 
-                onClick={() => loadRssFeed()}
-                disabled={loadingRss}
-                className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-semibold text-sm flex items-center gap-2 disabled:bg-gray-400"
-              >
-                {loadingRss ? '🔄 Loading...' : '🔄 Refresh News'}
-              </button>
             </div>
             
             <div className="space-y-6">
-              {/* User's Published Articles */}
-              {articles.filter(a => a.status === 'published').slice(0, 3).map(article => (
-                <div key={`article-${article.id}`} className="border-b pb-4">
-                  <div className="flex gap-4 cursor-pointer hover:bg-gray-50 p-3 rounded" onClick={() => setSelectedArticle(article)}>
-                    {article.image && (
-                      <img src={article.image} alt={article.title} className="w-24 h-24 object-cover rounded" />
-                    )}
-                    <div className="flex-1">
-                      <span className="text-xs bg-red-100 text-red-600 px-2 py-1 rounded mb-2 inline-block uppercase font-semibold">
-                        {categories.find(c => c.id === article.category)?.name}
-                      </span>
-                      <h3 className="font-bold text-lg mb-2 hover:text-red-600">{article.title}</h3>
-                      <p className="text-gray-600 text-sm line-clamp-2">{article.content}</p>
-                      <p className="text-xs text-gray-400 mt-2">{new Date(article.createdAt).toLocaleDateString()}</p>
+              {/* Recent Articles from all sources */}
+              {(() => {
+                // Combine articles from both sources based on dataSource setting
+                let allArticles = [];
+                if (dataSource === 'admin-only') {
+                  allArticles = articles.filter(a => a.status === 'published');
+                } else if (dataSource === 'sheets-only') {
+                  allArticles = sheetArticles.filter(a => a.status === 'published');
+                } else if (dataSource === 'both') {
+                  allArticles = [...articles.filter(a => a.status === 'published'), ...sheetArticles.filter(a => a.status === 'published')];
+                }
+
+                // Sort by date and take top 5
+                const recentArticles = allArticles
+                  .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+                  .slice(0, 5);
+
+                return recentArticles.length > 0 ? (
+                  recentArticles.map(article => (
+                    <div key={`article-${article.id}`} className="border-b pb-4">
+                      <div className="flex gap-4 cursor-pointer hover:bg-gray-50 p-3 rounded" onClick={() => setSelectedArticle(article)}>
+                        {article.image && (
+                          <img src={article.image} alt={article.title} className="w-24 h-24 object-cover rounded" />
+                        )}
+                        <div className="flex-1">
+                          <span className="text-xs bg-red-100 text-red-600 px-2 py-1 rounded mb-2 inline-block uppercase font-semibold">
+                            {categories.find(c => c.id === article.category)?.name}
+                          </span>
+                          <h3 className="font-bold text-lg mb-2 hover:text-red-600">{article.title}</h3>
+                          <p className="text-gray-600 text-sm line-clamp-2">{article.content}</p>
+                          <p className="text-xs text-gray-400 mt-2">{new Date(article.createdAt).toLocaleDateString()}</p>
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                </div>
-              ))}
-              
-              {articles.filter(a => a.status === 'published').length === 0 && (
-                <p className="text-gray-400 text-center py-8">No articles yet</p>
-              )}
+                  ))
+                ) : (
+                  <p className="text-gray-400 text-center py-8">No articles yet</p>
+                );
+              })()}
             </div>
           </div>
 
@@ -1168,7 +1036,6 @@ const CineChatter = () => {
             <input type="password" value={loginPassword} onChange={(e) => setLoginPassword(e.target.value)} onKeyPress={(e) => e.key === 'Enter' && handleAdminLogin()} className="w-full px-4 py-2 border rounded-lg mb-4" placeholder="Password" />
             <button onClick={handleAdminLogin} className="w-full bg-red-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-red-700 mb-4">Login</button>
             <button onClick={() => { setShowAdminLogin(false); setLoginPassword(''); }} className="w-full border px-6 py-3 rounded-lg font-semibold hover:bg-gray-50">Cancel</button>
-            <p className="text-sm text-gray-500 mt-4 text-center">Password: admin123</p>
           </div>
         </div>
       )}
