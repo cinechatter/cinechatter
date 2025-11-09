@@ -37,9 +37,7 @@ const CineChatter = () => {
   });
 
   const [featuredImages, setFeaturedImages] = useState([
-    { id: 1, image: '', title: 'Featured 1', link: 'hollywood-movies', articleTitle: '', articleDescription: '' },
-    { id: 2, image: '', title: 'Featured 2', link: 'bollywood-movies', articleTitle: '', articleDescription: '' },
-    { id: 3, image: '', title: 'Featured 3', link: 'music', articleTitle: '', articleDescription: '' }
+    { id: 1, image: '', title: 'Untold Story 1', link: 'hollywood-movies', articleTitle: '', articleDescription: '' }
   ]);
 
   const [showFeaturedManager, setShowFeaturedManager] = useState(false);
@@ -488,25 +486,23 @@ const CineChatter = () => {
             {/* Desktop Navigation - Always visible */}
             <div className="flex items-center gap-2">
               <button onClick={() => setCurrentView('home')} className="px-3 py-2 text-sm text-gray-700 hover:text-red-600 whitespace-nowrap">Home</button>
-              
-              <button onClick={() => { setSelectedCategory('ott'); setCurrentView('category'); }} className="px-3 py-2 text-sm text-gray-700 hover:text-red-600 whitespace-nowrap">OTT</button>
-              
+
               <div className="relative">
                 <button onClick={(e) => { e.stopPropagation(); setBollywoodOpen(false); setMoreOpen(false); setHollywoodOpen(!hollywoodOpen); }} className="flex items-center gap-1 px-3 py-2 text-sm text-gray-700 hover:text-red-600 whitespace-nowrap">
                   Hollywood <ChevronDown className="w-4 h-4" />
                 </button>
                 {hollywoodOpen && (
                   <div className="absolute top-full left-0 mt-1 bg-white shadow-lg rounded-lg py-2 w-48 z-50">
-                    <button 
-                      onClick={() => { setSelectedCategory('hollywood-movies'); setCurrentView('category'); setHollywoodOpen(false); }} 
+                    <button
+                      onClick={() => { setSelectedCategory('hollywood-movies'); setCurrentView('category'); setHollywoodOpen(false); }}
                       className="block w-full text-left px-4 py-2 text-gray-700 transition-colors duration-150"
                       onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#dc2626'; e.currentTarget.style.color = '#ffffff'; }}
                       onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = ''; e.currentTarget.style.color = ''; }}
                     >
                       Movies
                     </button>
-                    <button 
-                      onClick={() => { setSelectedCategory('hollywood-news'); setCurrentView('category'); setHollywoodOpen(false); }} 
+                    <button
+                      onClick={() => { setSelectedCategory('hollywood-news'); setCurrentView('category'); setHollywoodOpen(false); }}
                       className="block w-full text-left px-4 py-2 text-gray-700 transition-colors duration-150"
                       onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#dc2626'; e.currentTarget.style.color = '#ffffff'; }}
                       onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = ''; e.currentTarget.style.color = ''; }}
@@ -523,16 +519,16 @@ const CineChatter = () => {
                 </button>
                 {bollywoodOpen && (
                   <div className="absolute top-full left-0 mt-1 bg-white shadow-lg rounded-lg py-2 w-48 z-50">
-                    <button 
-                      onClick={() => { setSelectedCategory('bollywood-movies'); setCurrentView('category'); setBollywoodOpen(false); }} 
+                    <button
+                      onClick={() => { setSelectedCategory('bollywood-movies'); setCurrentView('category'); setBollywoodOpen(false); }}
                       className="block w-full text-left px-4 py-2 text-gray-700 transition-colors duration-150"
                       onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#dc2626'; e.currentTarget.style.color = '#ffffff'; }}
                       onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = ''; e.currentTarget.style.color = ''; }}
                     >
                       Movies
                     </button>
-                    <button 
-                      onClick={() => { setSelectedCategory('bollywood-news'); setCurrentView('category'); setBollywoodOpen(false); }} 
+                    <button
+                      onClick={() => { setSelectedCategory('bollywood-news'); setCurrentView('category'); setBollywoodOpen(false); }}
                       className="block w-full text-left px-4 py-2 text-gray-700 transition-colors duration-150"
                       onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#dc2626'; e.currentTarget.style.color = '#ffffff'; }}
                       onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = ''; e.currentTarget.style.color = ''; }}
@@ -542,9 +538,13 @@ const CineChatter = () => {
                   </div>
                 )}
               </div>
-              
+
+              <button onClick={() => { setSelectedCategory('international'); setCurrentView('category'); }} className="px-3 py-2 text-sm text-gray-700 hover:text-red-600 whitespace-nowrap">International</button>
+
+              <button onClick={() => { setSelectedCategory('ott'); setCurrentView('category'); }} className="px-3 py-2 text-sm text-gray-700 hover:text-red-600 whitespace-nowrap">OTT</button>
+
               <button onClick={() => { setSelectedCategory('music'); setCurrentView('category'); }} className="px-3 py-2 text-sm text-gray-700 hover:text-red-600 whitespace-nowrap">Music</button>
-              
+
               <button onClick={() => { setSelectedCategory('celebrity-style'); setCurrentView('category'); }} className="px-3 py-2 text-sm text-gray-700 hover:text-red-600 whitespace-nowrap">Celebrity Style</button>
 
               <div className="relative">
@@ -553,24 +553,16 @@ const CineChatter = () => {
                 </button>
                 {moreOpen && (
                   <div className="absolute top-full right-0 mt-1 bg-white shadow-lg rounded-lg py-2 w-48 z-50">
-                    <button 
-                      onClick={() => { setSelectedCategory('international'); setCurrentView('category'); setMoreOpen(false); }} 
-                      className="block w-full text-left px-4 py-2 text-gray-700 transition-colors duration-150"
-                      onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#dc2626'; e.currentTarget.style.color = '#ffffff'; }}
-                      onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = ''; e.currentTarget.style.color = ''; }}
-                    >
-                      International
-                    </button>
-                    <button 
-                      onClick={() => { setCurrentView('about'); setMoreOpen(false); }} 
+                    <button
+                      onClick={() => { setCurrentView('about'); setMoreOpen(false); }}
                       className="block w-full text-left px-4 py-2 text-gray-700 transition-colors duration-150"
                       onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#dc2626'; e.currentTarget.style.color = '#ffffff'; }}
                       onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = ''; e.currentTarget.style.color = ''; }}
                     >
                       About
                     </button>
-                    <button 
-                      onClick={() => { setCurrentView('contact'); setMoreOpen(false); }} 
+                    <button
+                      onClick={() => { setCurrentView('contact'); setMoreOpen(false); }}
                       className="block w-full text-left px-4 py-2 text-gray-700 transition-colors duration-150"
                       onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#dc2626'; e.currentTarget.style.color = '#ffffff'; }}
                       onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = ''; e.currentTarget.style.color = ''; }}
@@ -649,31 +641,31 @@ const CineChatter = () => {
 
       {currentView === 'home' && (
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8">
-          {/* Treasure Box Section */}
-          <div className="p-4 sm:p-8 mb-6 sm:mb-8 bg-white border-b-2 border-gray-300">
-            <div className="flex flex-col items-center mb-4 sm:mb-6">
-              <div className="relative mb-4">
-                <div className="w-32 h-32 sm:w-48 sm:h-48 bg-gradient-to-br from-yellow-600 via-yellow-500 to-yellow-400 rounded-lg shadow-2xl flex items-center justify-center cursor-pointer transform hover:scale-105 transition-transform" onClick={async () => { 
-                  await loadFeaturedImages();
-                  const validImages = featuredImages.filter(f => f.image); 
-                  if (validImages.length > 0) { 
-                    setCurrentTreasureIndex(Math.floor(Math.random() * validImages.length)); 
-                  }
-                  setTreasureBoxOpen(true); 
-                }}>
-                  <span className="text-6xl sm:text-9xl">🎁</span>
-                </div>
-                <div className="absolute -top-2 -right-2 w-10 h-10 bg-red-600 rounded-full flex items-center justify-center text-white text-sm font-bold animate-pulse">NEW</div>
-              </div>
-              <p className="text-center text-purple-700 font-bold text-2xl mb-4">Trending!</p>
-            </div>
-          </div>
-
           {/* Welcome Section */}
           <div className="text-center py-8 mb-8 border-b-2 border-gray-300">
             <h2 className="text-5xl font-bold mb-4">Welcome to CineChatter</h2>
             <p className="text-red-600 mb-8 font-semibold text-lg">Your ultimate destination for entertainment news and updates!</p>
             <p className="text-gray-500">Use the menu above to explore different categories</p>
+          </div>
+
+          {/* Treasure Box Section */}
+          <div className="p-4 sm:p-8 mb-6 sm:mb-8 bg-white border-b-2 border-gray-300">
+            <div className="flex flex-col items-center mb-4 sm:mb-6">
+              <div className="relative mb-4">
+                <div className="w-32 h-32 sm:w-48 sm:h-48 bg-gradient-to-br from-yellow-600 via-yellow-500 to-yellow-400 rounded-lg shadow-2xl flex items-center justify-center cursor-pointer transform hover:scale-105 transition-transform" onClick={async () => {
+                  await loadFeaturedImages();
+                  const validImages = featuredImages.filter(f => f.image);
+                  if (validImages.length > 0) {
+                    setCurrentTreasureIndex(Math.floor(Math.random() * validImages.length));
+                  }
+                  setTreasureBoxOpen(true);
+                }}>
+                  <span className="text-6xl sm:text-9xl">🎁</span>
+                </div>
+                <div className="absolute -top-2 -right-2 w-10 h-10 bg-red-600 rounded-full flex items-center justify-center text-white text-sm font-bold animate-pulse">NEW</div>
+              </div>
+              <p className="text-center text-red-600 font-bold text-2xl mb-4">Untold Stories!</p>
+            </div>
           </div>
 
           {/* Latest Articles Section */}
@@ -907,7 +899,7 @@ const CineChatter = () => {
                 <Settings className="w-4 h-4" />Integration Settings
               </button>
               <button onClick={() => setShowFeaturedManager(true)} className="bg-red-600 text-white px-3 sm:px-4 py-2 rounded-lg hover:bg-red-700 flex items-center gap-2 whitespace-nowrap text-sm sm:text-base flex-1 sm:flex-initial justify-center">
-                <Upload className="w-4 h-4" />Manage Featured
+                <Upload className="w-4 h-4" />Untold Stories
               </button>
               <button onClick={() => setShowArticleForm(true)} className="bg-red-600 text-white px-3 sm:px-4 py-2 rounded-lg hover:bg-red-700 flex items-center gap-2 whitespace-nowrap text-sm sm:text-base flex-1 sm:flex-initial justify-center">
                 <Plus className="w-4 h-4" />New Article
@@ -1204,35 +1196,47 @@ const CineChatter = () => {
           <div className="min-h-screen py-8 px-4 flex items-start justify-center">
             <div className="bg-white rounded-lg max-w-6xl w-full">
               <div className="sticky top-0 bg-white border-b p-6 flex justify-between items-center z-10 rounded-t-lg">
-                <h2 className="text-2xl font-bold">Manage Treasure Content (3 Slots)</h2>
+                <h2 className="text-2xl font-bold">Manage Untold Stories ({featuredImages.length} of 10)</h2>
                 <button onClick={() => setShowFeaturedManager(false)} className="hover:bg-gray-100 p-2 rounded-full">
                   <X className="w-6 h-6" />
                 </button>
               </div>
-              
+
               <div className="p-6">
                 <p className="text-sm text-gray-600 mb-6">Upload images with articles that will randomly appear when users open the treasure box!</p>
-                <div className="text-xs text-gray-400 mb-4 p-2 bg-gray-100 rounded">
-                  Debug: Current featuredImages state = {JSON.stringify(featuredImages.map(f => ({id: f.id, hasImage: !!f.image, imageLength: f.image?.length || 0})))}
-                </div>
-                
+
                 <div className="space-y-8">
-                  {featuredImages.map(featured => (
+                  {featuredImages.map((featured, index) => (
                     <div key={featured.id} className="border-2 rounded-lg p-6 hover:border-blue-500 bg-gray-50">
                       <div className="flex justify-between items-center mb-4">
-                        <h3 className="font-bold text-xl">Slot {featured.id}</h3>
-                        {featured.image && (
-                          <button 
-                            type="button"
-                            onClick={() => {
-                              const updated = featuredImages.map(img => img.id === featured.id ? { ...img, image: '', articleTitle: '', articleDescription: '' } : img);
-                              saveFeaturedImages(updated);
-                            }} 
-                            className="text-red-600 text-sm hover:text-red-800 font-semibold"
-                          >
-                            Remove All
-                          </button>
-                        )}
+                        <h3 className="font-bold text-xl">Untold Story {index + 1}</h3>
+                        <div className="flex gap-2">
+                          {featured.image && (
+                            <button
+                              type="button"
+                              onClick={() => {
+                                const updated = featuredImages.map(img => img.id === featured.id ? { ...img, image: '', articleTitle: '', articleDescription: '' } : img);
+                                saveFeaturedImages(updated);
+                              }}
+                              className="text-blue-600 text-sm hover:text-blue-800 font-semibold"
+                            >
+                              Clear Content
+                            </button>
+                          )}
+                          {featuredImages.length > 1 && (
+                            <button
+                              type="button"
+                              onClick={() => {
+                                const updated = featuredImages.filter(img => img.id !== featured.id);
+                                setFeaturedImages(updated);
+                                saveFeaturedImages(updated);
+                              }}
+                              className="text-red-600 text-sm hover:text-red-800 font-semibold"
+                            >
+                              Delete Story
+                            </button>
+                          )}
+                        </div>
                       </div>
                       
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -1331,15 +1335,40 @@ const CineChatter = () => {
                       </div>
                     </div>
                   ))}
+
+                  {/* Add Story Button */}
+                  {featuredImages.length < 10 && (
+                    <button
+                      onClick={() => {
+                        const maxId = Math.max(...featuredImages.map(f => f.id), 0);
+                        const newStory = {
+                          id: maxId + 1,
+                          image: '',
+                          title: `Untold Story ${featuredImages.length + 1}`,
+                          link: 'hollywood-movies',
+                          articleTitle: '',
+                          articleDescription: ''
+                        };
+                        const updated = [...featuredImages, newStory];
+                        setFeaturedImages(updated);
+                        saveFeaturedImages(updated);
+                      }}
+                      className="w-full border-2 border-dashed border-gray-300 rounded-lg p-8 hover:border-red-500 hover:bg-red-50 transition-colors flex flex-col items-center justify-center gap-2"
+                    >
+                      <Plus className="w-12 h-12 text-gray-400" />
+                      <span className="text-lg font-semibold text-gray-600">Add Story</span>
+                      <span className="text-sm text-gray-500">{10 - featuredImages.length} slots remaining</span>
+                    </button>
+                  )}
                 </div>
 
                 <div className="mt-8 flex justify-end sticky bottom-0 bg-white pt-4 border-t">
-                  <button 
+                  <button
                     onClick={async () => {
                       await saveFeaturedImages(featuredImages);
                       setShowFeaturedManager(false);
                       await loadFeaturedImages();
-                    }} 
+                    }}
                     className="bg-green-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-green-700 text-lg"
                   >
                     Done
