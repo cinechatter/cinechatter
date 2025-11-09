@@ -890,16 +890,16 @@ const CineChatter = () => {
             <button onClick={() => setCurrentView('home')} className="text-red-600 hover:underline mb-4 text-sm sm:text-base">← Back to Home</button>
             <h1 className="text-2xl sm:text-3xl font-bold">{categories.find(c => c.id === selectedCategory)?.name}</h1>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+          <div className="space-y-4">
             {getCategoryArticles(selectedCategory)
               .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
               .map(article => (
               <div key={article.id} onClick={() => setSelectedArticle(article)} className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow cursor-pointer">
-                {article.image && <img src={article.image} alt={article.title} className="w-full h-48 object-cover" />}
-                <div className="p-4">
-                  <h3 className="font-bold text-lg mb-2 line-clamp-2">{article.title}</h3>
-                  <p className="text-gray-600 text-sm line-clamp-3">{article.content}</p>
-                  <p className="text-xs text-gray-400 mt-2">{new Date(article.createdAt).toLocaleDateString()}</p>
+                {article.image && <img src={article.image} alt={article.title} className="w-full h-64 sm:h-80 lg:h-96 object-cover" />}
+                <div className="p-6">
+                  <h3 className="font-bold text-2xl mb-3">{article.title}</h3>
+                  <p className="text-gray-600 text-base leading-relaxed">{article.content}</p>
+                  <p className="text-sm text-gray-400 mt-4">{new Date(article.createdAt).toLocaleDateString()}</p>
                 </div>
               </div>
             ))}
@@ -1106,8 +1106,8 @@ const CineChatter = () => {
 
       {selectedArticle && (
         <div className="fixed inset-0 bg-black bg-opacity-90 z-50 overflow-y-auto">
-          <div className="min-h-screen py-12 px-4">
-            <div className="max-w-4xl mx-auto bg-white rounded-lg p-8">
+          <div className="min-h-screen py-12 px-4 sm:px-6 lg:px-8">
+            <div className="max-w-full mx-auto bg-white rounded-lg p-4 sm:p-6 lg:p-8">
               <button onClick={() => setSelectedArticle(null)} className="mb-6 text-red-600 hover:text-red-700 flex items-center gap-2 font-semibold">
                 <X className="w-6 h-6" />Close
               </button>
