@@ -51,7 +51,7 @@ const CineChatter = () => {
   const [sheetsEnabled, setSheetsEnabled] = useState(false);
   const [sheetUrl, setSheetUrl] = useState('');
   const [sheetStatus, setSheetStatus] = useState('not-connected');
-  const [dataSource, setDataSource] = useState('sheets-only');
+  const [dataSource, setDataSource] = useState('admin-only');
   const [sheetArticles, setSheetArticles] = useState([]);
   const [showIntegrationSettings, setShowIntegrationSettings] = useState(false);
 
@@ -541,8 +541,10 @@ const CineChatter = () => {
     try {
       await window.storage.set('cine-chatter-articles', JSON.stringify(updatedArticles));
       setArticles(updatedArticles);
+      console.log('✅ Articles saved successfully. Total articles:', updatedArticles.length);
+      console.log('Latest article:', updatedArticles[0]);
     } catch (error) {
-      console.error('Failed');
+      console.error('❌ Failed to save articles:', error);
     }
   };
 
@@ -836,11 +838,15 @@ const CineChatter = () => {
       updatedAt: new Date().toISOString()
     };
 
+    console.log('📝 Creating/Updating article:', articleData);
+
     let updatedArticles;
     if (editingArticle) {
       updatedArticles = articles.map(a => a.id === editingArticle.id ? articleData : a);
+      console.log('✏️ Editing existing article');
     } else {
       updatedArticles = [articleData, ...articles];
+      console.log('➕ Adding new article. Total articles will be:', updatedArticles.length);
     }
 
     saveArticles(updatedArticles);
@@ -1246,15 +1252,14 @@ const CineChatter = () => {
       {currentView === 'home' && (
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8">
           {/* Welcome Section */}
-          <div className="text-center py-8 mb-8 border-b-2 border-gray-300 dark:border-gray-700">
+          <div className="text-center py-8 mb-4">
             <h1 className="text-4xl font-bold mb-4 text-gray-900 dark:text-white leading-tight">Welcome to CineChatter</h1>
-            <p className="text-red-600 dark:text-red-400 mb-8 font-semibold text-xl leading-relaxed">Your ultimate destination for entertainment news and updates!</p>
-            <p className="text-gray-600 dark:text-gray-300 text-base leading-normal">Use the menu above to explore different categories</p>
+            <p className="text-red-600 dark:text-red-400 font-semibold text-xl leading-relaxed">Your ultimate destination for entertainment news and updates!</p>
           </div>
 
           {/* Treasure Box Section */}
-          <div className="p-4 sm:p-8 mb-6 sm:mb-8 bg-white dark:bg-gray-800 border-b-2 border-gray-300 dark:border-gray-700">
-            <div className="flex flex-col items-center mb-4 sm:mb-6">
+          <div className="max-w-2xl mx-auto py-8 sm:py-12 px-6 sm:px-8 mb-8 bg-gradient-to-br from-red-50 via-orange-50 to-yellow-50 dark:from-gray-800 dark:via-gray-750 dark:to-gray-800 rounded-2xl shadow-xl border border-red-100 dark:border-gray-700">
+            <div className="flex flex-col items-center">
               <div className="relative mb-4">
                 <div className="treasure-box w-32 h-32 sm:w-48 sm:h-48 bg-gradient-to-br from-yellow-600 via-yellow-500 to-yellow-400 rounded-lg shadow-2xl flex items-center justify-center cursor-pointer hover:shadow-3xl" onClick={async () => {
                   await loadFeaturedImages();
@@ -1268,7 +1273,7 @@ const CineChatter = () => {
                 </div>
                 <div className="absolute -top-2 -right-2 w-10 h-10 bg-red-600 rounded-full flex items-center justify-center text-white text-sm font-bold animate-pulse-glow">NEW</div>
               </div>
-              <p className="text-center text-red-600 dark:text-red-400 font-bold text-2xl mb-4">Untold Stories!</p>
+              <p className="text-center text-red-600 dark:text-red-400 font-bold text-xl sm:text-2xl mt-2">Untold Stories!</p>
             </div>
           </div>
 
@@ -1289,6 +1294,11 @@ const CineChatter = () => {
                 allArticles = [...articles.filter(a => a.status === 'published'), ...sheetArticles.filter(a => a.status === 'published')];
               }
 
+              console.log('📰 Latest Articles - Data Source:', dataSource);
+              console.log('📊 Total admin articles:', articles.length, '| Published:', articles.filter(a => a.status === 'published').length);
+              console.log('📊 Total sheet articles:', sheetArticles.length, '| Published:', sheetArticles.filter(a => a.status === 'published').length);
+              console.log('📊 All articles to display:', allArticles.length);
+
               // Sort by date and take top 7 (1 featured + 6 grid)
               const recentArticles = allArticles
                 .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
@@ -1306,7 +1316,7 @@ const CineChatter = () => {
                   {/* Featured Article - Large Card */}
                   <div
                     onClick={() => setSelectedArticle(featuredArticle)}
-                    className="lg:row-span-2 bg-white dark:bg-gray-800 rounded-lg shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden cursor-pointer group border border-gray-200 dark:border-gray-700"
+                    className="lg:row-span-2 bg-gradient-to-br from-red-50 via-orange-50 to-yellow-50 dark:from-gray-800 dark:via-gray-750 dark:to-gray-800 rounded-lg shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden cursor-pointer group border border-red-100 dark:border-gray-700"
                   >
                     {featuredArticle.image && (
                       <div className="relative h-64 lg:h-80 overflow-hidden">
@@ -1344,7 +1354,7 @@ const CineChatter = () => {
                     <div
                       key={`article-${article.id}`}
                       onClick={() => setSelectedArticle(article)}
-                      className="bg-white dark:bg-gray-800 rounded-lg shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden cursor-pointer group border border-gray-200 dark:border-gray-700"
+                      className="bg-gradient-to-br from-red-50 via-orange-50 to-yellow-50 dark:from-gray-800 dark:via-gray-750 dark:to-gray-800 rounded-lg shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden cursor-pointer group border border-red-100 dark:border-gray-700"
                     >
                       <div className="flex gap-4 p-4">
                         {article.image && (
