@@ -1154,7 +1154,7 @@ const CineChatter = () => {
                   {user.profile?.admin_status === 'A' && (
                     <button
                       onClick={() => setCurrentView('admin')}
-                      className="px-3 py-1.5 bg-green-600 text-white rounded-md text-sm hover:bg-green-700 whitespace-nowrap flex items-center gap-1"
+                      className="px-3 py-1.5 bg-secondary-600 text-white rounded-md text-sm hover:bg-secondary-700 whitespace-nowrap flex items-center gap-1 shadow-md hover:shadow-lg transition-all"
                     >
                       <Settings className="w-4 h-4" />
                       <span>Dashboard</span>
@@ -1238,7 +1238,7 @@ const CineChatter = () => {
           <div className="text-center py-8 mb-8 border-b-2 border-gray-300 dark:border-gray-700">
             <h1 className="text-4xl font-bold mb-4 text-gray-900 dark:text-white leading-tight">Welcome to CineChatter</h1>
             <p className="text-red-600 dark:text-red-400 mb-8 font-semibold text-lg leading-relaxed">Your ultimate destination for entertainment news and updates!</p>
-            <p className="text-gray-500 dark:text-gray-400 text-base leading-normal">Use the menu above to explore different categories</p>
+            <p className="text-gray-600 dark:text-gray-300 text-base leading-normal">Use the menu above to explore different categories</p>
           </div>
 
           {/* Treasure Box Section */}
@@ -1327,8 +1327,8 @@ const CineChatter = () => {
                       className="w-full px-4 py-2 rounded-lg text-gray-800 focus:outline-none focus:ring-2 focus:ring-yellow-400"
                     />
                   </div>
-                  <button type="submit" className="w-full bg-yellow-400 hover:bg-yellow-500 text-gray-800 font-bold py-3 rounded-lg transition-colors">
-                    Join
+                  <button type="submit" className="w-full bg-secondary-500 hover:bg-secondary-600 text-white font-bold py-3 rounded-lg transition-colors shadow-lg hover:shadow-xl">
+                    Join Newsletter
                   </button>
                 </form>
               </div>
@@ -1438,12 +1438,12 @@ const CineChatter = () => {
                 <h1 className="text-3xl font-bold text-gray-900 dark:text-white">{user.profile?.name || 'User'}</h1>
                 <p className="text-gray-600 dark:text-gray-400">{user.email}</p>
                 {user.profile?.admin_status === 'A' && (
-                  <span className="inline-block mt-2 bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-semibold">
+                  <span className="inline-block mt-2 bg-secondary-100 dark:bg-secondary-900 text-secondary-800 dark:text-secondary-200 px-3 py-1 rounded-full text-sm font-semibold shadow-sm">
                     Admin
                   </span>
                 )}
                 {user.profile?.admin_status === 'P' && (
-                  <span className="inline-block mt-2 bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-sm font-semibold">
+                  <span className="inline-block mt-2 bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200 px-3 py-1 rounded-full text-sm font-semibold shadow-sm">
                     Pending Approval
                   </span>
                 )}
@@ -1675,12 +1675,12 @@ const CineChatter = () => {
                           </td>
                           <td className="px-6 py-4 text-sm text-gray-700 dark:text-gray-300 whitespace-nowrap">{categories.find(c => c.id === article.category)?.name}</td>
                           <td className="px-6 py-4 text-sm whitespace-nowrap">
-                            <span className="px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">
+                            <span className="px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 shadow-sm">
                               {sourceDisplay}
                             </span>
                           </td>
                           <td className="px-6 py-4">
-                            <span className={`px-2 py-1 text-xs font-semibold rounded-full ${article.status === 'published' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}`}>
+                            <span className={`px-2 py-1 text-xs font-semibold rounded-full shadow-sm ${article.status === 'published' ? 'bg-secondary-100 dark:bg-secondary-900 text-secondary-800 dark:text-secondary-200' : 'bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200'}`}>
                               {article.status}
                             </span>
                           </td>
@@ -1962,19 +1962,19 @@ const CineChatter = () => {
                             <td className="px-6 py-4 text-sm text-gray-900 dark:text-gray-100">{u.name || '-'}</td>
                             <td className="px-6 py-4 text-sm">
                               {u.admin_status === 'A' ? (
-                                <span className="bg-green-100 text-green-800 px-2 py-1 rounded text-xs font-semibold">
+                                <span className="bg-secondary-100 dark:bg-secondary-900 text-secondary-800 dark:text-secondary-200 px-2 py-1 rounded text-xs font-semibold shadow-sm">
                                   Admin
                                 </span>
                               ) : u.admin_status === 'P' ? (
-                                <span className="bg-yellow-100 text-yellow-800 px-2 py-1 rounded text-xs font-semibold">
+                                <span className="bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200 px-2 py-1 rounded text-xs font-semibold shadow-sm">
                                   Pending
                                 </span>
                               ) : u.admin_status === 'R' ? (
-                                <span className="bg-red-100 text-red-800 px-2 py-1 rounded text-xs">
+                                <span className="bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200 px-2 py-1 rounded text-xs shadow-sm">
                                   Rejected
                                 </span>
                               ) : (
-                                <span className="bg-gray-100 text-gray-800 px-2 py-1 rounded text-xs">
+                                <span className="bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 px-2 py-1 rounded text-xs shadow-sm">
                                   User
                                 </span>
                               )}
