@@ -1287,16 +1287,16 @@ const CineChatter = () => {
 
                 return recentArticles.length > 0 ? (
                   recentArticles.map(article => (
-                    <div key={`article-${article.id}`} className="border-b border-gray-200 dark:border-gray-700 pb-4">
-                      <div className="flex gap-4 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 p-3 rounded transition-colors" onClick={() => setSelectedArticle(article)}>
+                    <div key={`article-${article.id}`} className="bg-gray-50 dark:bg-gray-700/50 rounded-lg shadow-md hover:shadow-lg transition-all duration-300 overflow-hidden border border-gray-200 dark:border-gray-600">
+                      <div className="flex gap-4 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 p-4 transition-colors" onClick={() => setSelectedArticle(article)}>
                         {article.image && (
-                          <img src={article.image} alt={article.title} className="w-24 h-24 object-cover rounded" />
+                          <img src={article.image} alt={article.title} className="w-24 h-24 object-cover rounded-lg shadow-sm" />
                         )}
                         <div className="flex-1">
                           <span className="text-xs bg-red-100 dark:bg-red-900 text-red-600 dark:text-red-300 px-2 py-1 rounded mb-2 inline-block uppercase font-semibold">
                             {categories.find(c => c.id === article.category)?.name}
                           </span>
-                          <h3 className="font-bold text-lg mb-2 text-gray-900 dark:text-white hover:text-red-600 dark:hover:text-red-400">{article.title}</h3>
+                          <h3 className="font-bold text-lg mb-2 text-gray-900 dark:text-white hover:text-red-600 dark:hover:text-red-400 transition-colors">{article.title}</h3>
                           <p className="text-gray-600 dark:text-gray-400 text-sm line-clamp-2">{article.content}</p>
                           <p className="text-xs text-gray-400 dark:text-gray-500 mt-2">{new Date(article.createdAt).toLocaleDateString()}</p>
                         </div>
@@ -1347,7 +1347,7 @@ const CineChatter = () => {
             {getCategoryArticles(selectedCategory)
               .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
               .map(article => (
-              <div key={article.id} onClick={() => setSelectedArticle(article)} className="bg-white dark:bg-gray-800 rounded-lg shadow-md dark:shadow-gray-900 overflow-hidden hover:shadow-xl transition-shadow cursor-pointer">
+              <div key={article.id} onClick={() => setSelectedArticle(article)} className="bg-white dark:bg-gray-800 rounded-lg shadow-lg dark:shadow-xl overflow-hidden hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 cursor-pointer border border-gray-100 dark:border-gray-700">
                 {article.image && <img src={article.image} alt={article.title} className="w-full h-64 sm:h-80 lg:h-96 object-cover" />}
                 <div className="p-6">
                   <h3 className="font-bold text-2xl mb-3 text-gray-900 dark:text-white">{article.title}</h3>
@@ -1373,7 +1373,7 @@ const CineChatter = () => {
             {getSearchResults()
               .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
               .map(article => (
-              <div key={article.id} onClick={() => setSelectedArticle(article)} className="bg-white dark:bg-gray-800 rounded-lg shadow-md dark:shadow-gray-900 overflow-hidden hover:shadow-xl transition-shadow cursor-pointer">
+              <div key={article.id} onClick={() => setSelectedArticle(article)} className="bg-white dark:bg-gray-800 rounded-lg shadow-lg dark:shadow-xl overflow-hidden hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 cursor-pointer border border-gray-100 dark:border-gray-700">
                 {article.image && <img src={article.image} alt={article.title} className="w-full h-48 object-cover" />}
                 <div className="p-4">
                   <span className="text-xs bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 px-2 py-1 rounded mb-2 inline-block">{categories.find(c => c.id === article.category)?.name}</span>
@@ -1393,7 +1393,7 @@ const CineChatter = () => {
       {currentView === 'about' && (
         <div className="max-w-4xl mx-auto px-4 py-8">
           <button onClick={() => setCurrentView('home')} className="text-red-600 dark:text-red-400 hover:underline mb-4">← Back to Home</button>
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-8">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-8 border border-gray-100 dark:border-gray-700">
             <h1 className="text-4xl font-bold mb-6 text-red-600 dark:text-red-400">About CineChatter</h1>
             <div className="space-y-4 text-gray-700 dark:text-gray-300 leading-relaxed">
               <p className="text-lg">
@@ -1429,7 +1429,7 @@ const CineChatter = () => {
       {currentView === 'profile' && user && (
         <div className="max-w-4xl mx-auto px-4 py-8">
           <button onClick={() => setCurrentView('home')} className="text-red-600 dark:text-red-400 hover:underline mb-4">← Back to Home</button>
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-8">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-8 border border-gray-100 dark:border-gray-700">
             <div className="flex items-center gap-6 mb-8">
               <div className="w-24 h-24 bg-red-100 dark:bg-red-900 rounded-full flex items-center justify-center">
                 <User className="w-12 h-12 text-red-600 dark:text-red-400" />
@@ -1518,7 +1518,7 @@ const CineChatter = () => {
       {currentView === 'contact' && (
         <div className="max-w-4xl mx-auto px-4 py-8">
           <button onClick={() => setCurrentView('home')} className="text-red-600 dark:text-red-400 hover:underline mb-4">← Back to Home</button>
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-8">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-8 border border-gray-100 dark:border-gray-700">
             <h1 className="text-4xl font-bold mb-6 text-red-600 dark:text-red-400">Contact Us</h1>
             <div className="space-y-6">
               <p className="text-gray-700 dark:text-gray-300 text-lg">
