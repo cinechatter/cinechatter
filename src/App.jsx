@@ -1650,26 +1650,45 @@ const CineChatter = () => {
           {/* Articles Tab */}
           {activeAdminTab === 'articles' && (
             <>
-              <div className="mb-4 flex justify-between items-center">
-                <p className="text-sm text-gray-600 dark:text-gray-400">
-                  Manage all articles from different sources
-                </p>
-                <button onClick={exportToCSV} className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 flex items-center gap-2 text-sm shadow-md hover:shadow-lg transition-all">
-                  <Download className="w-4 h-4" />Export CSV {selectedArticles.length > 0 && `(${selectedArticles.length})`}
-                </button>
-              </div>
               <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden">
+                {/* Gmail-style Toolbar */}
+                <div className="border-b border-gray-200 dark:border-gray-700 px-4 py-3 flex items-center gap-3">
+                  <input
+                    type="checkbox"
+                    checked={selectedArticles.length === [...articles, ...sheetArticles].filter(a => a.status === 'published').length && selectedArticles.length > 0}
+                    onChange={toggleAllArticles}
+                    className="w-4 h-4 text-red-600 border-gray-300 dark:border-gray-600 rounded focus:ring-red-500"
+                    title="Select all"
+                  />
+
+                  {selectedArticles.length > 0 ? (
+                    <>
+                      <span className="text-sm text-gray-600 dark:text-gray-400">
+                        {selectedArticles.length} selected
+                      </span>
+                      <div className="flex-1"></div>
+                      <button
+                        onClick={exportToCSV}
+                        className="flex items-center gap-2 px-3 py-1.5 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded transition-colors text-sm font-medium"
+                        title="Export selected articles to CSV"
+                      >
+                        <Download className="w-4 h-4" />
+                        <span className="hidden sm:inline">Export</span>
+                      </button>
+                    </>
+                  ) : (
+                    <span className="text-sm text-gray-500 dark:text-gray-500">
+                      Select articles to export
+                    </span>
+                  )}
+                </div>
+
                 <div className="overflow-x-auto">
                   <table className="w-full min-w-[640px]">
               <thead className="bg-gray-50 dark:bg-gray-700">
                 <tr>
                   <th className="px-4 py-3 text-left">
-                    <input
-                      type="checkbox"
-                      checked={selectedArticles.length === [...articles, ...sheetArticles].filter(a => a.status === 'published').length && selectedArticles.length > 0}
-                      onChange={toggleAllArticles}
-                      className="w-4 h-4 text-red-600 border-gray-300 dark:border-gray-600 rounded focus:ring-red-500"
-                    />
+                    <span className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Select</span>
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Image</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Title</th>
