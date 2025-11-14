@@ -1427,7 +1427,7 @@ const CineChatter = () => {
                         <div
                           key={`trending-${article.id}`}
                           onClick={() => setSelectedArticle(article)}
-                          className="flex-shrink-0 w-72 bg-white dark:bg-gray-800 rounded-lg shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden cursor-pointer group border border-gray-200 dark:border-gray-700"
+                          className="flex-shrink-0 w-72 bg-gradient-to-br from-red-50 via-orange-50 to-yellow-50 dark:from-slate-900 dark:via-gray-800 dark:to-slate-900 rounded-lg shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden cursor-pointer group border border-red-100 dark:border-gray-700"
                         >
                           {article.image && (
                             <div className="relative h-40 overflow-hidden">
@@ -1559,7 +1559,7 @@ const CineChatter = () => {
             {getCategoryArticles(selectedCategory)
               .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
               .map(article => (
-              <div key={article.id} onClick={() => setSelectedArticle(article)} className="bg-white dark:bg-gray-800 rounded-lg shadow-lg dark:shadow-xl overflow-hidden hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 cursor-pointer border border-gray-100 dark:border-gray-700">
+              <div key={article.id} onClick={() => setSelectedArticle(article)} className="bg-gradient-to-br from-red-50 via-orange-50 to-yellow-50 dark:from-slate-900 dark:via-gray-800 dark:to-slate-900 rounded-lg shadow-lg dark:shadow-xl overflow-hidden hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 cursor-pointer border border-red-100 dark:border-gray-700">
                 {article.image && <img src={article.image} alt={article.title} className="w-full h-64 sm:h-80 lg:h-96 object-cover" />}
                 <div className="p-6">
                   <h3 className="font-bold text-2xl mb-3 text-gray-900 dark:text-white">{article.title}</h3>
@@ -1585,7 +1585,7 @@ const CineChatter = () => {
             {getSearchResults()
               .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
               .map(article => (
-              <div key={article.id} onClick={() => setSelectedArticle(article)} className="bg-white dark:bg-gray-800 rounded-lg shadow-lg dark:shadow-xl overflow-hidden hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 cursor-pointer border border-gray-100 dark:border-gray-700">
+              <div key={article.id} onClick={() => setSelectedArticle(article)} className="bg-gradient-to-br from-red-50 via-orange-50 to-yellow-50 dark:from-slate-900 dark:via-gray-800 dark:to-slate-900 rounded-lg shadow-lg dark:shadow-xl overflow-hidden hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 cursor-pointer border border-red-100 dark:border-gray-700">
                 {article.image && <img src={article.image} alt={article.title} className="w-full h-48 object-cover" />}
                 <div className="p-4">
                   <span className="text-xs bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 px-2 py-1 rounded mb-2 inline-block">{categories.find(c => c.id === article.category)?.name}</span>
@@ -1605,7 +1605,7 @@ const CineChatter = () => {
       {currentView === 'about' && (
         <div className="max-w-4xl mx-auto px-4 py-8">
           <button onClick={() => setCurrentView('home')} className="text-red-600 dark:text-red-400 hover:underline mb-4">← Back to Home</button>
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-8 border border-gray-100 dark:border-gray-700">
+          <div className="bg-gradient-to-br from-red-50 via-orange-50 to-yellow-50 dark:from-slate-900 dark:via-gray-800 dark:to-slate-900 rounded-lg shadow-xl p-8 border border-red-100 dark:border-gray-700">
             <h1 className="text-4xl font-bold mb-6 text-red-600 dark:text-red-400 leading-tight">About CineChatter</h1>
             <div className="space-y-4 text-gray-700 dark:text-gray-300 leading-relaxed text-base">
               <p className="text-lg">
@@ -1641,7 +1641,7 @@ const CineChatter = () => {
       {currentView === 'profile' && user && (
         <div className="max-w-4xl mx-auto px-4 py-8">
           <button onClick={() => setCurrentView('home')} className="text-red-600 dark:text-red-400 hover:underline mb-4">← Back to Home</button>
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-8 border border-gray-100 dark:border-gray-700">
+          <div className="bg-gradient-to-br from-red-50 via-orange-50 to-yellow-50 dark:from-slate-900 dark:via-gray-800 dark:to-slate-900 rounded-lg shadow-xl p-8 border border-red-100 dark:border-gray-700">
             <div className="flex items-center gap-6 mb-8">
               <div className="w-24 h-24 bg-red-100 dark:bg-red-900 rounded-full flex items-center justify-center">
                 <User className="w-12 h-12 text-red-600 dark:text-red-400" />
@@ -1730,7 +1730,7 @@ const CineChatter = () => {
       {currentView === 'contact' && (
         <div className="max-w-4xl mx-auto px-4 py-8">
           <button onClick={() => setCurrentView('home')} className="text-red-600 dark:text-red-400 hover:underline mb-4">← Back to Home</button>
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-8 border border-gray-100 dark:border-gray-700">
+          <div className="bg-gradient-to-br from-red-50 via-orange-50 to-yellow-50 dark:from-slate-900 dark:via-gray-800 dark:to-slate-900 rounded-lg shadow-xl p-8 border border-red-100 dark:border-gray-700">
             <h1 className="text-4xl font-bold mb-6 text-red-600 dark:text-red-400 leading-tight">Contact Us</h1>
             <div className="space-y-6 text-base">
               <p className="text-gray-700 dark:text-gray-300 text-lg">
@@ -2174,7 +2174,7 @@ const CineChatter = () => {
       {selectedArticle && (
         <div className="fixed inset-0 bg-black bg-opacity-50 dark:bg-opacity-70 z-50 overflow-y-auto animate-fadeIn">
           <div className="min-h-screen py-12 px-4 sm:px-6 lg:px-8">
-            <div className="max-w-full mx-auto bg-white dark:bg-gray-800 rounded-lg p-4 sm:p-6 lg:p-8 animate-slideUp shadow-2xl">
+            <div className="max-w-full mx-auto bg-gradient-to-br from-red-50 via-orange-50 to-yellow-50 dark:from-slate-900 dark:via-gray-800 dark:to-slate-900 rounded-lg p-4 sm:p-6 lg:p-8 animate-slideUp shadow-2xl border border-red-100 dark:border-gray-700">
               <button onClick={() => setSelectedArticle(null)} className="mb-6 text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 flex items-center gap-2 font-semibold">
                 <X className="w-6 h-6" />Close
               </button>
@@ -2188,7 +2188,7 @@ const CineChatter = () => {
 
       {showArticleForm && (
         <div className="fixed inset-0 bg-black bg-opacity-50 dark:bg-opacity-70 flex items-center justify-center p-4 z-50 animate-fadeIn">
-          <div className="bg-white dark:bg-gray-800 rounded-lg max-w-2xl w-full p-6 max-h-screen overflow-y-auto animate-slideUp shadow-2xl">
+          <div className="bg-gradient-to-br from-red-50 via-orange-50 to-yellow-50 dark:from-slate-900 dark:via-gray-800 dark:to-slate-900 rounded-lg max-w-2xl w-full p-6 max-h-screen overflow-y-auto animate-slideUp shadow-2xl border border-red-100 dark:border-gray-700">
             <div className="flex justify-between mb-6">
               <h2 className="text-2xl font-bold text-gray-900 dark:text-white">{editingArticle ? 'Edit' : 'New'} Article</h2>
               <button onClick={resetForm} className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"><X className="w-6 h-6" /></button>
@@ -2836,7 +2836,7 @@ const CineChatter = () => {
       {selectedTreasureArticle && (
         <div className="fixed inset-0 bg-black bg-opacity-50 dark:bg-opacity-70 z-50 overflow-y-auto animate-fadeIn">
           <div className="min-h-screen py-12 px-4">
-            <div className="max-w-4xl mx-auto bg-white dark:bg-gray-800 rounded-lg p-8 animate-slideUp shadow-2xl">
+            <div className="max-w-4xl mx-auto bg-gradient-to-br from-red-50 via-orange-50 to-yellow-50 dark:from-slate-900 dark:via-gray-800 dark:to-slate-900 rounded-lg p-8 animate-slideUp shadow-2xl border border-red-100 dark:border-gray-700">
               <button
                 onClick={() => setSelectedTreasureArticle(null)}
                 className="mb-6 text-red-600 hover:text-red-700 flex items-center gap-2 font-semibold"
