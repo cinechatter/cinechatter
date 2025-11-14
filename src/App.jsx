@@ -1258,7 +1258,7 @@ const CineChatter = () => {
           </div>
 
           {/* Treasure Box Section */}
-          <div className="max-w-2xl mx-auto py-8 sm:py-12 px-6 sm:px-8 mb-8 bg-gradient-to-br from-red-50 via-orange-50 to-yellow-50 dark:from-gray-900 dark:via-red-950/20 dark:to-gray-900 rounded-2xl shadow-xl border border-red-100 dark:border-gray-700">
+          <div className="max-w-2xl mx-auto py-8 sm:py-12 px-6 sm:px-8 mb-8 bg-gradient-to-br from-red-50 via-orange-50 to-yellow-50 dark:from-slate-900 dark:via-gray-800 dark:to-slate-900 rounded-2xl shadow-xl border border-red-100 dark:border-gray-700">
             <div className="flex flex-col items-center">
               <div className="relative mb-4">
                 <div className="treasure-box w-32 h-32 sm:w-48 sm:h-48 bg-gradient-to-br from-yellow-600 via-yellow-500 to-yellow-400 rounded-lg shadow-2xl flex items-center justify-center cursor-pointer hover:shadow-3xl" onClick={async () => {
@@ -1316,7 +1316,7 @@ const CineChatter = () => {
                   {/* Featured Article - Large Card */}
                   <div
                     onClick={() => setSelectedArticle(featuredArticle)}
-                    className="lg:row-span-2 bg-gradient-to-br from-red-50 via-orange-50 to-yellow-50 dark:from-gray-900 dark:via-red-950/20 dark:to-gray-900 rounded-lg shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden cursor-pointer group border border-red-100 dark:border-gray-700"
+                    className="lg:row-span-2 bg-gradient-to-br from-red-50 via-orange-50 to-yellow-50 dark:from-slate-900 dark:via-gray-800 dark:to-slate-900 rounded-lg shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden cursor-pointer group border border-red-100 dark:border-gray-700"
                   >
                     {featuredArticle.image && (
                       <div className="relative h-64 lg:h-80 overflow-hidden">
@@ -1354,7 +1354,7 @@ const CineChatter = () => {
                     <div
                       key={`article-${article.id}`}
                       onClick={() => setSelectedArticle(article)}
-                      className="bg-gradient-to-br from-red-50 via-orange-50 to-yellow-50 dark:from-gray-900 dark:via-red-950/20 dark:to-gray-900 rounded-lg shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden cursor-pointer group border border-red-100 dark:border-gray-700"
+                      className="bg-gradient-to-br from-red-50 via-orange-50 to-yellow-50 dark:from-slate-900 dark:via-gray-800 dark:to-slate-900 rounded-lg shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden cursor-pointer group border border-red-100 dark:border-gray-700"
                     >
                       <div className="flex gap-4 p-4">
                         {article.image && (
