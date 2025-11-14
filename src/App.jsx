@@ -1511,50 +1511,50 @@ const CineChatter = () => {
 
       {currentView === 'contact' && (
         <div className="max-w-4xl mx-auto px-4 py-8">
-          <button onClick={() => setCurrentView('home')} className="text-red-600 hover:underline mb-4">← Back to Home</button>
-          <div className="bg-white rounded-lg shadow-md p-8">
-            <h1 className="text-4xl font-bold mb-6 text-red-600">Contact Us</h1>
+          <button onClick={() => setCurrentView('home')} className="text-red-600 dark:text-red-400 hover:underline mb-4">← Back to Home</button>
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-8">
+            <h1 className="text-4xl font-bold mb-6 text-red-600 dark:text-red-400">Contact Us</h1>
             <div className="space-y-6">
-              <p className="text-gray-700 text-lg">
+              <p className="text-gray-700 dark:text-gray-300 text-lg">
                 We'd love to hear from you! Whether you have a question, feedback, or just want to say hello,
                 feel free to reach out to us.
               </p>
 
               <div className="space-y-4">
-                <div className="border-l-4 border-red-600 pl-4">
-                  <h3 className="font-bold text-lg mb-1">Social Media</h3>
+                <div className="border-l-4 border-red-600 dark:border-red-500 pl-4">
+                  <h3 className="font-bold text-lg mb-1 text-gray-900 dark:text-white">Social Media</h3>
                   <div className="space-y-1">
-                    <p className="text-gray-700">Follow us on social media for the latest updates:</p>
+                    <p className="text-gray-700 dark:text-gray-300">Follow us on social media for the latest updates:</p>
                     <div className="flex gap-4 mt-2">
-                      <a href="#" className="text-red-600 hover:underline">Twitter</a>
-                      <a href="#" className="text-red-600 hover:underline">Facebook</a>
-                      <a href="#" className="text-red-600 hover:underline">Instagram</a>
+                      <a href="#" className="text-red-600 dark:text-red-400 hover:underline">Twitter</a>
+                      <a href="#" className="text-red-600 dark:text-red-400 hover:underline">Facebook</a>
+                      <a href="#" className="text-red-600 dark:text-red-400 hover:underline">Instagram</a>
                     </div>
                   </div>
                 </div>
 
-                <div className="border-l-4 border-red-600 pl-4">
-                  <h3 className="font-bold text-lg mb-1">Business Inquiries</h3>
-                  <a href="mailto:cinechattercontact@gmail.com" className="text-red-600 hover:underline">
+                <div className="border-l-4 border-red-600 dark:border-red-500 pl-4">
+                  <h3 className="font-bold text-lg mb-1 text-gray-900 dark:text-white">Business Inquiries</h3>
+                  <a href="mailto:cinechattercontact@gmail.com" className="text-red-600 dark:text-red-400 hover:underline">
                     cinechattercontact@gmail.com
                   </a>
                 </div>
               </div>
 
-              <div className="mt-8 p-6 bg-gray-50 rounded-lg">
-                <h3 className="font-bold text-xl mb-4">Send us a Message</h3>
+              <div className="mt-8 p-6 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                <h3 className="font-bold text-xl mb-4 text-gray-900 dark:text-white">Send us a Message</h3>
                 <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); alert('Thank you for your message! We will get back to you soon.'); }}>
                   <div>
-                    <label className="block text-sm font-medium mb-2">Name</label>
-                    <input type="text" required className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-red-500" />
+                    <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Name</label>
+                    <input type="text" required className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:border-red-500 dark:focus:border-red-400 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100" />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium mb-2">Email</label>
-                    <input type="email" required className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-red-500" />
+                    <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Email</label>
+                    <input type="email" required className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:border-red-500 dark:focus:border-red-400 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100" />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium mb-2">Message</label>
-                    <textarea rows="5" required className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-red-500"></textarea>
+                    <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Message</label>
+                    <textarea rows="5" required className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:border-red-500 dark:focus:border-red-400 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"></textarea>
                   </div>
                   <button type="submit" className="bg-red-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-red-700">
                     Send Message
@@ -1569,7 +1569,7 @@ const CineChatter = () => {
       {currentView === 'admin' && user && user.profile?.admin_status === 'A' && (
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 sm:mb-8 gap-4">
-            <h1 className="text-2xl sm:text-3xl font-bold">Admin Dashboard</h1>
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">Admin Dashboard</h1>
             <div className="flex gap-2 sm:gap-3 flex-wrap sm:flex-nowrap w-full sm:w-auto">
               <button onClick={() => setShowIntegrationSettings(true)} className="bg-red-600 text-white px-3 sm:px-4 py-2 rounded-lg hover:bg-red-700 flex items-center gap-2 whitespace-nowrap text-sm sm:text-base flex-1 sm:flex-initial justify-center">
                 <Settings className="w-4 h-4" />Integration Settings
@@ -1592,35 +1592,35 @@ const CineChatter = () => {
             </div>
           </div>
 
-          <div className="bg-white rounded-lg shadow-md overflow-hidden">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full min-w-[640px]">
-              <thead className="bg-gray-50">
+              <thead className="bg-gray-50 dark:bg-gray-700">
                 <tr>
                   <th className="px-4 py-3 text-left">
                     <input
                       type="checkbox"
                       checked={selectedArticles.length === [...articles, ...sheetArticles].filter(a => a.status === 'published').length && selectedArticles.length > 0}
                       onChange={toggleAllArticles}
-                      className="w-4 h-4 text-red-600 border-gray-300 rounded focus:ring-red-500"
+                      className="w-4 h-4 text-red-600 border-gray-300 dark:border-gray-600 rounded focus:ring-red-500"
                     />
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Image</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Title</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Description</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Category</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Source</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Image</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Title</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Description</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Category</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Source</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Status</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Actions</th>
                 </tr>
               </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
+              <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
                 {(() => {
                   // Combine admin articles and sheet articles
                   const allArticles = [...articles, ...sheetArticles];
 
                   if (allArticles.length === 0) {
-                    return <tr><td colSpan="8" className="px-6 py-8 text-center text-gray-400">No articles yet</td></tr>;
+                    return <tr><td colSpan="8" className="px-6 py-8 text-center text-gray-400 dark:text-gray-500">No articles yet</td></tr>;
                   }
 
                   return allArticles
@@ -1643,14 +1643,14 @@ const CineChatter = () => {
                       const isEditable = article.source !== 'google-sheets' && articles.some(a => a.id === article.id);
 
                       return (
-                        <tr key={article.id} className="hover:bg-gray-50">
+                        <tr key={article.id} className="hover:bg-gray-50 dark:hover:bg-gray-700">
                           <td className="px-4 py-4">
                             {article.status === 'published' && (
                               <input
                                 type="checkbox"
                                 checked={selectedArticles.includes(article.id)}
                                 onChange={() => toggleArticleSelection(article.id)}
-                                className="w-4 h-4 text-red-600 border-gray-300 rounded focus:ring-red-500"
+                                className="w-4 h-4 text-red-600 border-gray-300 dark:border-gray-600 rounded focus:ring-red-500"
                               />
                             )}
                           </td>
@@ -1658,16 +1658,16 @@ const CineChatter = () => {
                             {article.image ? (
                               <img src={article.image} alt="" className="w-16 h-16 object-cover rounded" />
                             ) : (
-                              <div className="w-16 h-16 bg-gray-200 rounded flex items-center justify-center text-gray-400 text-xs">No image</div>
+                              <div className="w-16 h-16 bg-gray-200 dark:bg-gray-700 rounded flex items-center justify-center text-gray-400 dark:text-gray-500 text-xs">No image</div>
                             )}
                           </td>
                           <td className="px-6 py-4">
-                            <span className="font-semibold text-gray-900">{truncatedTitle}</span>
+                            <span className="font-semibold text-gray-900 dark:text-white">{truncatedTitle}</span>
                           </td>
                           <td className="px-6 py-4 max-w-xs">
-                            <p className="text-sm text-gray-600">{truncatedDesc}</p>
+                            <p className="text-sm text-gray-600 dark:text-gray-400">{truncatedDesc}</p>
                           </td>
-                          <td className="px-6 py-4 text-sm whitespace-nowrap">{categories.find(c => c.id === article.category)?.name}</td>
+                          <td className="px-6 py-4 text-sm text-gray-700 dark:text-gray-300 whitespace-nowrap">{categories.find(c => c.id === article.category)?.name}</td>
                           <td className="px-6 py-4 text-sm whitespace-nowrap">
                             <span className="px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">
                               {sourceDisplay}
@@ -1680,15 +1680,15 @@ const CineChatter = () => {
                           </td>
                           <td className="px-6 py-4">
                             <div className="flex gap-2">
-                              <button onClick={() => setSelectedArticle(article)} className="text-blue-600 hover:text-blue-800" title="View"><Eye className="w-5 h-5" /></button>
+                              <button onClick={() => setSelectedArticle(article)} className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300" title="View"><Eye className="w-5 h-5" /></button>
                               {isEditable && (
                                 <>
-                                  <button onClick={() => { setEditingArticle(article); setFormInputs(article); setShowArticleForm(true); }} className="text-green-600 hover:text-green-800" title="Edit"><Edit2 className="w-5 h-5" /></button>
-                                  <button onClick={() => { if (window.confirm('Delete this article?')) saveArticles(articles.filter(a => a.id !== article.id)); }} className="text-red-600 hover:text-red-800" title="Delete"><Trash2 className="w-5 h-5" /></button>
+                                  <button onClick={() => { setEditingArticle(article); setFormInputs(article); setShowArticleForm(true); }} className="text-green-600 dark:text-green-400 hover:text-green-800 dark:hover:text-green-300" title="Edit"><Edit2 className="w-5 h-5" /></button>
+                                  <button onClick={() => { if (window.confirm('Delete this article?')) saveArticles(articles.filter(a => a.id !== article.id)); }} className="text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300" title="Delete"><Trash2 className="w-5 h-5" /></button>
                                 </>
                               )}
                               {!isEditable && (
-                                <span className="text-gray-400 text-xs">View only</span>
+                                <span className="text-gray-400 dark:text-gray-500 text-xs">View only</span>
                               )}
                             </div>
                           </td>
@@ -1706,13 +1706,13 @@ const CineChatter = () => {
       {/* Admin Access Control - When visiting #admin but not authorized */}
       {currentView === 'admin' && (!user || user.profile?.admin_status !== 'A') && !showAdminRequestModal && (
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="bg-white rounded-lg shadow-md p-8 text-center">
-            <Settings className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-8 text-center">
+            <Settings className="w-16 h-16 text-gray-400 dark:text-gray-500 mx-auto mb-4" />
 
             {!user ? (
               <>
-                <h2 className="text-2xl font-bold mb-4">Admin Access</h2>
-                <p className="text-gray-600 mb-6">Please login to access the admin panel.</p>
+                <h2 className="text-2xl font-bold mb-4 text-gray-900 dark:text-white">Admin Access</h2>
+                <p className="text-gray-600 dark:text-gray-400 mb-6">Please login to access the admin panel.</p>
 
                 <button
                   onClick={() => { setShowAuthModal(true); setAuthMode('login'); }}
@@ -1723,9 +1723,9 @@ const CineChatter = () => {
               </>
             ) : (
               <>
-                <h2 className="text-2xl font-bold mb-4">Access Denied</h2>
-                <p className="text-gray-600 mb-6">You do not have admin privileges.</p>
-                <p className="text-sm text-gray-500 mb-4">If you need admin access, please contact the site administrator.</p>
+                <h2 className="text-2xl font-bold mb-4 text-gray-900 dark:text-white">Access Denied</h2>
+                <p className="text-gray-600 dark:text-gray-400 mb-6">You do not have admin privileges.</p>
+                <p className="text-sm text-gray-500 dark:text-gray-500 mb-4">If you need admin access, please contact the site administrator.</p>
                 <button
                   onClick={() => setCurrentView('home')}
                   className="bg-red-600 text-white px-6 py-3 rounded-lg hover:bg-red-700"
@@ -1888,12 +1888,12 @@ const CineChatter = () => {
 
       {/* Manage Admins Modal */}
       {showManageAdmins && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 overflow-y-auto">
+        <div className="fixed inset-0 bg-black bg-opacity-50 dark:bg-opacity-70 z-50 overflow-y-auto">
           <div className="min-h-screen py-8 px-4 flex items-start justify-center">
-            <div className="bg-white rounded-lg max-w-4xl w-full">
-              <div className="sticky top-0 bg-white border-b p-6 flex justify-between items-center z-10 rounded-t-lg">
-                <h2 className="text-2xl font-bold">Manage Admins</h2>
-                <button onClick={() => setShowManageAdmins(false)} className="text-gray-500 hover:text-gray-700">
+            <div className="bg-white dark:bg-gray-800 rounded-lg max-w-4xl w-full">
+              <div className="sticky top-0 bg-white dark:bg-gray-800 border-b dark:border-gray-700 p-6 flex justify-between items-center z-10 rounded-t-lg">
+                <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Manage Admins</h2>
+                <button onClick={() => setShowManageAdmins(false)} className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200">
                   <X className="w-6 h-6" />
                 </button>
               </div>
@@ -1906,7 +1906,7 @@ const CineChatter = () => {
                       placeholder="Search users by email..."
                       value={userSearchQuery}
                       onChange={(e) => setUserSearchQuery(e.target.value)}
-                      className="flex-1 px-4 py-2 border rounded-lg focus:outline-none focus:border-red-500"
+                      className="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:border-red-500 dark:focus:border-red-400"
                     />
                     <button onClick={loadAllUsers} className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700">
                       Refresh
@@ -1914,9 +1914,9 @@ const CineChatter = () => {
                   </div>
                 </div>
 
-                <div className="bg-gray-50 rounded-lg p-4 mb-4">
-                  <h3 className="font-semibold mb-2">Instructions:</h3>
-                  <ul className="text-sm text-gray-600 space-y-1">
+                <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 mb-4">
+                  <h3 className="font-semibold mb-2 text-gray-900 dark:text-white">Instructions:</h3>
+                  <ul className="text-sm text-gray-600 dark:text-gray-300 space-y-1">
                     <li>• Only existing admins can promote users to admin</li>
                     <li>• Users must have an account before they can be promoted</li>
                     <li>• You cannot demote yourself</li>
@@ -1924,27 +1924,27 @@ const CineChatter = () => {
                   </ul>
                 </div>
 
-                <div className="bg-white rounded-lg shadow overflow-hidden">
+                <div className="bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden border dark:border-gray-700">
                   <table className="w-full">
-                    <thead className="bg-gray-50">
+                    <thead className="bg-gray-50 dark:bg-gray-700">
                       <tr>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Email</th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Name</th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Created</th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Email</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Name</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Status</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Created</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Actions</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-gray-200">
+                    <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
                       {allUsers
                         .filter(u => !userSearchQuery || u.email.toLowerCase().includes(userSearchQuery.toLowerCase()))
                         .map((u) => (
-                          <tr key={u.id} className={u.id === user?.id ? 'bg-blue-50' : ''}>
-                            <td className="px-6 py-4 text-sm">
+                          <tr key={u.id} className={u.id === user?.id ? 'bg-blue-50 dark:bg-blue-900' : ''}>
+                            <td className="px-6 py-4 text-sm text-gray-900 dark:text-gray-100">
                               {u.email}
-                              {u.id === user?.id && <span className="ml-2 text-xs text-blue-600">(You)</span>}
+                              {u.id === user?.id && <span className="ml-2 text-xs text-blue-600 dark:text-blue-400">(You)</span>}
                             </td>
-                            <td className="px-6 py-4 text-sm">{u.name || '-'}</td>
+                            <td className="px-6 py-4 text-sm text-gray-900 dark:text-gray-100">{u.name || '-'}</td>
                             <td className="px-6 py-4 text-sm">
                               {u.admin_status === 'A' ? (
                                 <span className="bg-green-100 text-green-800 px-2 py-1 rounded text-xs font-semibold">
@@ -1964,7 +1964,7 @@ const CineChatter = () => {
                                 </span>
                               )}
                             </td>
-                            <td className="px-6 py-4 text-sm text-gray-600">
+                            <td className="px-6 py-4 text-sm text-gray-600 dark:text-gray-400">
                               {new Date(u.created_at).toLocaleDateString()}
                             </td>
                             <td className="px-6 py-4 text-sm">
@@ -1995,7 +1995,7 @@ const CineChatter = () => {
                   </table>
 
                   {allUsers.length === 0 && (
-                    <div className="text-center py-8 text-gray-500">
+                    <div className="text-center py-8 text-gray-500 dark:text-gray-400">
                       No users found. Users appear here after they sign up.
                     </div>
                   )}
@@ -2008,13 +2008,13 @@ const CineChatter = () => {
 
       {/* Integration Settings Modal */}
       {showIntegrationSettings && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 overflow-y-auto">
+        <div className="fixed inset-0 bg-black bg-opacity-50 dark:bg-opacity-70 z-50 overflow-y-auto">
           <div className="min-h-screen py-8 px-4 flex items-start justify-center">
-            <div className="bg-white rounded-lg max-w-3xl w-full">
-              <div className="sticky top-0 bg-white border-b p-6 flex justify-between items-center z-10 rounded-t-lg">
-                <h2 className="text-2xl font-bold">Google Sheets Integration</h2>
-                <button onClick={() => setShowIntegrationSettings(false)} className="hover:bg-gray-100 p-2 rounded-full">
-                  <X className="w-6 h-6" />
+            <div className="bg-white dark:bg-gray-800 rounded-lg max-w-3xl w-full">
+              <div className="sticky top-0 bg-white dark:bg-gray-800 border-b dark:border-gray-700 p-6 flex justify-between items-center z-10 rounded-t-lg">
+                <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Google Sheets Integration</h2>
+                <button onClick={() => setShowIntegrationSettings(false)} className="hover:bg-gray-100 dark:hover:bg-gray-700 p-2 rounded-full">
+                  <X className="w-6 h-6 text-gray-700 dark:text-gray-300" />
                 </button>
               </div>
               
@@ -2031,7 +2031,7 @@ const CineChatter = () => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     Google Sheet URL
                   </label>
                   <input
@@ -2039,14 +2039,14 @@ const CineChatter = () => {
                     value={sheetUrl}
                     onChange={(e) => setSheetUrl(e.target.value)}
                     placeholder="https://docs.google.com/spreadsheets/d/YOUR_SHEET_ID/edit"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   />
                 </div>
 
-                <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
                   <div>
-                    <p className="font-medium text-gray-900">Connection Status</p>
-                    <p className="text-sm text-gray-600">
+                    <p className="font-medium text-gray-900 dark:text-white">Connection Status</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-300">
                       {sheetStatus === 'not-connected' && '⚠️ Not Connected'}
                       {sheetStatus === 'connecting' && '🔄 Connecting...'}
                       {sheetStatus === 'connected' && sheetArticles.length > 0 && sheetArticles[0]?.source === 'google-sheets-demo' && (
@@ -2081,11 +2081,11 @@ const CineChatter = () => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-3">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
                     Data Source
                   </label>
                   <div className="space-y-2">
-                    <label className="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-gray-50">
+                    <label className="flex items-center p-3 border border-gray-300 dark:border-gray-600 rounded-lg cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700">
                       <input
                         type="radio"
                         name="dataSource"
@@ -2095,12 +2095,12 @@ const CineChatter = () => {
                         className="mr-3"
                       />
                       <div>
-                        <p className="font-medium">Admin Panel Only</p>
-                        <p className="text-sm text-gray-600">Use only articles created in the admin panel (default)</p>
+                        <p className="font-medium text-gray-900 dark:text-white">Admin Panel Only</p>
+                        <p className="text-sm text-gray-600 dark:text-gray-400">Use only articles created in the admin panel (default)</p>
                       </div>
                     </label>
-                    
-                    <label className="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-gray-50">
+
+                    <label className="flex items-center p-3 border border-gray-300 dark:border-gray-600 rounded-lg cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700">
                       <input
                         type="radio"
                         name="dataSource"
@@ -2111,12 +2111,12 @@ const CineChatter = () => {
                         disabled={sheetStatus !== 'connected'}
                       />
                       <div>
-                        <p className="font-medium">Admin Panel + Google Sheets</p>
-                        <p className="text-sm text-gray-600">Combine articles from both sources</p>
+                        <p className="font-medium text-gray-900 dark:text-white">Admin Panel + Google Sheets</p>
+                        <p className="text-sm text-gray-600 dark:text-gray-400">Combine articles from both sources</p>
                       </div>
                     </label>
-                    
-                    <label className="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-gray-50">
+
+                    <label className="flex items-center p-3 border border-gray-300 dark:border-gray-600 rounded-lg cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700">
                       <input
                         type="radio"
                         name="dataSource"
@@ -2127,8 +2127,8 @@ const CineChatter = () => {
                         disabled={sheetStatus !== 'connected'}
                       />
                       <div>
-                        <p className="font-medium">Google Sheets Only</p>
-                        <p className="text-sm text-gray-600">Use only articles from Google Sheets</p>
+                        <p className="font-medium text-gray-900 dark:text-white">Google Sheets Only</p>
+                        <p className="text-sm text-gray-600 dark:text-gray-400">Use only articles from Google Sheets</p>
                       </div>
                     </label>
                   </div>
@@ -2166,24 +2166,24 @@ const CineChatter = () => {
       )}
 
       {showFeaturedManager && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 overflow-y-auto">
+        <div className="fixed inset-0 bg-black bg-opacity-50 dark:bg-opacity-70 z-50 overflow-y-auto">
           <div className="min-h-screen py-8 px-4 flex items-start justify-center">
-            <div className="bg-white rounded-lg max-w-6xl w-full">
-              <div className="sticky top-0 bg-white border-b p-6 flex justify-between items-center z-10 rounded-t-lg">
-                <h2 className="text-2xl font-bold">Manage Untold Stories ({featuredImages.length} of 10)</h2>
-                <button onClick={() => setShowFeaturedManager(false)} className="hover:bg-gray-100 p-2 rounded-full">
-                  <X className="w-6 h-6" />
+            <div className="bg-white dark:bg-gray-800 rounded-lg max-w-6xl w-full">
+              <div className="sticky top-0 bg-white dark:bg-gray-800 border-b dark:border-gray-700 p-6 flex justify-between items-center z-10 rounded-t-lg">
+                <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Manage Untold Stories ({featuredImages.length} of 10)</h2>
+                <button onClick={() => setShowFeaturedManager(false)} className="hover:bg-gray-100 dark:hover:bg-gray-700 p-2 rounded-full">
+                  <X className="w-6 h-6 text-gray-700 dark:text-gray-300" />
                 </button>
               </div>
 
               <div className="p-6">
-                <p className="text-sm text-gray-600 mb-6">Upload images with articles that will randomly appear when users open the treasure box!</p>
+                <p className="text-sm text-gray-600 dark:text-gray-400 mb-6">Upload images with articles that will randomly appear when users open the treasure box!</p>
 
                 <div className="space-y-8">
                   {featuredImages.map((featured, index) => (
-                    <div key={featured.id} className="border-2 rounded-lg p-6 hover:border-blue-500 bg-gray-50">
+                    <div key={featured.id} className="border-2 border-gray-300 dark:border-gray-600 rounded-lg p-6 hover:border-blue-500 dark:hover:border-blue-400 bg-gray-50 dark:bg-gray-700">
                       <div className="flex justify-between items-center mb-4">
-                        <h3 className="font-bold text-xl">Untold Story {index + 1}</h3>
+                        <h3 className="font-bold text-xl text-gray-900 dark:text-white">Untold Story {index + 1}</h3>
                         <div className="flex gap-2">
                           {featured.image && (
                             <button
@@ -2192,7 +2192,7 @@ const CineChatter = () => {
                                 const updated = featuredImages.map(img => img.id === featured.id ? { ...img, image: '', articleTitle: '', articleDescription: '' } : img);
                                 saveFeaturedImages(updated);
                               }}
-                              className="text-blue-600 text-sm hover:text-blue-800 font-semibold"
+                              className="text-blue-600 dark:text-blue-400 text-sm hover:text-blue-800 dark:hover:text-blue-300 font-semibold"
                             >
                               Clear Content
                             </button>
@@ -2205,7 +2205,7 @@ const CineChatter = () => {
                                 setFeaturedImages(updated);
                                 saveFeaturedImages(updated);
                               }}
-                              className="text-red-600 text-sm hover:text-red-800 font-semibold"
+                              className="text-red-600 dark:text-red-400 text-sm hover:text-red-800 dark:hover:text-red-300 font-semibold"
                             >
                               Delete Story
                             </button>
@@ -2217,11 +2217,11 @@ const CineChatter = () => {
                         <div>
                           {/* Image Upload Section */}
                           {featured.image ? (
-                            <img src={featured.image} alt={featured.title} className="w-full h-64 object-contain bg-white rounded mb-3 border" />
+                            <img src={featured.image} alt={featured.title} className="w-full h-64 object-contain bg-white dark:bg-gray-900 rounded mb-3 border border-gray-300 dark:border-gray-600" />
                           ) : (
-                            <div className="w-full h-64 bg-white flex flex-col items-center justify-center rounded mb-3 border-2 border-dashed border-gray-300">
-                              <Upload className="w-16 h-16 text-gray-400 mb-2" />
-                              <p className="text-sm text-gray-500">No image</p>
+                            <div className="w-full h-64 bg-white dark:bg-gray-800 flex flex-col items-center justify-center rounded mb-3 border-2 border-dashed border-gray-300 dark:border-gray-600">
+                              <Upload className="w-16 h-16 text-gray-400 dark:text-gray-500 mb-2" />
+                              <p className="text-sm text-gray-500 dark:text-gray-400">No image</p>
                             </div>
                           )}
                           
@@ -2250,13 +2250,13 @@ const CineChatter = () => {
                         <div className="space-y-4">
                           {/* Article Title */}
                           <div>
-                            <label className="block text-sm font-semibold mb-2">Article Title</label>
-                            <input 
+                            <label className="block text-sm font-semibold mb-2 text-gray-900 dark:text-white">Article Title</label>
+                            <input
                               type="text"
                               value={featured.articleTitle || ''}
                               onChange={(e) => {
                                 const newTitle = e.target.value;
-                                setFeaturedImages(prev => prev.map(img => 
+                                setFeaturedImages(prev => prev.map(img =>
                                   img.id === featured.id ? { ...img, articleTitle: newTitle } : img
                                 ));
                               }}
@@ -2264,18 +2264,18 @@ const CineChatter = () => {
                                 saveFeaturedImages(featuredImages);
                               }}
                               placeholder="Enter article title..."
-                              className="w-full px-4 py-2 text-base border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 bg-white"
+                              className="w-full px-4 py-2 text-base border-2 border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:border-blue-500 dark:focus:border-blue-400 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400"
                             />
                           </div>
 
                           {/* Article Description */}
                           <div>
-                            <label className="block text-sm font-semibold mb-2">Article Description</label>
-                            <textarea 
+                            <label className="block text-sm font-semibold mb-2 text-gray-900 dark:text-white">Article Description</label>
+                            <textarea
                               value={featured.articleDescription || ''}
                               onChange={(e) => {
                                 const newDesc = e.target.value;
-                                setFeaturedImages(prev => prev.map(img => 
+                                setFeaturedImages(prev => prev.map(img =>
                                   img.id === featured.id ? { ...img, articleDescription: newDesc } : img
                                 ));
                               }}
@@ -2284,26 +2284,26 @@ const CineChatter = () => {
                               }}
                               placeholder="Enter article description..."
                               rows="6"
-                              className="w-full px-4 py-2 text-base border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 resize-none bg-white"
+                              className="w-full px-4 py-2 text-base border-2 border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:border-blue-500 dark:focus:border-blue-400 resize-none bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400"
                             />
                           </div>
 
                           {/* Fallback Link */}
                           <div>
-                            <label className="block text-sm font-semibold mb-2">Fallback Link (if no article):</label>
-                            <select 
+                            <label className="block text-sm font-semibold mb-2 text-gray-900 dark:text-white">Fallback Link (if no article):</label>
+                            <select
                               value={featured.link}
                               onChange={(e) => {
                                 const updated = featuredImages.map(img => img.id === featured.id ? { ...img, link: e.target.value } : img);
                                 saveFeaturedImages(updated);
                               }}
-                              className="w-full px-4 py-2 text-base border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 bg-white"
+                              className="w-full px-4 py-2 text-base border-2 border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:border-blue-500 dark:focus:border-blue-400 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
                             >
                               {categories.map(cat => (
                                 <option key={cat.id} value={cat.id}>{cat.name}</option>
                               ))}
                             </select>
-                            <p className="text-xs text-gray-500 mt-2">User will go to this category if no article is set</p>
+                            <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">User will go to this category if no article is set</p>
                           </div>
                         </div>
                       </div>
