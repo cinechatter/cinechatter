@@ -73,16 +73,6 @@ const CineChatter = () => {
   const [selectedArticles, setSelectedArticles] = useState([])
 
   useEffect(() => {
-    // Log environment check on app load
-    console.log('🔧 CineChatter Environment Check:', {
-      supabaseConfigured: isSupabaseConfigured(),
-      hasUrl: !!import.meta.env.VITE_SUPABASE_URL,
-      hasKey: !!import.meta.env.VITE_SUPABASE_ANON_KEY,
-      urlPreview: import.meta.env.VITE_SUPABASE_URL ?
-        import.meta.env.VITE_SUPABASE_URL.substring(0, 30) + '...' : 'MISSING',
-      environment: import.meta.env.MODE
-    });
-
     loadArticles();
     loadFeaturedImages();
     checkUser();
@@ -211,42 +201,22 @@ const CineChatter = () => {
       return;
     }
 
-    // Trim and validate email/password format
-    const email = authForm.email.trim();
-    const password = authForm.password.trim();
-
-    // Basic email validation
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      alert('Please enter a valid email address');
-      return;
-    }
-
-    // Password length validation
-    if (password.length < 6) {
-      alert('Password must be at least 6 characters');
-      return;
-    }
-
     try {
-      console.log('🔐 Attempting login with:', { email, passwordLength: password.length });
-
       const { data, error } = await supabase.auth.signInWithPassword({
-        email: email,
-        password: password
+        email: authForm.email.trim(),
+        password: authForm.password.trim()
       });
 
       if (error) {
-        console.error('❌ Login error:', error);
+        console.error('Login error:', error);
         alert('Login error: ' + error.message);
       } else {
-        console.log('✅ Login successful:', data);
         setAuthForm({ name: '', email: '', password: '' });
         setShowAuthModal(false);
         checkUser();
       }
     } catch (err) {
-      console.error('❌ Unexpected login error:', err);
+      console.error('Unexpected login error:', err);
       alert('Login failed: ' + err.message);
     }
   };
@@ -260,13 +230,10 @@ const CineChatter = () => {
   // Handle first-time admin setup
   // Handle admin access request
   const handleAdminRequest = async () => {
-    console.log('🚀 handleAdminRequest called');
-
     if (!isSupabaseConfigured()) {
       alert('Supabase is not configured.');
       return;
     }
-    console.log('✅ Supabase is configured');
 
     if (!adminRequestForm.name || !adminRequestForm.email || !adminRequestForm.password) {
       alert('Please fill in all required fields');
@@ -279,15 +246,6 @@ const CineChatter = () => {
     }
 
     try {
-      console.log('📝 Submitting admin access request with:', {
-        email: adminRequestForm.email,
-        name: adminRequestForm.name,
-        passwordLength: adminRequestForm.password.length,
-        hasMessage: !!adminRequestForm.message
-      });
-
-      console.log('🔐 Calling supabase.auth.signUp...');
-
       // Create Supabase auth user account
       const { data: authData, error: authError } = await supabase.auth.signUp({
         email: adminRequestForm.email,
@@ -299,32 +257,15 @@ const CineChatter = () => {
         }
       });
 
-      console.log('📥 SignUp response:', {
-        hasData: !!authData,
-        hasError: !!authError,
-        userId: authData?.user?.id,
-        userEmail: authData?.user?.email,
-        errorMessage: authError?.message,
-        errorDetails: authError
-      });
-
       if (authError) {
-        console.error('❌ Signup error details:', {
-          message: authError.message,
-          status: authError.status,
-          name: authError.name,
-          fullError: authError
-        });
-
         if (authError.message.includes('already registered')) {
           alert('An account with this email already exists. Please login or use a different email.');
         } else {
           alert('Error creating account: ' + authError.message);
         }
+        console.error('Signup error:', authError);
         return;
       }
-
-      console.log('✅ User created successfully:', authData.user.id);
 
       // Wait for trigger to create user record
       await new Promise(resolve => setTimeout(resolve, 1500));
@@ -355,19 +296,8 @@ const CineChatter = () => {
       setShowAdminRequestModal(false);
       setCurrentView('home');
     } catch (error) {
-      console.error('💥 Unexpected error in handleAdminRequest:', {
-        message: error.message,
-        name: error.name,
-        stack: error.stack,
-        fullError: error
-      });
-
-      // Check if it's a fetch error
-      if (error.message && error.message.includes('fetch')) {
-        alert('Network error: Unable to connect to authentication service.\n\nPossible causes:\n1. Environment variables not set correctly in Vercel\n2. Supabase URL may have extra spaces/characters\n3. CORS issue - check Supabase dashboard URL allowlist\n\nError: ' + error.message);
-      } else {
-        alert('Failed to submit request: ' + error.message);
-      }
+      console.error('Request failed:', error);
+      alert('Failed to submit request: ' + error.message);
     }
   };
 

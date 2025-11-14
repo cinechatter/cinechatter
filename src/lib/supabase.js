@@ -2,63 +2,15 @@ import { createClient } from '@supabase/supabase-js'
 
 // Supabase configuration
 // Get these values from: Supabase Dashboard > Settings > API
-// Trim values to remove any whitespace that might be added by build systems
 const supabaseUrl = (import.meta.env.VITE_SUPABASE_URL || '').trim()
 const supabaseAnonKey = (import.meta.env.VITE_SUPABASE_ANON_KEY || '').trim()
 
-// Debug: Log if environment variables are missing (only in development)
-if (import.meta.env.DEV) {
-  console.log('🔍 Supabase Config Check:', {
-    hasUrl: !!supabaseUrl,
-    hasKey: !!supabaseAnonKey,
-    urlPreview: supabaseUrl ? supabaseUrl.substring(0, 30) + '...' : 'MISSING'
-  })
+// Validate configuration in development
+if (import.meta.env.DEV && (!supabaseUrl || !supabaseAnonKey)) {
+  console.error('❌ Supabase configuration missing! Add VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY to your .env file')
 }
 
-// Validate that we have the required values
-if (!supabaseUrl || !supabaseAnonKey) {
-  console.error('❌ Supabase configuration missing!', {
-    VITE_SUPABASE_URL: supabaseUrl ? 'Set' : 'Missing',
-    VITE_SUPABASE_ANON_KEY: supabaseAnonKey ? 'Set' : 'Missing'
-  })
-}
-
-// Validate URL format
-if (supabaseUrl && !supabaseUrl.startsWith('https://')) {
-  console.error('❌ Invalid Supabase URL format. Must start with https://')
-}
-
-// Validate key format (JWT should start with 'eyJ')
-if (supabaseAnonKey && !supabaseAnonKey.startsWith('eyJ')) {
-  console.error('❌ Invalid Supabase Key format. JWT tokens should start with "eyJ"')
-}
-
-// Additional validation before creating client
-let clientCreationError = null;
-
-// Validate URL is a valid URL
-try {
-  if (supabaseUrl) {
-    new URL(supabaseUrl);
-  }
-} catch (e) {
-  clientCreationError = `Invalid URL format: ${e.message}`;
-  console.error('❌ Supabase URL validation failed:', e);
-}
-
-// Check for common URL issues
-if (supabaseUrl) {
-  if (supabaseUrl.includes(' ')) {
-    clientCreationError = 'URL contains spaces';
-    console.error('❌ Supabase URL contains spaces!');
-  }
-  if (supabaseUrl.includes('\n') || supabaseUrl.includes('\r')) {
-    clientCreationError = 'URL contains newline characters';
-    console.error('❌ Supabase URL contains newline characters!');
-  }
-}
-
-// Supabase client options for better CORS handling
+// Supabase client options
 const supabaseOptions = {
   auth: {
     autoRefreshToken: true,
@@ -70,12 +22,7 @@ const supabaseOptions = {
 // Create a single supabase client for interacting with your database
 export const supabase = createClient(supabaseUrl, supabaseAnonKey, supabaseOptions)
 
-// Log if there were any validation errors
-if (clientCreationError) {
-  console.error('⚠️ Supabase client created but validation found issues:', clientCreationError);
-}
-
 // Helper function to check if Supabase is configured
 export const isSupabaseConfigured = () => {
-  return !!(supabaseUrl && supabaseAnonKey && supabaseUrl !== '' && supabaseAnonKey !== '')
+  return !!(supabaseUrl && supabaseAnonKey)
 }
