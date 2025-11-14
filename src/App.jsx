@@ -1739,50 +1739,50 @@ const CineChatter = () => {
       )}
 
       {selectedArticle && (
-        <div className="fixed inset-0 bg-black bg-opacity-90 z-50 overflow-y-auto">
+        <div className="fixed inset-0 bg-black dark:bg-black bg-opacity-90 dark:bg-opacity-95 z-50 overflow-y-auto">
           <div className="min-h-screen py-12 px-4 sm:px-6 lg:px-8">
-            <div className="max-w-full mx-auto bg-white rounded-lg p-4 sm:p-6 lg:p-8">
-              <button onClick={() => setSelectedArticle(null)} className="mb-6 text-red-600 hover:text-red-700 flex items-center gap-2 font-semibold">
+            <div className="max-w-full mx-auto bg-white dark:bg-gray-800 rounded-lg p-4 sm:p-6 lg:p-8">
+              <button onClick={() => setSelectedArticle(null)} className="mb-6 text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 flex items-center gap-2 font-semibold">
                 <X className="w-6 h-6" />Close
               </button>
               {selectedArticle.image && <img src={selectedArticle.image} alt={selectedArticle.title} className="w-full h-96 object-cover rounded-lg mb-6" />}
-              <h1 className="text-4xl font-bold mt-2 mb-4">{selectedArticle.title}</h1>
-              <p className="text-gray-800 leading-relaxed whitespace-pre-wrap">{selectedArticle.content}</p>
+              <h1 className="text-4xl font-bold mt-2 mb-4 text-gray-900 dark:text-white">{selectedArticle.title}</h1>
+              <p className="text-gray-800 dark:text-gray-300 leading-relaxed whitespace-pre-wrap">{selectedArticle.content}</p>
             </div>
           </div>
         </div>
       )}
 
       {showArticleForm && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-lg max-w-2xl w-full p-6 max-h-screen overflow-y-auto">
+        <div className="fixed inset-0 bg-black bg-opacity-50 dark:bg-opacity-70 flex items-center justify-center p-4 z-50">
+          <div className="bg-white dark:bg-gray-800 rounded-lg max-w-2xl w-full p-6 max-h-screen overflow-y-auto">
             <div className="flex justify-between mb-6">
-              <h2 className="text-2xl font-bold">{editingArticle ? 'Edit' : 'New'} Article</h2>
-              <button onClick={resetForm}><X className="w-6 h-6" /></button>
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-white">{editingArticle ? 'Edit' : 'New'} Article</h2>
+              <button onClick={resetForm} className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"><X className="w-6 h-6" /></button>
             </div>
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium mb-2">Title</label>
-                <input type="text" value={formInputs.title} onChange={(e) => setFormInputs(p => ({...p, title: e.target.value}))} className="w-full px-4 py-2 border rounded-lg" />
+                <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Title</label>
+                <input type="text" value={formInputs.title} onChange={(e) => setFormInputs(p => ({...p, title: e.target.value}))} className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:border-red-500 dark:focus:border-red-400" />
               </div>
               <div>
-                <label className="block text-sm font-medium mb-2">Category</label>
-                <select value={formInputs.category} onChange={(e) => setFormInputs(p => ({...p, category: e.target.value}))} className="w-full px-4 py-2 border rounded-lg">
+                <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Category</label>
+                <select value={formInputs.category} onChange={(e) => setFormInputs(p => ({...p, category: e.target.value}))} className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:border-red-500 dark:focus:border-red-400">
                   {categories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium mb-2">Description</label>
-                <textarea value={formInputs.content} onChange={(e) => setFormInputs(p => ({...p, content: e.target.value}))} rows="10" className="w-full px-4 py-2 border rounded-lg" />
+                <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Description</label>
+                <textarea value={formInputs.content} onChange={(e) => setFormInputs(p => ({...p, content: e.target.value}))} rows="10" className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:border-red-500 dark:focus:border-red-400" />
               </div>
               <div>
-                <label className="block text-sm font-medium mb-2">Image</label>
-                <input type="file" accept="image/*" onChange={handleImageUpload} className="w-full px-4 py-2 border rounded-lg" />
+                <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Image</label>
+                <input type="file" accept="image/*" onChange={handleImageUpload} className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:border-red-500 dark:focus:border-red-400" />
                 {formInputs.image && <img src={formInputs.image} alt="Preview" className="mt-4 w-full h-48 object-cover rounded-lg" />}
               </div>
               <div>
-                <label className="block text-sm font-medium mb-2">Status</label>
-                <select value={formInputs.status} onChange={(e) => setFormInputs(p => ({...p, status: e.target.value}))} className="w-full px-4 py-2 border rounded-lg">
+                <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Status</label>
+                <select value={formInputs.status} onChange={(e) => setFormInputs(p => ({...p, status: e.target.value}))} className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:border-red-500 dark:focus:border-red-400">
                   <option value="published">Published</option>
                   <option value="draft">Draft</option>
                 </select>
@@ -1797,71 +1797,71 @@ const CineChatter = () => {
 
       {/* Admin Access Request Modal */}
       {showAdminRequestModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-[100] overflow-y-auto">
-          <div className="bg-white rounded-lg p-6 max-w-lg w-full relative my-8 max-h-[90vh] overflow-y-auto">
+        <div className="fixed inset-0 bg-black bg-opacity-50 dark:bg-opacity-70 flex items-center justify-center p-4 z-[100] overflow-y-auto">
+          <div className="bg-white dark:bg-gray-800 rounded-lg p-6 max-w-lg w-full relative my-8 max-h-[90vh] overflow-y-auto">
             {/* Close Button */}
             <button
               onClick={() => {setShowAdminRequestModal(false); setCurrentView('home');}}
-              className="absolute top-4 right-4 text-gray-400 hover:text-gray-600"
+              className="absolute top-4 right-4 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300"
             >
               <X className="w-6 h-6" />
             </button>
 
             <div className="text-center mb-4">
-              <Settings className="w-12 h-12 text-red-600 mx-auto mb-3" />
-              <h2 className="text-xl font-bold mb-1">Request Admin Access</h2>
-              <p className="text-gray-600 text-xs">Submit your request and wait for approval</p>
+              <Settings className="w-12 h-12 text-red-600 dark:text-red-400 mx-auto mb-3" />
+              <h2 className="text-xl font-bold mb-1 text-gray-900 dark:text-white">Request Admin Access</h2>
+              <p className="text-gray-600 dark:text-gray-400 text-xs">Submit your request and wait for approval</p>
             </div>
 
             <div className="space-y-3">
               <div>
-                <label className="block text-xs font-medium mb-1">Name *</label>
+                <label className="block text-xs font-medium mb-1 text-gray-700 dark:text-gray-300">Name *</label>
                 <input
                   type="text"
                   value={adminRequestForm.name}
                   onChange={(e) => setAdminRequestForm(p => ({ ...p, name: e.target.value }))}
                   placeholder="Your full name"
-                  className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-red-500 text-sm"
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:border-red-500 dark:focus:border-red-400 text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400"
                   autoComplete="off"
                   required
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-medium mb-1">Email *</label>
+                <label className="block text-xs font-medium mb-1 text-gray-700 dark:text-gray-300">Email *</label>
                 <input
                   type="email"
                   value={adminRequestForm.email}
                   onChange={(e) => setAdminRequestForm(p => ({ ...p, email: e.target.value }))}
                   placeholder="your.email@example.com"
-                  className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-red-500 text-sm"
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:border-red-500 dark:focus:border-red-400 text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400"
                   autoComplete="off"
                   required
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-medium mb-1">Password *</label>
+                <label className="block text-xs font-medium mb-1 text-gray-700 dark:text-gray-300">Password *</label>
                 <input
                   type="password"
                   value={adminRequestForm.password}
                   onChange={(e) => setAdminRequestForm(p => ({ ...p, password: e.target.value }))}
                   placeholder="••••••••"
-                  className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-red-500 text-sm"
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:border-red-500 dark:focus:border-red-400 text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400"
                   autoComplete="new-password"
                   required
                 />
-                <p className="text-xs text-gray-500 mt-0.5">Minimum 6 characters</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">Minimum 6 characters</p>
               </div>
 
               <div>
-                <label className="block text-xs font-medium mb-1">Message (Optional)</label>
+                <label className="block text-xs font-medium mb-1 text-gray-700 dark:text-gray-300">Message (Optional)</label>
                 <textarea
                   value={adminRequestForm.message}
                   onChange={(e) => setAdminRequestForm(p => ({ ...p, message: e.target.value }))}
                   placeholder="Why do you need admin access?"
                   rows="2"
-                  className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-red-500 resize-none text-sm"
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:border-red-500 dark:focus:border-red-400 resize-none text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400"
                 />
               </div>
 
@@ -2426,53 +2426,53 @@ const CineChatter = () => {
 
       {/* Authentication Modal */}
       {showAuthModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-lg p-8 max-w-md w-full">
+        <div className="fixed inset-0 bg-black bg-opacity-50 dark:bg-opacity-70 flex items-center justify-center p-4 z-50">
+          <div className="bg-white dark:bg-gray-800 rounded-lg p-8 max-w-md w-full">
             <div className="flex justify-between items-center mb-6">
-              <h2 className="text-2xl font-bold">{authMode === 'signup' ? 'Create Account' : 'Welcome Back'}</h2>
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-white">{authMode === 'signup' ? 'Create Account' : 'Welcome Back'}</h2>
               <button onClick={() => { setShowAuthModal(false); setAuthForm({ name: '', email: '', password: '' }); }}>
-                <X className="w-6 h-6 text-gray-500 hover:text-gray-700" />
+                <X className="w-6 h-6 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200" />
               </button>
             </div>
 
             <div className="space-y-4">
               {authMode === 'signup' && (
                 <div>
-                  <label className="block text-sm font-medium mb-2">Name (Optional)</label>
+                  <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Name (Optional)</label>
                   <input
                     type="text"
                     value={authForm.name}
                     onChange={(e) => setAuthForm(p => ({ ...p, name: e.target.value }))}
                     placeholder="Your name"
-                    className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-red-500"
+                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:border-red-500 dark:focus:border-red-400 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400"
                   />
                 </div>
               )}
 
               <div>
-                <label className="block text-sm font-medium mb-2">Email</label>
+                <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Email</label>
                 <input
                   type="email"
                   value={authForm.email}
                   onChange={(e) => setAuthForm(p => ({ ...p, email: e.target.value }))}
                   placeholder="your@email.com"
-                  className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-red-500"
+                  className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:border-red-500 dark:focus:border-red-400 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400"
                   onKeyPress={(e) => e.key === 'Enter' && (authMode === 'login' ? handleLogin() : handleSignup())}
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-2">Password</label>
+                <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Password</label>
                 <input
                   type="password"
                   value={authForm.password}
                   onChange={(e) => setAuthForm(p => ({ ...p, password: e.target.value }))}
                   placeholder="••••••••"
-                  className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-red-500"
+                  className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:border-red-500 dark:focus:border-red-400 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400"
                   onKeyPress={(e) => e.key === 'Enter' && (authMode === 'login' ? handleLogin() : handleSignup())}
                 />
                 {authMode === 'signup' && (
-                  <p className="text-xs text-gray-500 mt-1">Minimum 6 characters</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Minimum 6 characters</p>
                 )}
               </div>
 
@@ -2483,13 +2483,13 @@ const CineChatter = () => {
                 {authMode === 'signup' ? 'Sign Up' : 'Login'}
               </button>
 
-              <div className="text-center text-sm text-gray-600">
+              <div className="text-center text-sm text-gray-600 dark:text-gray-400">
                 {authMode === 'login' ? (
                   <p>
                     Don't have an account?{' '}
                     <button
                       onClick={() => setAuthMode('signup')}
-                      className="text-red-600 hover:underline font-semibold"
+                      className="text-red-600 dark:text-red-400 hover:underline font-semibold"
                     >
                       Sign up
                     </button>
@@ -2499,7 +2499,7 @@ const CineChatter = () => {
                     Already have an account?{' '}
                     <button
                       onClick={() => setAuthMode('login')}
-                      className="text-red-600 hover:underline font-semibold"
+                      className="text-red-600 dark:text-red-400 hover:underline font-semibold"
                     >
                       Login
                     </button>
