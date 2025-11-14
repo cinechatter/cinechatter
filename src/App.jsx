@@ -73,6 +73,16 @@ const CineChatter = () => {
   const [selectedArticles, setSelectedArticles] = useState([])
 
   useEffect(() => {
+    // Log environment check on app load
+    console.log('🔧 CineChatter Environment Check:', {
+      supabaseConfigured: isSupabaseConfigured(),
+      hasUrl: !!import.meta.env.VITE_SUPABASE_URL,
+      hasKey: !!import.meta.env.VITE_SUPABASE_ANON_KEY,
+      urlPreview: import.meta.env.VITE_SUPABASE_URL ?
+        import.meta.env.VITE_SUPABASE_URL.substring(0, 30) + '...' : 'MISSING',
+      environment: import.meta.env.MODE
+    });
+
     loadArticles();
     loadFeaturedImages();
     checkUser();
