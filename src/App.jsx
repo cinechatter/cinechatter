@@ -971,16 +971,16 @@ const CineChatter = () => {
               CineChatter
             </button>
 
-            {/* Desktop Search */}
-            <div className="flex items-center mx-2 flex-shrink-0" style={{ width: '280px', minWidth: '280px' }}>
+            {/* Desktop Search - Hidden on mobile */}
+            <div className="hidden lg:flex items-center mx-2 flex-shrink-0" style={{ width: '280px', minWidth: '280px' }}>
               <div className="relative w-full">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
                 <input type="text" placeholder="Search articles..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter' && searchQuery.trim()) { setCurrentView('search'); } }} className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-full focus:outline-none focus:border-red-500 text-sm" />
               </div>
             </div>
 
-            {/* Desktop Navigation - Always visible */}
-            <div className="flex items-center gap-0.5">
+            {/* Desktop Navigation - Hidden on mobile */}
+            <div className="hidden lg:flex items-center gap-0.5">
               <button onClick={() => setCurrentView('home')} className="px-2 py-2 text-sm text-gray-700 hover:text-red-600 whitespace-nowrap">Home</button>
 
               <div className="relative">
@@ -1131,10 +1131,10 @@ const CineChatter = () => {
               )}
             </div>
 
-            {/* Mobile Menu Button - Hidden for now */}
-            <button 
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)} 
-              className="hidden p-2 text-gray-700 hover:text-red-600"
+            {/* Mobile Menu Button - Visible on mobile only */}
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="lg:hidden p-2 text-gray-700 hover:text-red-600"
             >
               {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </button>
@@ -1148,9 +1148,9 @@ const CineChatter = () => {
             </div>
           </div>
 
-          {/* Mobile Menu Dropdown - Hidden for now */}
-          {false && mobileMenuOpen && (
-            <div className="sm:hidden border-t bg-white pb-4">
+          {/* Mobile Menu Dropdown */}
+          {mobileMenuOpen && (
+            <div className="lg:hidden border-t bg-white pb-4">
               <div className="py-2 space-y-1">
                 <button onClick={() => { setCurrentView('home'); setMobileMenuOpen(false); }} className="block w-full text-left px-4 py-2 text-gray-700 hover:bg-red-50 hover:text-red-600">Home</button>
                 
@@ -1179,10 +1179,19 @@ const CineChatter = () => {
                 <button onClick={() => { setCurrentView('contact'); setMobileMenuOpen(false); }} className="block w-full text-left px-4 py-2 text-gray-700 hover:bg-red-50 hover:text-red-600">Contact</button>
                 
                 <div className="border-t border-gray-200 my-2"></div>
-                {!isAdmin ? (
-                  <button onClick={() => { setShowAdminLogin(true); setMobileMenuOpen(false); }} className="block w-full text-left px-4 py-3 bg-red-600 text-white font-semibold rounded-md mx-4" style={{ width: 'calc(100% - 2rem)' }}>Admin Login</button>
+                {!user ? (
+                  <>
+                    <button onClick={() => { setAuthMode('signup'); setShowAuthModal(true); setMobileMenuOpen(false); }} className="block w-full text-left px-4 py-3 bg-red-600 text-white font-semibold rounded-md mx-4 mb-2" style={{ width: 'calc(100% - 2rem)' }}>Sign Up</button>
+                    <button onClick={() => { setAuthMode('login'); setShowAuthModal(true); setMobileMenuOpen(false); }} className="block w-full text-left px-4 py-3 bg-gray-600 text-white font-semibold rounded-md mx-4" style={{ width: 'calc(100% - 2rem)' }}>Login</button>
+                  </>
                 ) : (
-                  <button onClick={() => { setCurrentView('admin'); setMobileMenuOpen(false); }} className="block w-full text-left px-4 py-3 bg-green-600 text-white font-semibold rounded-md mx-4" style={{ width: 'calc(100% - 2rem)' }}>Dashboard</button>
+                  <>
+                    <button onClick={() => { setCurrentView('profile'); setMobileMenuOpen(false); }} className="block w-full text-left px-4 py-2 text-gray-700 hover:bg-red-50 hover:text-red-600">My Profile</button>
+                    {user.profile?.admin_status === 'A' && (
+                      <button onClick={() => { setCurrentView('admin'); setMobileMenuOpen(false); }} className="block w-full text-left px-4 py-3 bg-green-600 text-white font-semibold rounded-md mx-4 mb-2" style={{ width: 'calc(100% - 2rem)' }}>Dashboard</button>
+                    )}
+                    <button onClick={() => { handleLogout(); setMobileMenuOpen(false); }} className="block w-full text-left px-4 py-2 text-gray-700 hover:bg-red-50 hover:text-red-600">Logout</button>
+                  </>
                 )}
               </div>
             </div>
