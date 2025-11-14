@@ -1236,9 +1236,9 @@ const CineChatter = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8">
           {/* Welcome Section */}
           <div className="text-center py-8 mb-8 border-b-2 border-gray-300 dark:border-gray-700">
-            <h2 className="text-5xl font-bold mb-4 text-gray-900 dark:text-white">Welcome to CineChatter</h2>
-            <p className="text-red-600 dark:text-red-400 mb-8 font-semibold text-lg">Your ultimate destination for entertainment news and updates!</p>
-            <p className="text-gray-500 dark:text-gray-400">Use the menu above to explore different categories</p>
+            <h1 className="text-4xl font-bold mb-4 text-gray-900 dark:text-white leading-tight">Welcome to CineChatter</h1>
+            <p className="text-red-600 dark:text-red-400 mb-8 font-semibold text-lg leading-relaxed">Your ultimate destination for entertainment news and updates!</p>
+            <p className="text-gray-500 dark:text-gray-400 text-base leading-normal">Use the menu above to explore different categories</p>
           </div>
 
           {/* Treasure Box Section */}
@@ -1264,7 +1264,7 @@ const CineChatter = () => {
           {/* Latest Articles Section */}
           <div className="p-8 mb-8 bg-white dark:bg-gray-800 border-b-2 border-gray-300 dark:border-gray-700">
             <div className="mb-6">
-              <h2 className="text-3xl font-bold text-gray-900 dark:text-white">Latest Articles</h2>
+              <h2 className="text-3xl font-bold text-gray-900 dark:text-white leading-tight">Latest Articles</h2>
             </div>
             
             <div className="space-y-6">
@@ -1341,7 +1341,7 @@ const CineChatter = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8">
           <div className="mb-6">
             <button onClick={() => setCurrentView('home')} className="text-red-600 dark:text-red-400 hover:underline mb-4 text-sm sm:text-base">← Back to Home</button>
-            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">{categories.find(c => c.id === selectedCategory)?.name}</h1>
+            <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white leading-tight">{categories.find(c => c.id === selectedCategory)?.name}</h1>
           </div>
           <div className="space-y-4">
             {getCategoryArticles(selectedCategory)
@@ -1367,7 +1367,7 @@ const CineChatter = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8">
           <div className="mb-6">
             <button onClick={() => { setCurrentView('home'); setSearchQuery(''); }} className="text-red-600 dark:text-red-400 hover:underline mb-4 text-sm sm:text-base">← Back to Home</button>
-            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">Search Results for "{searchQuery}"</h1>
+            <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white leading-tight">Search Results for "{searchQuery}"</h1>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
             {getSearchResults()
@@ -1394,8 +1394,8 @@ const CineChatter = () => {
         <div className="max-w-4xl mx-auto px-4 py-8">
           <button onClick={() => setCurrentView('home')} className="text-red-600 dark:text-red-400 hover:underline mb-4">← Back to Home</button>
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-8 border border-gray-100 dark:border-gray-700">
-            <h1 className="text-4xl font-bold mb-6 text-red-600 dark:text-red-400">About CineChatter</h1>
-            <div className="space-y-4 text-gray-700 dark:text-gray-300 leading-relaxed">
+            <h1 className="text-4xl font-bold mb-6 text-red-600 dark:text-red-400 leading-tight">About CineChatter</h1>
+            <div className="space-y-4 text-gray-700 dark:text-gray-300 leading-relaxed text-base">
               <p className="text-lg">
                 Welcome to <strong>CineChatter</strong>, your ultimate destination for entertainment news and updates!
               </p>
@@ -1519,8 +1519,8 @@ const CineChatter = () => {
         <div className="max-w-4xl mx-auto px-4 py-8">
           <button onClick={() => setCurrentView('home')} className="text-red-600 dark:text-red-400 hover:underline mb-4">← Back to Home</button>
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-8 border border-gray-100 dark:border-gray-700">
-            <h1 className="text-4xl font-bold mb-6 text-red-600 dark:text-red-400">Contact Us</h1>
-            <div className="space-y-6">
+            <h1 className="text-4xl font-bold mb-6 text-red-600 dark:text-red-400 leading-tight">Contact Us</h1>
+            <div className="space-y-6 text-base">
               <p className="text-gray-700 dark:text-gray-300 text-lg">
                 We'd love to hear from you! Whether you have a question, feedback, or just want to say hello,
                 feel free to reach out to us.
