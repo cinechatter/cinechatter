@@ -994,23 +994,23 @@ const CineChatter = () => {
   return (
     <div className="min-h-screen bg-white dark:bg-gray-900 transition-colors">
       <nav className="bg-white dark:bg-gray-800 shadow-sm border-b dark:border-gray-700 sticky top-0 z-40">
-        <div className="max-w-7xl mx-auto px-4">
+        <div className="max-w-full mx-auto px-2 sm:px-4">
           <div className="flex justify-between items-center h-16">
-            {/* Logo */}
-            <button onClick={() => setCurrentView('home')} className="bg-red-600 text-white px-3 sm:px-4 py-1.5 rounded-md font-bold text-base sm:text-lg hover:bg-red-700 whitespace-nowrap" style={{ fontFamily: 'cursive' }}>
+            {/* Logo - More compact */}
+            <button onClick={() => setCurrentView('home')} className="bg-red-600 text-white px-2 sm:px-3 py-1.5 rounded-md font-bold text-sm sm:text-base hover:bg-red-700 whitespace-nowrap flex-shrink-0" style={{ fontFamily: 'cursive' }}>
               CineChatter
             </button>
 
-            {/* Desktop Search - Hidden on mobile */}
-            <div className="hidden lg:flex items-center mx-2 flex-shrink-0" style={{ width: '280px', minWidth: '280px' }}>
+            {/* Desktop Search - More compact */}
+            <div className="hidden lg:flex items-center mx-2 flex-shrink-0" style={{ width: '200px', minWidth: '200px' }}>
               <div className="relative w-full">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-gray-500 w-5 h-5" />
-                <input type="text" placeholder="Search articles..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter' && searchQuery.trim()) { setCurrentView('search'); } }} className="w-full pl-10 pr-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-full focus:outline-none focus:border-red-500 dark:focus:border-red-400 text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400" />
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-gray-500 w-4 h-4" />
+                <input type="text" placeholder="Search..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter' && searchQuery.trim()) { setCurrentView('search'); } }} className="w-full pl-9 pr-3 py-2 border border-gray-300 dark:border-gray-600 rounded-full focus:outline-none focus:border-red-500 dark:focus:border-red-400 text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400" />
               </div>
             </div>
 
-            {/* Desktop Navigation - Hidden on mobile */}
-            <div className="hidden lg:flex items-center gap-0.5">
+            {/* Desktop Navigation - Compact spacing */}
+            <div className="hidden lg:flex items-center gap-0.5 flex-1 justify-center">
               <button onClick={() => setCurrentView('home')} className="px-2 py-2 text-sm text-gray-700 dark:text-gray-300 hover:text-red-600 dark:hover:text-red-400 whitespace-nowrap">Home</button>
 
               <div className="relative">
@@ -1087,13 +1087,17 @@ const CineChatter = () => {
                 )}
               </div>
 
+            </div>
+
+            {/* Right Side: Dark Mode, User, Dashboard - Compact */}
+            <div className="hidden lg:flex items-center gap-1 flex-shrink-0">
               {/* Dark Mode Toggle */}
               <button
                 onClick={toggleDarkMode}
                 className="p-2 text-gray-700 hover:text-red-600 rounded-md hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700 transition-colors"
                 aria-label="Toggle dark mode"
               >
-                {darkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+                {darkMode ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
               </button>
 
               {/* User Authentication */}
@@ -1101,60 +1105,62 @@ const CineChatter = () => {
                 <>
                   <button
                     onClick={() => { setAuthMode('signup'); setShowAuthModal(true); }}
-                    className="px-3 sm:px-4 py-2 bg-red-600 text-white rounded-md text-sm hover:bg-red-700 whitespace-nowrap"
+                    className="px-3 py-1.5 bg-red-600 text-white rounded-md text-sm hover:bg-red-700 whitespace-nowrap"
                   >
                     Sign Up
                   </button>
                   <button
                     onClick={() => { setAuthMode('login'); setShowAuthModal(true); }}
-                    className="px-3 sm:px-4 py-2 border border-red-600 text-red-600 rounded-md text-sm hover:bg-red-50 whitespace-nowrap"
+                    className="px-3 py-1.5 border border-red-600 text-red-600 dark:text-red-400 dark:border-red-500 rounded-md text-sm hover:bg-red-50 dark:hover:bg-gray-700 whitespace-nowrap"
                   >
                     Login
                   </button>
                 </>
               ) : (
-                <div className="relative">
-                  <button
-                    onClick={(e) => { e.stopPropagation(); setHollywoodOpen(false); setBollywoodOpen(false); setMoreOpen(false); setUserMenuOpen(!userMenuOpen); }}
-                    className="flex items-center gap-2 px-3 py-2 text-sm text-gray-700 dark:text-gray-200 hover:text-red-600 dark:hover:text-red-400 whitespace-nowrap"
-                  >
-                    <User className="w-5 h-5" />
-                    <span>{user.profile?.name || user.email?.split('@')[0]}</span>
-                    <ChevronDown className="w-4 h-4" />
-                  </button>
-                  {userMenuOpen && (
-                    <div className="absolute top-full right-0 mt-1 bg-white dark:bg-gray-800 shadow-lg rounded-lg py-2 w-48 z-50">
-                      <div className="px-4 py-2 border-b border-gray-200 dark:border-gray-700">
-                        <p className="font-semibold text-sm truncate text-gray-900 dark:text-white">{user.email}</p>
+                <>
+                  <div className="relative">
+                    <button
+                      onClick={(e) => { e.stopPropagation(); setHollywoodOpen(false); setBollywoodOpen(false); setMoreOpen(false); setUserMenuOpen(!userMenuOpen); }}
+                      className="flex items-center gap-1 px-2 py-2 text-sm text-gray-700 dark:text-gray-200 hover:text-red-600 dark:hover:text-red-400 whitespace-nowrap"
+                    >
+                      <User className="w-4 h-4" />
+                      <span className="max-w-[100px] truncate">{user.profile?.name || user.email?.split('@')[0]}</span>
+                      <ChevronDown className="w-3 h-3" />
+                    </button>
+                    {userMenuOpen && (
+                      <div className="absolute top-full right-0 mt-1 bg-white dark:bg-gray-800 shadow-lg rounded-lg py-2 w-48 z-50">
+                        <div className="px-4 py-2 border-b border-gray-200 dark:border-gray-700">
+                          <p className="font-semibold text-sm truncate text-gray-900 dark:text-white">{user.email}</p>
+                        </div>
+                        <button
+                          onClick={() => { setUserMenuOpen(false); setCurrentView('profile'); }}
+                          className="block w-full text-left px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-red-50 dark:hover:bg-gray-700 hover:text-red-600 dark:hover:text-red-400 text-sm"
+                        >
+                          <User className="w-4 h-4 inline mr-2" />
+                          My Profile
+                        </button>
+                        <button
+                          onClick={handleLogout}
+                          className="block w-full text-left px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-red-50 dark:hover:bg-gray-700 hover:text-red-600 dark:hover:text-red-400 text-sm border-t border-gray-200 dark:border-gray-700"
+                        >
+                          <LogOut className="w-4 h-4 inline mr-2" />
+                          Logout
+                        </button>
                       </div>
-                      <button
-                        onClick={() => { setUserMenuOpen(false); setCurrentView('profile'); }}
-                        className="block w-full text-left px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-red-50 dark:hover:bg-gray-700 hover:text-red-600 dark:hover:text-red-400 text-sm"
-                      >
-                        <User className="w-4 h-4 inline mr-2" />
-                        My Profile
-                      </button>
-                      <button
-                        onClick={handleLogout}
-                        className="block w-full text-left px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-red-50 dark:hover:bg-gray-700 hover:text-red-600 dark:hover:text-red-400 text-sm border-t border-gray-200 dark:border-gray-700"
-                      >
-                        <LogOut className="w-4 h-4 inline mr-2" />
-                        Logout
-                      </button>
-                    </div>
-                  )}
-                </div>
-              )}
+                    )}
+                  </div>
 
-              {/* Dashboard Button - Only visible for approved admin users */}
-              {user && user.profile?.admin_status === 'A' && (
-                <button
-                  onClick={() => setCurrentView('admin')}
-                  className="px-3 sm:px-4 py-2 bg-green-600 text-white rounded-md text-sm hover:bg-green-700 whitespace-nowrap flex items-center gap-2"
-                >
-                  <Settings className="w-4 h-4" />
-                  Dashboard
-                </button>
+                  {/* Dashboard Button - Only visible for approved admin users */}
+                  {user.profile?.admin_status === 'A' && (
+                    <button
+                      onClick={() => setCurrentView('admin')}
+                      className="px-3 py-1.5 bg-green-600 text-white rounded-md text-sm hover:bg-green-700 whitespace-nowrap flex items-center gap-1"
+                    >
+                      <Settings className="w-4 h-4" />
+                      <span>Dashboard</span>
+                    </button>
+                  )}
+                </>
               )}
             </div>
 
