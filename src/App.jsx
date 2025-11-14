@@ -1370,6 +1370,89 @@ const CineChatter = () => {
             })()}
           </div>
 
+          {/* Trending Now Section - Horizontal Scroll */}
+          <div className="mb-8">
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center gap-3">
+                <TrendingUp className="w-6 h-6 text-red-600 dark:text-red-400" />
+                <h2 className="text-3xl font-bold text-gray-900 dark:text-white leading-tight">Trending Now</h2>
+              </div>
+              <span className="text-sm text-gray-500 dark:text-gray-400 hidden sm:block">Swipe to explore →</span>
+            </div>
+
+            {(() => {
+              // Get trending articles (most recent across all categories)
+              let allArticles = [];
+              if (dataSource === 'admin-only') {
+                allArticles = articles.filter(a => a.status === 'published');
+              } else if (dataSource === 'sheets-only') {
+                allArticles = sheetArticles.filter(a => a.status === 'published');
+              } else if (dataSource === 'both') {
+                allArticles = [...articles.filter(a => a.status === 'published'), ...sheetArticles.filter(a => a.status === 'published')];
+              }
+
+              // Get different articles than the featured ones (skip first 7)
+              const trendingArticles = allArticles
+                .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+                .slice(7, 15); // Get next 8 articles
+
+              if (trendingArticles.length === 0) {
+                return null; // Don't show section if no articles
+              }
+
+              return (
+                <div className="relative">
+                  {/* Horizontal Scrollable Container */}
+                  <div className="overflow-x-auto scrollbar-hide -mx-4 sm:mx-0">
+                    <div className="flex gap-4 px-4 sm:px-0 pb-2">
+                      {trendingArticles.map((article, index) => (
+                        <div
+                          key={`trending-${article.id}`}
+                          onClick={() => setSelectedArticle(article)}
+                          className="flex-shrink-0 w-72 bg-white dark:bg-gray-800 rounded-lg shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden cursor-pointer group border border-gray-200 dark:border-gray-700"
+                        >
+                          {article.image && (
+                            <div className="relative h-40 overflow-hidden">
+                              <img
+                                src={article.image}
+                                alt={article.title}
+                                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                              />
+                              {/* Trending Badge */}
+                              <div className="absolute top-3 left-3 bg-gradient-to-r from-red-600 to-orange-500 text-white px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1 shadow-lg">
+                                <TrendingUp className="w-3 h-3" />
+                                #{index + 1}
+                              </div>
+                            </div>
+                          )}
+                          <div className="p-4">
+                            <span className="text-xs bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 px-2 py-1 rounded-full mb-2 inline-block uppercase font-semibold">
+                              {categories.find(c => c.id === article.category)?.name}
+                            </span>
+                            <h3 className="font-bold text-base mb-2 text-gray-900 dark:text-white group-hover:text-red-600 dark:group-hover:text-red-400 transition-colors line-clamp-2 leading-tight">
+                              {article.title}
+                            </h3>
+                            <p className="text-gray-600 dark:text-gray-400 text-sm line-clamp-2 mb-3">
+                              {article.content}
+                            </p>
+                            <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
+                              <span>{new Date(article.createdAt).toLocaleDateString()}</span>
+                              <span className="text-red-600 dark:text-red-400 font-medium group-hover:underline">Read →</span>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Scroll Fade Indicators */}
+                  <div className="pointer-events-none absolute inset-y-0 left-0 w-8 bg-gradient-to-r from-white dark:from-gray-900 to-transparent"></div>
+                  <div className="pointer-events-none absolute inset-y-0 right-0 w-8 bg-gradient-to-l from-white dark:from-gray-900 to-transparent"></div>
+                </div>
+              );
+            })()}
+          </div>
+
           {/* Newsletter Section - 40% width, left aligned */}
           <div className="p-6 bg-white dark:bg-gray-800 border-b-2 border-gray-300 dark:border-gray-700">
             <div className="max-w-md">
