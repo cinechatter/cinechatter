@@ -103,6 +103,14 @@ const CineChatter = () => {
     }
   }, [darkMode]);
 
+  // Smooth scroll to top when view changes
+  useEffect(() => {
+    // Small delay to ensure DOM is ready and scroll is visible
+    setTimeout(() => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }, 0);
+  }, [currentView, selectedCategory]);
+
   useEffect(() => {
     loadArticles();
     loadFeaturedImages();
@@ -1248,7 +1256,7 @@ const CineChatter = () => {
           <div className="p-4 sm:p-8 mb-6 sm:mb-8 bg-white dark:bg-gray-800 border-b-2 border-gray-300 dark:border-gray-700">
             <div className="flex flex-col items-center mb-4 sm:mb-6">
               <div className="relative mb-4">
-                <div className="w-32 h-32 sm:w-48 sm:h-48 bg-gradient-to-br from-yellow-600 via-yellow-500 to-yellow-400 rounded-lg shadow-2xl flex items-center justify-center cursor-pointer transform hover:scale-105 transition-transform" onClick={async () => {
+                <div className="treasure-box w-32 h-32 sm:w-48 sm:h-48 bg-gradient-to-br from-yellow-600 via-yellow-500 to-yellow-400 rounded-lg shadow-2xl flex items-center justify-center cursor-pointer hover:shadow-3xl" onClick={async () => {
                   await loadFeaturedImages();
                   const validImages = featuredImages.filter(f => f.image);
                   if (validImages.length > 0) {
@@ -1258,7 +1266,7 @@ const CineChatter = () => {
                 }}>
                   <span className="text-6xl sm:text-9xl">🎁</span>
                 </div>
-                <div className="absolute -top-2 -right-2 w-10 h-10 bg-red-600 rounded-full flex items-center justify-center text-white text-sm font-bold animate-pulse">NEW</div>
+                <div className="absolute -top-2 -right-2 w-10 h-10 bg-red-600 rounded-full flex items-center justify-center text-white text-sm font-bold animate-pulse-glow">NEW</div>
               </div>
               <p className="text-center text-red-600 dark:text-red-400 font-bold text-2xl mb-4">Untold Stories!</p>
             </div>
@@ -1499,7 +1507,7 @@ const CineChatter = () => {
                   />
                   <button
                     type="submit"
-                    className="px-8 py-4 bg-white text-red-600 font-bold rounded-lg hover:bg-gray-100 transition-all duration-300 shadow-xl hover:shadow-2xl hover:scale-105 text-base sm:text-lg whitespace-nowrap"
+                    className="px-8 py-4 bg-white text-red-600 font-bold rounded-lg hover:bg-gray-100 transition-all duration-300 shadow-xl hover:shadow-2xl hover:scale-105 text-base sm:text-lg whitespace-nowrap hover-bounce"
                   >
                     Subscribe Now
                   </button>
