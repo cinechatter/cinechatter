@@ -1264,53 +1264,110 @@ const CineChatter = () => {
             </div>
           </div>
 
-          {/* Latest Articles Section */}
-          <div className="p-8 mb-8 bg-white dark:bg-gray-800 border-b-2 border-gray-300 dark:border-gray-700">
+          {/* Latest Articles Section - Magazine Grid */}
+          <div className="mb-8">
             <div className="mb-6">
               <h2 className="text-3xl font-bold text-gray-900 dark:text-white leading-tight">Latest Articles</h2>
             </div>
-            
-            <div className="space-y-6">
-              {/* Recent Articles from all sources */}
-              {(() => {
-                // Combine articles from both sources based on dataSource setting
-                let allArticles = [];
-                if (dataSource === 'admin-only') {
-                  allArticles = articles.filter(a => a.status === 'published');
-                } else if (dataSource === 'sheets-only') {
-                  allArticles = sheetArticles.filter(a => a.status === 'published');
-                } else if (dataSource === 'both') {
-                  allArticles = [...articles.filter(a => a.status === 'published'), ...sheetArticles.filter(a => a.status === 'published')];
-                }
 
-                // Sort by date and take top 5
-                const recentArticles = allArticles
-                  .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
-                  .slice(0, 5);
+            {(() => {
+              // Combine articles from both sources based on dataSource setting
+              let allArticles = [];
+              if (dataSource === 'admin-only') {
+                allArticles = articles.filter(a => a.status === 'published');
+              } else if (dataSource === 'sheets-only') {
+                allArticles = sheetArticles.filter(a => a.status === 'published');
+              } else if (dataSource === 'both') {
+                allArticles = [...articles.filter(a => a.status === 'published'), ...sheetArticles.filter(a => a.status === 'published')];
+              }
 
-                return recentArticles.length > 0 ? (
-                  recentArticles.map(article => (
-                    <div key={`article-${article.id}`} className="bg-gray-50 dark:bg-gray-700/50 rounded-lg shadow-md hover:shadow-lg transition-all duration-300 overflow-hidden border border-gray-200 dark:border-gray-600">
-                      <div className="flex gap-4 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 p-4 transition-colors" onClick={() => setSelectedArticle(article)}>
+              // Sort by date and take top 7 (1 featured + 6 grid)
+              const recentArticles = allArticles
+                .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+                .slice(0, 7);
+
+              if (recentArticles.length === 0) {
+                return <p className="text-gray-400 dark:text-gray-500 text-center py-8">No articles yet</p>;
+              }
+
+              const featuredArticle = recentArticles[0];
+              const gridArticles = recentArticles.slice(1);
+
+              return (
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  {/* Featured Article - Large Card */}
+                  <div
+                    onClick={() => setSelectedArticle(featuredArticle)}
+                    className="lg:row-span-2 bg-white dark:bg-gray-800 rounded-lg shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden cursor-pointer group border border-gray-200 dark:border-gray-700"
+                  >
+                    {featuredArticle.image && (
+                      <div className="relative h-64 lg:h-80 overflow-hidden">
+                        <img
+                          src={featuredArticle.image}
+                          alt={featuredArticle.title}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                        />
+                        <div className="absolute top-4 left-4">
+                          <span className="bg-red-600 text-white px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide shadow-lg">
+                            Featured
+                          </span>
+                        </div>
+                      </div>
+                    )}
+                    <div className="p-6">
+                      <span className="text-xs bg-red-100 dark:bg-red-900 text-red-600 dark:text-red-300 px-3 py-1 rounded-full mb-3 inline-block uppercase font-semibold">
+                        {categories.find(c => c.id === featuredArticle.category)?.name}
+                      </span>
+                      <h3 className="font-bold text-2xl mb-3 text-gray-900 dark:text-white group-hover:text-red-600 dark:group-hover:text-red-400 transition-colors leading-tight">
+                        {featuredArticle.title}
+                      </h3>
+                      <p className="text-gray-600 dark:text-gray-400 text-base line-clamp-3 mb-4 leading-relaxed">
+                        {featuredArticle.content}
+                      </p>
+                      <div className="flex items-center justify-between text-sm text-gray-500 dark:text-gray-400">
+                        <span>{new Date(featuredArticle.createdAt).toLocaleDateString()}</span>
+                        <span className="text-red-600 dark:text-red-400 font-medium group-hover:underline">Read More →</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Grid Articles - Smaller Cards */}
+                  {gridArticles.map(article => (
+                    <div
+                      key={`article-${article.id}`}
+                      onClick={() => setSelectedArticle(article)}
+                      className="bg-white dark:bg-gray-800 rounded-lg shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden cursor-pointer group border border-gray-200 dark:border-gray-700"
+                    >
+                      <div className="flex gap-4 p-4">
                         {article.image && (
-                          <img src={article.image} alt={article.title} className="w-24 h-24 object-cover rounded-lg shadow-sm" />
+                          <div className="flex-shrink-0 w-24 h-24 sm:w-28 sm:h-28 overflow-hidden rounded-lg">
+                            <img
+                              src={article.image}
+                              alt={article.title}
+                              className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                            />
+                          </div>
                         )}
-                        <div className="flex-1">
-                          <span className="text-xs bg-red-100 dark:bg-red-900 text-red-600 dark:text-red-300 px-2 py-1 rounded mb-2 inline-block uppercase font-semibold">
+                        <div className="flex-1 min-w-0">
+                          <span className="text-xs bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 px-2 py-1 rounded mb-2 inline-block uppercase font-semibold">
                             {categories.find(c => c.id === article.category)?.name}
                           </span>
-                          <h3 className="font-bold text-lg mb-2 text-gray-900 dark:text-white hover:text-red-600 dark:hover:text-red-400 transition-colors">{article.title}</h3>
-                          <p className="text-gray-600 dark:text-gray-400 text-sm line-clamp-2">{article.content}</p>
-                          <p className="text-xs text-gray-400 dark:text-gray-500 mt-2">{new Date(article.createdAt).toLocaleDateString()}</p>
+                          <h3 className="font-bold text-base sm:text-lg mb-2 text-gray-900 dark:text-white group-hover:text-red-600 dark:group-hover:text-red-400 transition-colors line-clamp-2 leading-tight">
+                            {article.title}
+                          </h3>
+                          <p className="text-gray-600 dark:text-gray-400 text-sm line-clamp-2 mb-2">
+                            {article.content}
+                          </p>
+                          <p className="text-xs text-gray-400 dark:text-gray-500">
+                            {new Date(article.createdAt).toLocaleDateString()}
+                          </p>
                         </div>
                       </div>
                     </div>
-                  ))
-                ) : (
-                  <p className="text-gray-400 dark:text-gray-500 text-center py-8">No articles yet</p>
-                );
-              })()}
-            </div>
+                  ))}
+                </div>
+              );
+            })()}
           </div>
 
           {/* Newsletter Section - 40% width, left aligned */}
