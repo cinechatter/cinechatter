@@ -1237,7 +1237,7 @@ const CineChatter = () => {
           {/* Welcome Section */}
           <div className="text-center py-8 mb-8 border-b-2 border-gray-300 dark:border-gray-700">
             <h1 className="text-4xl font-bold mb-4 text-gray-900 dark:text-white leading-tight">Welcome to CineChatter</h1>
-            <p className="text-red-600 dark:text-red-400 mb-8 font-semibold text-lg leading-relaxed">Your ultimate destination for entertainment news and updates!</p>
+            <p className="text-red-600 dark:text-red-400 mb-8 font-semibold text-xl leading-relaxed">Your ultimate destination for entertainment news and updates!</p>
             <p className="text-gray-600 dark:text-gray-300 text-base leading-normal">Use the menu above to explore different categories</p>
           </div>
 
@@ -1575,7 +1575,7 @@ const CineChatter = () => {
       {currentView === 'admin' && user && user.profile?.admin_status === 'A' && (
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 sm:mb-8 gap-4">
-            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">Admin Dashboard</h1>
+            <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white leading-tight">Admin Dashboard</h1>
             <div className="flex gap-2 sm:gap-3 flex-wrap sm:flex-nowrap w-full sm:w-auto">
               <button onClick={() => setShowIntegrationSettings(true)} className="bg-red-600 text-white px-3 sm:px-4 py-2 rounded-lg hover:bg-red-700 flex items-center gap-2 whitespace-nowrap text-sm sm:text-base flex-1 sm:flex-initial justify-center">
                 <Settings className="w-4 h-4" />Integration Settings
