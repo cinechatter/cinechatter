@@ -33,6 +33,31 @@ if (supabaseAnonKey && !supabaseAnonKey.startsWith('eyJ')) {
   console.error('❌ Invalid Supabase Key format. JWT tokens should start with "eyJ"')
 }
 
+// Additional validation before creating client
+let clientCreationError = null;
+
+// Validate URL is a valid URL
+try {
+  if (supabaseUrl) {
+    new URL(supabaseUrl);
+  }
+} catch (e) {
+  clientCreationError = `Invalid URL format: ${e.message}`;
+  console.error('❌ Supabase URL validation failed:', e);
+}
+
+// Check for common URL issues
+if (supabaseUrl) {
+  if (supabaseUrl.includes(' ')) {
+    clientCreationError = 'URL contains spaces';
+    console.error('❌ Supabase URL contains spaces!');
+  }
+  if (supabaseUrl.includes('\n') || supabaseUrl.includes('\r')) {
+    clientCreationError = 'URL contains newline characters';
+    console.error('❌ Supabase URL contains newline characters!');
+  }
+}
+
 // Supabase client options for better CORS handling
 const supabaseOptions = {
   auth: {
@@ -44,6 +69,11 @@ const supabaseOptions = {
 
 // Create a single supabase client for interacting with your database
 export const supabase = createClient(supabaseUrl, supabaseAnonKey, supabaseOptions)
+
+// Log if there were any validation errors
+if (clientCreationError) {
+  console.error('⚠️ Supabase client created but validation found issues:', clientCreationError);
+}
 
 // Helper function to check if Supabase is configured
 export const isSupabaseConfigured = () => {
