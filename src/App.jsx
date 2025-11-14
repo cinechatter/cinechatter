@@ -1233,14 +1233,14 @@ const CineChatter = () => {
       {currentView === 'home' && (
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8">
           {/* Welcome Section */}
-          <div className="text-center py-8 mb-8 border-b-2 border-gray-300">
-            <h2 className="text-5xl font-bold mb-4">Welcome to CineChatter</h2>
-            <p className="text-red-600 mb-8 font-semibold text-lg">Your ultimate destination for entertainment news and updates!</p>
-            <p className="text-gray-500">Use the menu above to explore different categories</p>
+          <div className="text-center py-8 mb-8 border-b-2 border-gray-300 dark:border-gray-700">
+            <h2 className="text-5xl font-bold mb-4 text-gray-900 dark:text-white">Welcome to CineChatter</h2>
+            <p className="text-red-600 dark:text-red-400 mb-8 font-semibold text-lg">Your ultimate destination for entertainment news and updates!</p>
+            <p className="text-gray-500 dark:text-gray-400">Use the menu above to explore different categories</p>
           </div>
 
           {/* Treasure Box Section */}
-          <div className="p-4 sm:p-8 mb-6 sm:mb-8 bg-white border-b-2 border-gray-300">
+          <div className="p-4 sm:p-8 mb-6 sm:mb-8 bg-white dark:bg-gray-800 border-b-2 border-gray-300 dark:border-gray-700">
             <div className="flex flex-col items-center mb-4 sm:mb-6">
               <div className="relative mb-4">
                 <div className="w-32 h-32 sm:w-48 sm:h-48 bg-gradient-to-br from-yellow-600 via-yellow-500 to-yellow-400 rounded-lg shadow-2xl flex items-center justify-center cursor-pointer transform hover:scale-105 transition-transform" onClick={async () => {
@@ -1255,14 +1255,14 @@ const CineChatter = () => {
                 </div>
                 <div className="absolute -top-2 -right-2 w-10 h-10 bg-red-600 rounded-full flex items-center justify-center text-white text-sm font-bold animate-pulse">NEW</div>
               </div>
-              <p className="text-center text-red-600 font-bold text-2xl mb-4">Untold Stories!</p>
+              <p className="text-center text-red-600 dark:text-red-400 font-bold text-2xl mb-4">Untold Stories!</p>
             </div>
           </div>
 
           {/* Latest Articles Section */}
-          <div className="p-8 mb-8 bg-white border-b-2 border-gray-300">
+          <div className="p-8 mb-8 bg-white dark:bg-gray-800 border-b-2 border-gray-300 dark:border-gray-700">
             <div className="mb-6">
-              <h2 className="text-3xl font-bold">Latest Articles</h2>
+              <h2 className="text-3xl font-bold text-gray-900 dark:text-white">Latest Articles</h2>
             </div>
             
             <div className="space-y-6">
@@ -1285,31 +1285,31 @@ const CineChatter = () => {
 
                 return recentArticles.length > 0 ? (
                   recentArticles.map(article => (
-                    <div key={`article-${article.id}`} className="border-b pb-4">
-                      <div className="flex gap-4 cursor-pointer hover:bg-gray-50 p-3 rounded" onClick={() => setSelectedArticle(article)}>
+                    <div key={`article-${article.id}`} className="border-b border-gray-200 dark:border-gray-700 pb-4">
+                      <div className="flex gap-4 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 p-3 rounded transition-colors" onClick={() => setSelectedArticle(article)}>
                         {article.image && (
                           <img src={article.image} alt={article.title} className="w-24 h-24 object-cover rounded" />
                         )}
                         <div className="flex-1">
-                          <span className="text-xs bg-red-100 text-red-600 px-2 py-1 rounded mb-2 inline-block uppercase font-semibold">
+                          <span className="text-xs bg-red-100 dark:bg-red-900 text-red-600 dark:text-red-300 px-2 py-1 rounded mb-2 inline-block uppercase font-semibold">
                             {categories.find(c => c.id === article.category)?.name}
                           </span>
-                          <h3 className="font-bold text-lg mb-2 hover:text-red-600">{article.title}</h3>
-                          <p className="text-gray-600 text-sm line-clamp-2">{article.content}</p>
-                          <p className="text-xs text-gray-400 mt-2">{new Date(article.createdAt).toLocaleDateString()}</p>
+                          <h3 className="font-bold text-lg mb-2 text-gray-900 dark:text-white hover:text-red-600 dark:hover:text-red-400">{article.title}</h3>
+                          <p className="text-gray-600 dark:text-gray-400 text-sm line-clamp-2">{article.content}</p>
+                          <p className="text-xs text-gray-400 dark:text-gray-500 mt-2">{new Date(article.createdAt).toLocaleDateString()}</p>
                         </div>
                       </div>
                     </div>
                   ))
                 ) : (
-                  <p className="text-gray-400 text-center py-8">No articles yet</p>
+                  <p className="text-gray-400 dark:text-gray-500 text-center py-8">No articles yet</p>
                 );
               })()}
             </div>
           </div>
 
           {/* Newsletter Section - 40% width, left aligned */}
-          <div className="p-6 bg-white border-b-2 border-gray-300">
+          <div className="p-6 bg-white dark:bg-gray-800 border-b-2 border-gray-300 dark:border-gray-700">
             <div className="max-w-md">
               <div className="bg-red-600 rounded-lg p-6 text-white">
                 <h3 className="text-xl font-bold mb-4">Subscribe to Our Newsletter</h3>
@@ -1338,25 +1338,25 @@ const CineChatter = () => {
       {currentView === 'category' && (
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8">
           <div className="mb-6">
-            <button onClick={() => setCurrentView('home')} className="text-red-600 hover:underline mb-4 text-sm sm:text-base">← Back to Home</button>
-            <h1 className="text-2xl sm:text-3xl font-bold">{categories.find(c => c.id === selectedCategory)?.name}</h1>
+            <button onClick={() => setCurrentView('home')} className="text-red-600 dark:text-red-400 hover:underline mb-4 text-sm sm:text-base">← Back to Home</button>
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">{categories.find(c => c.id === selectedCategory)?.name}</h1>
           </div>
           <div className="space-y-4">
             {getCategoryArticles(selectedCategory)
               .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
               .map(article => (
-              <div key={article.id} onClick={() => setSelectedArticle(article)} className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow cursor-pointer">
+              <div key={article.id} onClick={() => setSelectedArticle(article)} className="bg-white dark:bg-gray-800 rounded-lg shadow-md dark:shadow-gray-900 overflow-hidden hover:shadow-xl transition-shadow cursor-pointer">
                 {article.image && <img src={article.image} alt={article.title} className="w-full h-64 sm:h-80 lg:h-96 object-cover" />}
                 <div className="p-6">
-                  <h3 className="font-bold text-2xl mb-3">{article.title}</h3>
-                  <p className="text-gray-600 text-base leading-relaxed">{article.content}</p>
-                  <p className="text-sm text-gray-400 mt-4">{new Date(article.createdAt).toLocaleDateString()}</p>
+                  <h3 className="font-bold text-2xl mb-3 text-gray-900 dark:text-white">{article.title}</h3>
+                  <p className="text-gray-600 dark:text-gray-400 text-base leading-relaxed">{article.content}</p>
+                  <p className="text-sm text-gray-400 dark:text-gray-500 mt-4">{new Date(article.createdAt).toLocaleDateString()}</p>
                 </div>
               </div>
             ))}
           </div>
           {getCategoryArticles(selectedCategory).length === 0 && (
-            <p className="text-center text-gray-400 py-12">No articles in this category yet</p>
+            <p className="text-center text-gray-400 dark:text-gray-500 py-12">No articles in this category yet</p>
           )}
         </div>
       )}
@@ -1364,36 +1364,36 @@ const CineChatter = () => {
       {currentView === 'search' && searchQuery && (
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8">
           <div className="mb-6">
-            <button onClick={() => { setCurrentView('home'); setSearchQuery(''); }} className="text-red-600 hover:underline mb-4 text-sm sm:text-base">← Back to Home</button>
-            <h1 className="text-2xl sm:text-3xl font-bold">Search Results for "{searchQuery}"</h1>
+            <button onClick={() => { setCurrentView('home'); setSearchQuery(''); }} className="text-red-600 dark:text-red-400 hover:underline mb-4 text-sm sm:text-base">← Back to Home</button>
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">Search Results for "{searchQuery}"</h1>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
             {getSearchResults()
               .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
               .map(article => (
-              <div key={article.id} onClick={() => setSelectedArticle(article)} className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow cursor-pointer">
+              <div key={article.id} onClick={() => setSelectedArticle(article)} className="bg-white dark:bg-gray-800 rounded-lg shadow-md dark:shadow-gray-900 overflow-hidden hover:shadow-xl transition-shadow cursor-pointer">
                 {article.image && <img src={article.image} alt={article.title} className="w-full h-48 object-cover" />}
                 <div className="p-4">
-                  <span className="text-xs bg-gray-200 px-2 py-1 rounded mb-2 inline-block">{categories.find(c => c.id === article.category)?.name}</span>
-                  <h3 className="font-bold text-lg mb-2 line-clamp-2">{article.title}</h3>
-                  <p className="text-gray-600 text-sm line-clamp-3">{article.content}</p>
-                  <p className="text-xs text-gray-400 mt-2">{new Date(article.createdAt).toLocaleDateString()}</p>
+                  <span className="text-xs bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 px-2 py-1 rounded mb-2 inline-block">{categories.find(c => c.id === article.category)?.name}</span>
+                  <h3 className="font-bold text-lg mb-2 line-clamp-2 text-gray-900 dark:text-white">{article.title}</h3>
+                  <p className="text-gray-600 dark:text-gray-400 text-sm line-clamp-3">{article.content}</p>
+                  <p className="text-xs text-gray-400 dark:text-gray-500 mt-2">{new Date(article.createdAt).toLocaleDateString()}</p>
                 </div>
               </div>
             ))}
           </div>
           {getSearchResults().length === 0 && (
-            <p className="text-center text-gray-400 py-12">No results found</p>
+            <p className="text-center text-gray-400 dark:text-gray-500 py-12">No results found</p>
           )}
         </div>
       )}
 
       {currentView === 'about' && (
         <div className="max-w-4xl mx-auto px-4 py-8">
-          <button onClick={() => setCurrentView('home')} className="text-red-600 hover:underline mb-4">← Back to Home</button>
-          <div className="bg-white rounded-lg shadow-md p-8">
-            <h1 className="text-4xl font-bold mb-6 text-red-600">About CineChatter</h1>
-            <div className="space-y-4 text-gray-700 leading-relaxed">
+          <button onClick={() => setCurrentView('home')} className="text-red-600 dark:text-red-400 hover:underline mb-4">← Back to Home</button>
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-8">
+            <h1 className="text-4xl font-bold mb-6 text-red-600 dark:text-red-400">About CineChatter</h1>
+            <div className="space-y-4 text-gray-700 dark:text-gray-300 leading-relaxed">
               <p className="text-lg">
                 Welcome to <strong>CineChatter</strong>, your ultimate destination for entertainment news and updates!
               </p>
@@ -1426,15 +1426,15 @@ const CineChatter = () => {
 
       {currentView === 'profile' && user && (
         <div className="max-w-4xl mx-auto px-4 py-8">
-          <button onClick={() => setCurrentView('home')} className="text-red-600 hover:underline mb-4">← Back to Home</button>
-          <div className="bg-white rounded-lg shadow-md p-8">
+          <button onClick={() => setCurrentView('home')} className="text-red-600 dark:text-red-400 hover:underline mb-4">← Back to Home</button>
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-8">
             <div className="flex items-center gap-6 mb-8">
-              <div className="w-24 h-24 bg-red-100 rounded-full flex items-center justify-center">
-                <User className="w-12 h-12 text-red-600" />
+              <div className="w-24 h-24 bg-red-100 dark:bg-red-900 rounded-full flex items-center justify-center">
+                <User className="w-12 h-12 text-red-600 dark:text-red-400" />
               </div>
               <div>
-                <h1 className="text-3xl font-bold">{user.profile?.name || 'User'}</h1>
-                <p className="text-gray-600">{user.email}</p>
+                <h1 className="text-3xl font-bold text-gray-900 dark:text-white">{user.profile?.name || 'User'}</h1>
+                <p className="text-gray-600 dark:text-gray-400">{user.email}</p>
                 {user.profile?.admin_status === 'A' && (
                   <span className="inline-block mt-2 bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-semibold">
                     Admin
@@ -1451,11 +1451,11 @@ const CineChatter = () => {
             <div className="grid md:grid-cols-2 gap-6">
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Name</label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Name</label>
                   <input
                     type="text"
                     value={user.profile?.name || ''}
-                    className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-red-500"
+                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:border-red-500 dark:focus:border-red-400 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                     readOnly
                   />
                 </div>
