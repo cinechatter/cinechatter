@@ -1649,7 +1649,7 @@ const CineChatter = () => {
                       const isEditable = article.source !== 'google-sheets' && articles.some(a => a.id === article.id);
 
                       return (
-                        <tr key={article.id} className="hover:bg-gray-50 dark:hover:bg-gray-700">
+                        <tr key={article.id} className="even:bg-gray-50 dark:even:bg-gray-700/50 hover:bg-gray-100 dark:hover:bg-gray-600/50 transition-colors">
                           <td className="px-4 py-4">
                             {article.status === 'published' && (
                               <input
@@ -1685,16 +1685,25 @@ const CineChatter = () => {
                             </span>
                           </td>
                           <td className="px-6 py-4">
-                            <div className="flex gap-2">
-                              <button onClick={() => setSelectedArticle(article)} className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300" title="View"><Eye className="w-5 h-5" /></button>
+                            <div className="flex gap-2 items-center">
+                              <button onClick={() => setSelectedArticle(article)} className="flex items-center gap-1 px-2 py-1 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded transition-colors text-xs font-medium" title="View">
+                                <Eye className="w-4 h-4" />
+                                <span>View</span>
+                              </button>
                               {isEditable && (
                                 <>
-                                  <button onClick={() => { setEditingArticle(article); setFormInputs(article); setShowArticleForm(true); }} className="text-green-600 dark:text-green-400 hover:text-green-800 dark:hover:text-green-300" title="Edit"><Edit2 className="w-5 h-5" /></button>
-                                  <button onClick={() => { if (window.confirm('Delete this article?')) saveArticles(articles.filter(a => a.id !== article.id)); }} className="text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300" title="Delete"><Trash2 className="w-5 h-5" /></button>
+                                  <button onClick={() => { setEditingArticle(article); setFormInputs(article); setShowArticleForm(true); }} className="flex items-center gap-1 px-2 py-1 text-green-600 dark:text-green-400 hover:bg-green-50 dark:hover:bg-green-900/30 rounded transition-colors text-xs font-medium" title="Edit">
+                                    <Edit2 className="w-4 h-4" />
+                                    <span>Edit</span>
+                                  </button>
+                                  <button onClick={() => { if (window.confirm('Delete this article?')) saveArticles(articles.filter(a => a.id !== article.id)); }} className="flex items-center gap-1 px-2 py-1 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30 rounded transition-colors text-xs font-medium" title="Delete">
+                                    <Trash2 className="w-4 h-4" />
+                                    <span>Delete</span>
+                                  </button>
                                 </>
                               )}
                               {!isEditable && (
-                                <span className="text-gray-400 dark:text-gray-500 text-xs">View only</span>
+                                <span className="text-gray-400 dark:text-gray-500 text-xs italic">View only</span>
                               )}
                             </div>
                           </td>
@@ -1944,8 +1953,8 @@ const CineChatter = () => {
                     <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
                       {allUsers
                         .filter(u => !userSearchQuery || u.email.toLowerCase().includes(userSearchQuery.toLowerCase()))
-                        .map((u) => (
-                          <tr key={u.id} className={u.id === user?.id ? 'bg-blue-50 dark:bg-blue-900' : ''}>
+                        .map((u, index) => (
+                          <tr key={u.id} className={u.id === user?.id ? 'bg-blue-50 dark:bg-blue-900' : index % 2 === 0 ? '' : 'bg-gray-50 dark:bg-gray-700/50'}>
                             <td className="px-6 py-4 text-sm text-gray-900 dark:text-gray-100">
                               {u.email}
                               {u.id === user?.id && <span className="ml-2 text-xs text-blue-600 dark:text-blue-400">(You)</span>}
