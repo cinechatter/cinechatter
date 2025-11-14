@@ -1061,29 +1061,25 @@ const CineChatter = () => {
 
               <button onClick={() => { setSelectedCategory('ott'); setCurrentView('category'); }} className="px-2 py-2 text-sm text-gray-700 dark:text-gray-300 hover:text-red-600 dark:hover:text-red-400 whitespace-nowrap">OTT</button>
 
-              <button onClick={() => { setSelectedCategory('music'); setCurrentView('category'); }} className="px-2 py-2 text-sm text-gray-700 hover:text-red-600 whitespace-nowrap">Music</button>
+              <button onClick={() => { setSelectedCategory('music'); setCurrentView('category'); }} className="px-2 py-2 text-sm text-gray-700 dark:text-gray-300 hover:text-red-600 dark:hover:text-red-400 whitespace-nowrap">Music</button>
 
-              <button onClick={() => { setSelectedCategory('celebrity-style'); setCurrentView('category'); }} className="px-2 py-2 text-sm text-gray-700 hover:text-red-600 whitespace-nowrap">Celebrity Style</button>
+              <button onClick={() => { setSelectedCategory('celebrity-style'); setCurrentView('category'); }} className="px-2 py-2 text-sm text-gray-700 dark:text-gray-300 hover:text-red-600 dark:hover:text-red-400 whitespace-nowrap">Celebrity Style</button>
 
               <div className="relative">
-                <button onClick={(e) => { e.stopPropagation(); setHollywoodOpen(false); setBollywoodOpen(false); setUserMenuOpen(false); setMoreOpen(!moreOpen); }} className="flex items-center gap-1 px-2 py-2 text-sm text-gray-700 hover:text-red-600 whitespace-nowrap">
+                <button onClick={(e) => { e.stopPropagation(); setHollywoodOpen(false); setBollywoodOpen(false); setUserMenuOpen(false); setMoreOpen(!moreOpen); }} className="flex items-center gap-1 px-2 py-2 text-sm text-gray-700 dark:text-gray-300 hover:text-red-600 dark:hover:text-red-400 whitespace-nowrap">
                   More <ChevronDown className="w-4 h-4" />
                 </button>
                 {moreOpen && (
-                  <div className="absolute top-full right-0 mt-1 bg-white shadow-lg rounded-lg py-2 w-48 z-50">
+                  <div className="absolute top-full right-0 mt-1 bg-white dark:bg-gray-800 shadow-lg rounded-lg py-2 w-48 z-50">
                     <button
                       onClick={() => { setCurrentView('about'); setMoreOpen(false); }}
-                      className="block w-full text-left px-4 py-2 text-gray-700 transition-colors duration-150"
-                      onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#dc2626'; e.currentTarget.style.color = '#ffffff'; }}
-                      onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = ''; e.currentTarget.style.color = ''; }}
+                      className="block w-full text-left px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-red-600 hover:text-white transition-colors duration-150"
                     >
                       About
                     </button>
                     <button
                       onClick={() => { setCurrentView('contact'); setMoreOpen(false); }}
-                      className="block w-full text-left px-4 py-2 text-gray-700 transition-colors duration-150"
-                      onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#dc2626'; e.currentTarget.style.color = '#ffffff'; }}
-                      onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = ''; e.currentTarget.style.color = ''; }}
+                      className="block w-full text-left px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-red-600 hover:text-white transition-colors duration-150"
                     >
                       Contact
                     </button>
@@ -1127,20 +1123,20 @@ const CineChatter = () => {
                     <ChevronDown className="w-4 h-4" />
                   </button>
                   {userMenuOpen && (
-                    <div className="absolute top-full right-0 mt-1 bg-white shadow-lg rounded-lg py-2 w-48 z-50">
-                      <div className="px-4 py-2 border-b">
-                        <p className="font-semibold text-sm truncate">{user.email}</p>
+                    <div className="absolute top-full right-0 mt-1 bg-white dark:bg-gray-800 shadow-lg rounded-lg py-2 w-48 z-50">
+                      <div className="px-4 py-2 border-b border-gray-200 dark:border-gray-700">
+                        <p className="font-semibold text-sm truncate text-gray-900 dark:text-white">{user.email}</p>
                       </div>
                       <button
                         onClick={() => { setUserMenuOpen(false); setCurrentView('profile'); }}
-                        className="block w-full text-left px-4 py-2 text-gray-700 hover:bg-red-50 hover:text-red-600 text-sm"
+                        className="block w-full text-left px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-red-50 dark:hover:bg-gray-700 hover:text-red-600 dark:hover:text-red-400 text-sm"
                       >
                         <User className="w-4 h-4 inline mr-2" />
                         My Profile
                       </button>
                       <button
                         onClick={handleLogout}
-                        className="block w-full text-left px-4 py-2 text-gray-700 hover:bg-red-50 hover:text-red-600 text-sm border-t"
+                        className="block w-full text-left px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-red-50 dark:hover:bg-gray-700 hover:text-red-600 dark:hover:text-red-400 text-sm border-t border-gray-200 dark:border-gray-700"
                       >
                         <LogOut className="w-4 h-4 inline mr-2" />
                         Logout
@@ -1165,7 +1161,7 @@ const CineChatter = () => {
             {/* Mobile Menu Button - Visible on mobile only */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="lg:hidden p-2 text-gray-700 hover:text-red-600"
+              className="lg:hidden p-2 text-gray-700 dark:text-gray-300 hover:text-red-600 dark:hover:text-red-400"
             >
               {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </button>
@@ -1174,54 +1170,54 @@ const CineChatter = () => {
           {/* Mobile Search Bar - Hidden for now */}
           <div className="hidden pb-3">
             <div className="relative w-full">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-              <input type="text" placeholder="Search articles..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter' && searchQuery.trim()) { setCurrentView('search'); setMobileMenuOpen(false); } }} className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-full focus:outline-none focus:border-red-500 text-sm" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-gray-500 w-4 h-4" />
+              <input type="text" placeholder="Search articles..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter' && searchQuery.trim()) { setCurrentView('search'); setMobileMenuOpen(false); } }} className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-full focus:outline-none focus:border-red-500 dark:focus:border-red-400 text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100" />
             </div>
           </div>
 
           {/* Mobile Menu Dropdown */}
           {mobileMenuOpen && (
-            <div className="lg:hidden border-t bg-white pb-4">
+            <div className="lg:hidden border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 pb-4">
               <div className="py-2 space-y-1">
-                <button onClick={() => { setCurrentView('home'); setMobileMenuOpen(false); }} className="block w-full text-left px-4 py-2 text-gray-700 hover:bg-red-50 hover:text-red-600">Home</button>
-                
-                <button onClick={() => { setSelectedCategory('ott'); setCurrentView('category'); setMobileMenuOpen(false); }} className="block w-full text-left px-4 py-2 text-gray-700 hover:bg-red-50 hover:text-red-600">OTT</button>
-                
-                <div className="border-t border-gray-200 my-1"></div>
-                <div className="px-4 py-1 text-xs font-semibold text-gray-500 uppercase">Hollywood</div>
-                <button onClick={() => { setSelectedCategory('hollywood-movies'); setCurrentView('category'); setMobileMenuOpen(false); }} className="block w-full text-left px-6 py-2 text-gray-700 hover:bg-red-50 hover:text-red-600">Movies</button>
-                <button onClick={() => { setSelectedCategory('hollywood-news'); setCurrentView('category'); setMobileMenuOpen(false); }} className="block w-full text-left px-6 py-2 text-gray-700 hover:bg-red-50 hover:text-red-600">News</button>
-                
-                <div className="border-t border-gray-200 my-1"></div>
-                <div className="px-4 py-1 text-xs font-semibold text-gray-500 uppercase">Bollywood</div>
-                <button onClick={() => { setSelectedCategory('bollywood-movies'); setCurrentView('category'); setMobileMenuOpen(false); }} className="block w-full text-left px-6 py-2 text-gray-700 hover:bg-red-50 hover:text-red-600">Movies</button>
-                <button onClick={() => { setSelectedCategory('bollywood-news'); setCurrentView('category'); setMobileMenuOpen(false); }} className="block w-full text-left px-6 py-2 text-gray-700 hover:bg-red-50 hover:text-red-600">News</button>
-                
-                <div className="border-t border-gray-200 my-1"></div>
-                <button onClick={() => { setSelectedCategory('music'); setCurrentView('category'); setMobileMenuOpen(false); }} className="block w-full text-left px-4 py-2 text-gray-700 hover:bg-red-50 hover:text-red-600">Music</button>
-                
-                <button onClick={() => { setSelectedCategory('celebrity-style'); setCurrentView('category'); setMobileMenuOpen(false); }} className="block w-full text-left px-4 py-2 text-gray-700 hover:bg-red-50 hover:text-red-600">Celebrity Style</button>
-                
-                <button onClick={() => { setSelectedCategory('international'); setCurrentView('category'); setMobileMenuOpen(false); }} className="block w-full text-left px-4 py-2 text-gray-700 hover:bg-red-50 hover:text-red-600">International</button>
-                
-                <div className="border-t border-gray-200 my-1"></div>
-                <button onClick={() => { setCurrentView('about'); setMobileMenuOpen(false); }} className="block w-full text-left px-4 py-2 text-gray-700 hover:bg-red-50 hover:text-red-600">About</button>
-                
-                <button onClick={() => { setCurrentView('contact'); setMobileMenuOpen(false); }} className="block w-full text-left px-4 py-2 text-gray-700 hover:bg-red-50 hover:text-red-600">Contact</button>
-                
-                <div className="border-t border-gray-200 my-2"></div>
+                <button onClick={() => { setCurrentView('home'); setMobileMenuOpen(false); }} className="block w-full text-left px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-red-50 dark:hover:bg-gray-700 hover:text-red-600 dark:hover:text-red-400">Home</button>
+
+                <button onClick={() => { setSelectedCategory('ott'); setCurrentView('category'); setMobileMenuOpen(false); }} className="block w-full text-left px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-red-50 dark:hover:bg-gray-700 hover:text-red-600 dark:hover:text-red-400">OTT</button>
+
+                <div className="border-t border-gray-200 dark:border-gray-700 my-1"></div>
+                <div className="px-4 py-1 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">Hollywood</div>
+                <button onClick={() => { setSelectedCategory('hollywood-movies'); setCurrentView('category'); setMobileMenuOpen(false); }} className="block w-full text-left px-6 py-2 text-gray-700 dark:text-gray-300 hover:bg-red-50 dark:hover:bg-gray-700 hover:text-red-600 dark:hover:text-red-400">Movies</button>
+                <button onClick={() => { setSelectedCategory('hollywood-news'); setCurrentView('category'); setMobileMenuOpen(false); }} className="block w-full text-left px-6 py-2 text-gray-700 dark:text-gray-300 hover:bg-red-50 dark:hover:bg-gray-700 hover:text-red-600 dark:hover:text-red-400">News</button>
+
+                <div className="border-t border-gray-200 dark:border-gray-700 my-1"></div>
+                <div className="px-4 py-1 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">Bollywood</div>
+                <button onClick={() => { setSelectedCategory('bollywood-movies'); setCurrentView('category'); setMobileMenuOpen(false); }} className="block w-full text-left px-6 py-2 text-gray-700 dark:text-gray-300 hover:bg-red-50 dark:hover:bg-gray-700 hover:text-red-600 dark:hover:text-red-400">Movies</button>
+                <button onClick={() => { setSelectedCategory('bollywood-news'); setCurrentView('category'); setMobileMenuOpen(false); }} className="block w-full text-left px-6 py-2 text-gray-700 dark:text-gray-300 hover:bg-red-50 dark:hover:bg-gray-700 hover:text-red-600 dark:hover:text-red-400">News</button>
+
+                <div className="border-t border-gray-200 dark:border-gray-700 my-1"></div>
+                <button onClick={() => { setSelectedCategory('music'); setCurrentView('category'); setMobileMenuOpen(false); }} className="block w-full text-left px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-red-50 dark:hover:bg-gray-700 hover:text-red-600 dark:hover:text-red-400">Music</button>
+
+                <button onClick={() => { setSelectedCategory('celebrity-style'); setCurrentView('category'); setMobileMenuOpen(false); }} className="block w-full text-left px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-red-50 dark:hover:bg-gray-700 hover:text-red-600 dark:hover:text-red-400">Celebrity Style</button>
+
+                <button onClick={() => { setSelectedCategory('international'); setCurrentView('category'); setMobileMenuOpen(false); }} className="block w-full text-left px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-red-50 dark:hover:bg-gray-700 hover:text-red-600 dark:hover:text-red-400">International</button>
+
+                <div className="border-t border-gray-200 dark:border-gray-700 my-1"></div>
+                <button onClick={() => { setCurrentView('about'); setMobileMenuOpen(false); }} className="block w-full text-left px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-red-50 dark:hover:bg-gray-700 hover:text-red-600 dark:hover:text-red-400">About</button>
+
+                <button onClick={() => { setCurrentView('contact'); setMobileMenuOpen(false); }} className="block w-full text-left px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-red-50 dark:hover:bg-gray-700 hover:text-red-600 dark:hover:text-red-400">Contact</button>
+
+                <div className="border-t border-gray-200 dark:border-gray-700 my-2"></div>
                 {!user ? (
                   <>
                     <button onClick={() => { setAuthMode('signup'); setShowAuthModal(true); setMobileMenuOpen(false); }} className="block w-full text-left px-4 py-3 bg-red-600 text-white font-semibold rounded-md mx-4 mb-2" style={{ width: 'calc(100% - 2rem)' }}>Sign Up</button>
-                    <button onClick={() => { setAuthMode('login'); setShowAuthModal(true); setMobileMenuOpen(false); }} className="block w-full text-left px-4 py-3 bg-gray-600 text-white font-semibold rounded-md mx-4" style={{ width: 'calc(100% - 2rem)' }}>Login</button>
+                    <button onClick={() => { setAuthMode('login'); setShowAuthModal(true); setMobileMenuOpen(false); }} className="block w-full text-left px-4 py-3 bg-gray-600 dark:bg-gray-700 text-white font-semibold rounded-md mx-4" style={{ width: 'calc(100% - 2rem)' }}>Login</button>
                   </>
                 ) : (
                   <>
-                    <button onClick={() => { setCurrentView('profile'); setMobileMenuOpen(false); }} className="block w-full text-left px-4 py-2 text-gray-700 hover:bg-red-50 hover:text-red-600">My Profile</button>
+                    <button onClick={() => { setCurrentView('profile'); setMobileMenuOpen(false); }} className="block w-full text-left px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-red-50 dark:hover:bg-gray-700 hover:text-red-600 dark:hover:text-red-400">My Profile</button>
                     {user.profile?.admin_status === 'A' && (
                       <button onClick={() => { setCurrentView('admin'); setMobileMenuOpen(false); }} className="block w-full text-left px-4 py-3 bg-green-600 text-white font-semibold rounded-md mx-4 mb-2" style={{ width: 'calc(100% - 2rem)' }}>Dashboard</button>
                     )}
-                    <button onClick={() => { handleLogout(); setMobileMenuOpen(false); }} className="block w-full text-left px-4 py-2 text-gray-700 hover:bg-red-50 hover:text-red-600">Logout</button>
+                    <button onClick={() => { handleLogout(); setMobileMenuOpen(false); }} className="block w-full text-left px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-red-50 dark:hover:bg-gray-700 hover:text-red-600 dark:hover:text-red-400">Logout</button>
                   </>
                 )}
               </div>
