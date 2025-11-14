@@ -1453,27 +1453,78 @@ const CineChatter = () => {
             })()}
           </div>
 
-          {/* Newsletter Section - 40% width, left aligned */}
-          <div className="p-6 bg-white dark:bg-gray-800 border-b-2 border-gray-300 dark:border-gray-700">
-            <div className="max-w-md">
-              <div className="bg-red-600 rounded-lg p-6 text-white">
-                <h3 className="text-xl font-bold mb-4">Subscribe to Our Newsletter</h3>
-                <form onSubmit={(e) => { e.preventDefault(); if (newsletterEmail) { alert('Thank you for subscribing!'); setNewsletterEmail(''); } }} className="space-y-3">
-                  <div>
-                    <label className="block text-sm mb-2">Email *</label>
-                    <input 
-                      type="email" 
-                      value={newsletterEmail}
-                      onChange={(e) => setNewsletterEmail(e.target.value)}
-                      placeholder="Enter your email" 
-                      required
-                      className="w-full px-4 py-2 rounded-lg text-gray-800 focus:outline-none focus:ring-2 focus:ring-yellow-400"
-                    />
-                  </div>
-                  <button type="submit" className="w-full bg-secondary-500 hover:bg-secondary-600 text-white font-bold py-3 rounded-lg transition-colors shadow-lg hover:shadow-xl">
-                    Join Newsletter
+          {/* Newsletter Section - Full Width Redesign */}
+          <div className="relative overflow-hidden bg-gradient-to-br from-red-600 via-red-700 to-orange-600 dark:from-red-800 dark:via-red-900 dark:to-orange-800 py-16 sm:py-20">
+            {/* Decorative Background Pattern */}
+            <div className="absolute inset-0 opacity-10">
+              <div className="absolute top-0 left-0 w-64 h-64 bg-white rounded-full -translate-x-1/2 -translate-y-1/2"></div>
+              <div className="absolute bottom-0 right-0 w-96 h-96 bg-white rounded-full translate-x-1/2 translate-y-1/2"></div>
+            </div>
+
+            <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+              {/* Icon */}
+              <div className="inline-flex items-center justify-center w-16 h-16 bg-white/20 rounded-full mb-6">
+                <Film className="w-8 h-8 text-white" />
+              </div>
+
+              {/* Heading */}
+              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-4 leading-tight">
+                Never Miss a Story
+              </h2>
+
+              {/* Subheading */}
+              <p className="text-lg sm:text-xl text-white/90 mb-8 max-w-2xl mx-auto leading-relaxed">
+                Get the latest entertainment news, exclusive interviews, and trending updates delivered straight to your inbox
+              </p>
+
+              {/* Form */}
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  if (newsletterEmail) {
+                    alert('Thank you for subscribing!');
+                    setNewsletterEmail('');
+                  }
+                }}
+                className="max-w-lg mx-auto"
+              >
+                <div className="flex flex-col sm:flex-row gap-3">
+                  <input
+                    type="email"
+                    value={newsletterEmail}
+                    onChange={(e) => setNewsletterEmail(e.target.value)}
+                    placeholder="Enter your email address"
+                    required
+                    className="flex-1 px-6 py-4 rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-4 focus:ring-white/30 text-base sm:text-lg shadow-xl"
+                  />
+                  <button
+                    type="submit"
+                    className="px-8 py-4 bg-white text-red-600 font-bold rounded-lg hover:bg-gray-100 transition-all duration-300 shadow-xl hover:shadow-2xl hover:scale-105 text-base sm:text-lg whitespace-nowrap"
+                  >
+                    Subscribe Now
                   </button>
-                </form>
+                </div>
+
+                {/* Privacy Note */}
+                <p className="text-sm text-white/70 mt-4">
+                  🔒 We respect your privacy. Unsubscribe anytime.
+                </p>
+              </form>
+
+              {/* Social Proof / Stats */}
+              <div className="mt-12 flex flex-wrap justify-center gap-8 text-white/90">
+                <div className="text-center">
+                  <div className="text-2xl sm:text-3xl font-bold">10K+</div>
+                  <div className="text-sm sm:text-base">Subscribers</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-2xl sm:text-3xl font-bold">Daily</div>
+                  <div className="text-sm sm:text-base">Updates</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-2xl sm:text-3xl font-bold">100%</div>
+                  <div className="text-sm sm:text-base">Free</div>
+                </div>
               </div>
             </div>
           </div>
