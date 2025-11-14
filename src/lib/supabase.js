@@ -2,8 +2,9 @@ import { createClient } from '@supabase/supabase-js'
 
 // Supabase configuration
 // Get these values from: Supabase Dashboard > Settings > API
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || ''
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || ''
+// Trim values to remove any whitespace that might be added by build systems
+const supabaseUrl = (import.meta.env.VITE_SUPABASE_URL || '').trim()
+const supabaseAnonKey = (import.meta.env.VITE_SUPABASE_ANON_KEY || '').trim()
 
 // Debug: Log if environment variables are missing (only in development)
 if (import.meta.env.DEV) {
@@ -20,6 +21,16 @@ if (!supabaseUrl || !supabaseAnonKey) {
     VITE_SUPABASE_URL: supabaseUrl ? 'Set' : 'Missing',
     VITE_SUPABASE_ANON_KEY: supabaseAnonKey ? 'Set' : 'Missing'
   })
+}
+
+// Validate URL format
+if (supabaseUrl && !supabaseUrl.startsWith('https://')) {
+  console.error('❌ Invalid Supabase URL format. Must start with https://')
+}
+
+// Validate key format (JWT should start with 'eyJ')
+if (supabaseAnonKey && !supabaseAnonKey.startsWith('eyJ')) {
+  console.error('❌ Invalid Supabase Key format. JWT tokens should start with "eyJ"')
 }
 
 // Supabase client options for better CORS handling
