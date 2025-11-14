@@ -82,6 +82,9 @@ const CineChatter = () => {
     return window.matchMedia('(prefers-color-scheme: dark)').matches;
   });
 
+  // Admin Tab State (Gmail-style)
+  const [activeAdminTab, setActiveAdminTab] = useState('articles');
+
   // Toggle dark mode
   const toggleDarkMode = () => {
     setDarkMode(prev => {
@@ -1574,33 +1577,90 @@ const CineChatter = () => {
 
       {currentView === 'admin' && user && user.profile?.admin_status === 'A' && (
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8">
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 sm:mb-8 gap-4">
-            <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white leading-tight">Admin Dashboard</h1>
-            <div className="flex gap-2 sm:gap-3 flex-wrap sm:flex-nowrap w-full sm:w-auto">
-              <button onClick={() => setShowIntegrationSettings(true)} className="bg-red-600 text-white px-3 sm:px-4 py-2 rounded-lg hover:bg-red-700 flex items-center gap-2 whitespace-nowrap text-sm sm:text-base flex-1 sm:flex-initial justify-center">
-                <Settings className="w-4 h-4" />Integration Settings
-              </button>
-              <button onClick={() => setShowFeaturedManager(true)} className="bg-red-600 text-white px-3 sm:px-4 py-2 rounded-lg hover:bg-red-700 flex items-center gap-2 whitespace-nowrap text-sm sm:text-base flex-1 sm:flex-initial justify-center">
-                <Upload className="w-4 h-4" />Untold Stories
-              </button>
-              <button onClick={() => alert('Coming Soon...')} className="bg-red-600 text-white px-3 sm:px-4 py-2 rounded-lg hover:bg-red-700 flex items-center gap-2 whitespace-nowrap text-sm sm:text-base flex-1 sm:flex-initial justify-center">
-                <Settings className="w-4 h-4" />Agent
-              </button>
-              <button onClick={() => setShowArticleForm(true)} className="bg-red-600 text-white px-3 sm:px-4 py-2 rounded-lg hover:bg-red-700 flex items-center gap-2 whitespace-nowrap text-sm sm:text-base flex-1 sm:flex-initial justify-center">
-                <Plus className="w-4 h-4" />New Article
-              </button>
-              <button onClick={() => { setShowManageAdmins(true); loadAdminRequests(); loadAllUsers(); }} className="bg-gray-600 text-white px-3 sm:px-4 py-2 rounded-lg hover:bg-gray-700 flex items-center gap-2 whitespace-nowrap text-sm sm:text-base flex-1 sm:flex-initial justify-center">
-                <User className="w-4 h-4" />Manage Admins
-              </button>
-              <button onClick={exportToCSV} className="bg-blue-600 text-white px-3 sm:px-4 py-2 rounded-lg hover:bg-blue-700 flex items-center gap-2 whitespace-nowrap text-sm sm:text-base flex-1 sm:flex-initial justify-center">
-                <Download className="w-4 h-4" />Export CSV {selectedArticles.length > 0 && `(${selectedArticles.length})`}
-              </button>
+          <div className="mb-6">
+            <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white leading-tight mb-6">Admin Dashboard</h1>
+
+            {/* Gmail-style Tab Navigation */}
+            <div className="border-b border-gray-200 dark:border-gray-700">
+              <nav className="flex gap-0 overflow-x-auto">
+                <button
+                  onClick={() => setActiveAdminTab('articles')}
+                  className={`px-4 sm:px-6 py-3 text-sm font-medium whitespace-nowrap border-b-2 transition-colors ${
+                    activeAdminTab === 'articles'
+                      ? 'border-red-600 text-red-600 dark:text-red-400'
+                      : 'border-transparent text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 hover:border-gray-300 dark:hover:border-gray-600'
+                  }`}
+                >
+                  Articles
+                </button>
+                <button
+                  onClick={() => setActiveAdminTab('integration')}
+                  className={`px-4 sm:px-6 py-3 text-sm font-medium whitespace-nowrap border-b-2 transition-colors ${
+                    activeAdminTab === 'integration'
+                      ? 'border-red-600 text-red-600 dark:text-red-400'
+                      : 'border-transparent text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 hover:border-gray-300 dark:hover:border-gray-600'
+                  }`}
+                >
+                  Integration Settings
+                </button>
+                <button
+                  onClick={() => setActiveAdminTab('untold-stories')}
+                  className={`px-4 sm:px-6 py-3 text-sm font-medium whitespace-nowrap border-b-2 transition-colors ${
+                    activeAdminTab === 'untold-stories'
+                      ? 'border-red-600 text-red-600 dark:text-red-400'
+                      : 'border-transparent text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 hover:border-gray-300 dark:hover:border-gray-600'
+                  }`}
+                >
+                  Untold Stories
+                </button>
+                <button
+                  onClick={() => setActiveAdminTab('agent')}
+                  className={`px-4 sm:px-6 py-3 text-sm font-medium whitespace-nowrap border-b-2 transition-colors ${
+                    activeAdminTab === 'agent'
+                      ? 'border-red-600 text-red-600 dark:text-red-400'
+                      : 'border-transparent text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 hover:border-gray-300 dark:hover:border-gray-600'
+                  }`}
+                >
+                  Agent
+                </button>
+                <button
+                  onClick={() => setActiveAdminTab('new-article')}
+                  className={`px-4 sm:px-6 py-3 text-sm font-medium whitespace-nowrap border-b-2 transition-colors ${
+                    activeAdminTab === 'new-article'
+                      ? 'border-red-600 text-red-600 dark:text-red-400'
+                      : 'border-transparent text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 hover:border-gray-300 dark:hover:border-gray-600'
+                  }`}
+                >
+                  New Article
+                </button>
+                <button
+                  onClick={() => setActiveAdminTab('manage-admins')}
+                  className={`px-4 sm:px-6 py-3 text-sm font-medium whitespace-nowrap border-b-2 transition-colors ${
+                    activeAdminTab === 'manage-admins'
+                      ? 'border-red-600 text-red-600 dark:text-red-400'
+                      : 'border-transparent text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 hover:border-gray-300 dark:hover:border-gray-600'
+                  }`}
+                >
+                  Manage Admins
+                </button>
+              </nav>
             </div>
           </div>
 
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden">
-            <div className="overflow-x-auto">
-              <table className="w-full min-w-[640px]">
+          {/* Articles Tab */}
+          {activeAdminTab === 'articles' && (
+            <>
+              <div className="mb-4 flex justify-between items-center">
+                <p className="text-sm text-gray-600 dark:text-gray-400">
+                  Manage all articles from different sources
+                </p>
+                <button onClick={exportToCSV} className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 flex items-center gap-2 text-sm shadow-md hover:shadow-lg transition-all">
+                  <Download className="w-4 h-4" />Export CSV {selectedArticles.length > 0 && `(${selectedArticles.length})`}
+                </button>
+              </div>
+              <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden">
+                <div className="overflow-x-auto">
+                  <table className="w-full min-w-[640px]">
               <thead className="bg-gray-50 dark:bg-gray-700">
                 <tr>
                   <th className="px-4 py-3 text-left">
@@ -1715,6 +1775,136 @@ const CineChatter = () => {
             </table>
             </div>
           </div>
+            </>
+          )}
+
+          {/* Integration Settings Tab */}
+          {activeAdminTab === 'integration' && (
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
+              <div className="flex justify-between items-center mb-6">
+                <div>
+                  <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Integration Settings</h2>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">Configure external data sources and integrations</p>
+                </div>
+                <button onClick={() => setShowIntegrationSettings(true)} className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 flex items-center gap-2 shadow-md">
+                  <Settings className="w-5 h-5" />Open Settings
+                </button>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+                  <h3 className="font-semibold text-gray-900 dark:text-white mb-2">Google Sheets</h3>
+                  <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">Connect to external spreadsheets for article management</p>
+                  <div className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold ${sheetsEnabled ? 'bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200' : 'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200'}`}>
+                    {sheetsEnabled ? 'Connected' : 'Not Connected'}
+                  </div>
+                </div>
+                <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+                  <h3 className="font-semibold text-gray-900 dark:text-white mb-2">Data Source</h3>
+                  <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">Current data source configuration</p>
+                  <div className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200">
+                    {dataSource === 'sheets-only' ? 'Sheets Only' : dataSource === 'admin-only' ? 'Admin Only' : 'Both Sources'}
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Untold Stories Tab */}
+          {activeAdminTab === 'untold-stories' && (
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
+              <div className="flex justify-between items-center mb-6">
+                <div>
+                  <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Untold Stories</h2>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">Featured carousel stories for homepage</p>
+                </div>
+                <button onClick={() => setShowFeaturedManager(true)} className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 flex items-center gap-2 shadow-md">
+                  <Upload className="w-5 h-5" />Manage Stories
+                </button>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {featuredImages.map((story, index) => (
+                  <div key={story.id} className="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
+                    {story.image ? (
+                      <img src={story.image} alt={story.title} className="w-full h-48 object-cover" />
+                    ) : (
+                      <div className="w-full h-48 bg-gray-200 dark:bg-gray-700 flex items-center justify-center text-gray-400 dark:text-gray-500">
+                        No Image
+                      </div>
+                    )}
+                    <div className="p-4">
+                      <h3 className="font-semibold text-gray-900 dark:text-white mb-1">{story.title || `Story ${index + 1}`}</h3>
+                      <p className="text-xs text-gray-600 dark:text-gray-400">{story.articleTitle || 'No article linked'}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Agent Tab */}
+          {activeAdminTab === 'agent' && (
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
+              <div className="text-center py-12">
+                <Settings className="w-16 h-16 text-gray-400 dark:text-gray-500 mx-auto mb-4" />
+                <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Agent</h2>
+                <p className="text-gray-600 dark:text-gray-400 mb-6">AI-powered content management coming soon</p>
+                <button onClick={() => alert('Coming Soon...')} className="bg-red-600 text-white px-6 py-2 rounded-lg hover:bg-red-700 shadow-md">
+                  Learn More
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* New Article Tab */}
+          {activeAdminTab === 'new-article' && (
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
+              <div className="flex justify-between items-center mb-6">
+                <div>
+                  <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Create New Article</h2>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">Write and publish new content</p>
+                </div>
+                <button onClick={() => setShowArticleForm(true)} className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 flex items-center gap-2 shadow-md">
+                  <Plus className="w-5 h-5" />New Article
+                </button>
+              </div>
+              <div className="text-center py-12 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg">
+                <Plus className="w-16 h-16 text-gray-400 dark:text-gray-500 mx-auto mb-4" />
+                <p className="text-gray-600 dark:text-gray-400 mb-4">Click the button above to create your first article</p>
+                <p className="text-sm text-gray-500 dark:text-gray-500">Articles created here will appear in the Articles tab</p>
+              </div>
+            </div>
+          )}
+
+          {/* Manage Admins Tab */}
+          {activeAdminTab === 'manage-admins' && (
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
+              <div className="flex justify-between items-center mb-6">
+                <div>
+                  <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Manage Admins</h2>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">Review admin requests and manage user permissions</p>
+                </div>
+                <button onClick={() => { setShowManageAdmins(true); loadAdminRequests(); loadAllUsers(); }} className="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 flex items-center gap-2 shadow-md">
+                  <User className="w-5 h-5" />Open Admin Panel
+                </button>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-6 text-center">
+                  <div className="text-3xl font-bold text-red-600 dark:text-red-400 mb-2">{adminRequests.length}</div>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">Pending Requests</p>
+                </div>
+                <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-6 text-center">
+                  <div className="text-3xl font-bold text-secondary-600 dark:text-secondary-400 mb-2">
+                    {allUsers.filter(u => u.profile?.admin_status === 'A').length}
+                  </div>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">Active Admins</p>
+                </div>
+                <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-6 text-center">
+                  <div className="text-3xl font-bold text-blue-600 dark:text-blue-400 mb-2">{allUsers.length}</div>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">Total Users</p>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       )}
 
