@@ -1754,9 +1754,9 @@ const CineChatter = () => {
       )}
 
       {selectedArticle && (
-        <div className="fixed inset-0 bg-black dark:bg-black bg-opacity-90 dark:bg-opacity-95 z-50 overflow-y-auto">
+        <div className="fixed inset-0 bg-black bg-opacity-50 dark:bg-opacity-70 z-50 overflow-y-auto animate-fadeIn">
           <div className="min-h-screen py-12 px-4 sm:px-6 lg:px-8">
-            <div className="max-w-full mx-auto bg-white dark:bg-gray-800 rounded-lg p-4 sm:p-6 lg:p-8">
+            <div className="max-w-full mx-auto bg-white dark:bg-gray-800 rounded-lg p-4 sm:p-6 lg:p-8 animate-slideUp shadow-2xl">
               <button onClick={() => setSelectedArticle(null)} className="mb-6 text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 flex items-center gap-2 font-semibold">
                 <X className="w-6 h-6" />Close
               </button>
@@ -1769,8 +1769,8 @@ const CineChatter = () => {
       )}
 
       {showArticleForm && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 dark:bg-opacity-70 flex items-center justify-center p-4 z-50">
-          <div className="bg-white dark:bg-gray-800 rounded-lg max-w-2xl w-full p-6 max-h-screen overflow-y-auto">
+        <div className="fixed inset-0 bg-black bg-opacity-50 dark:bg-opacity-70 flex items-center justify-center p-4 z-50 animate-fadeIn">
+          <div className="bg-white dark:bg-gray-800 rounded-lg max-w-2xl w-full p-6 max-h-screen overflow-y-auto animate-slideUp shadow-2xl">
             <div className="flex justify-between mb-6">
               <h2 className="text-2xl font-bold text-gray-900 dark:text-white">{editingArticle ? 'Edit' : 'New'} Article</h2>
               <button onClick={resetForm} className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"><X className="w-6 h-6" /></button>
@@ -1812,8 +1812,8 @@ const CineChatter = () => {
 
       {/* Admin Access Request Modal */}
       {showAdminRequestModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 dark:bg-opacity-70 flex items-center justify-center p-4 z-[100] overflow-y-auto">
-          <div className="bg-white dark:bg-gray-800 rounded-lg p-6 max-w-lg w-full relative my-8 max-h-[90vh] overflow-y-auto">
+        <div className="fixed inset-0 bg-black bg-opacity-50 dark:bg-opacity-70 flex items-center justify-center p-4 z-[100] overflow-y-auto animate-fadeIn">
+          <div className="bg-white dark:bg-gray-800 rounded-lg p-6 max-w-lg w-full relative my-8 max-h-[90vh] overflow-y-auto animate-slideUp shadow-2xl">
             {/* Close Button */}
             <button
               onClick={() => {setShowAdminRequestModal(false); setCurrentView('home');}}
@@ -1903,9 +1903,9 @@ const CineChatter = () => {
 
       {/* Manage Admins Modal */}
       {showManageAdmins && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 dark:bg-opacity-70 z-50 overflow-y-auto">
+        <div className="fixed inset-0 bg-black bg-opacity-50 dark:bg-opacity-70 z-50 overflow-y-auto animate-fadeIn">
           <div className="min-h-screen py-8 px-4 flex items-start justify-center">
-            <div className="bg-white dark:bg-gray-800 rounded-lg max-w-4xl w-full">
+            <div className="bg-white dark:bg-gray-800 rounded-lg max-w-4xl w-full animate-slideUp shadow-2xl">
               <div className="sticky top-0 bg-white dark:bg-gray-800 border-b dark:border-gray-700 p-6 flex justify-between items-center z-10 rounded-t-lg">
                 <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Manage Admins</h2>
                 <button onClick={() => setShowManageAdmins(false)} className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200">
@@ -2023,9 +2023,9 @@ const CineChatter = () => {
 
       {/* Integration Settings Modal */}
       {showIntegrationSettings && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 dark:bg-opacity-70 z-50 overflow-y-auto">
+        <div className="fixed inset-0 bg-black bg-opacity-50 dark:bg-opacity-70 z-50 overflow-y-auto animate-fadeIn">
           <div className="min-h-screen py-8 px-4 flex items-start justify-center">
-            <div className="bg-white dark:bg-gray-800 rounded-lg max-w-3xl w-full">
+            <div className="bg-white dark:bg-gray-800 rounded-lg max-w-3xl w-full animate-slideUp shadow-2xl">
               <div className="sticky top-0 bg-white dark:bg-gray-800 border-b dark:border-gray-700 p-6 flex justify-between items-center z-10 rounded-t-lg">
                 <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Google Sheets Integration</h2>
                 <button onClick={() => setShowIntegrationSettings(false)} className="hover:bg-gray-100 dark:hover:bg-gray-700 p-2 rounded-full">
@@ -2181,9 +2181,9 @@ const CineChatter = () => {
       )}
 
       {showFeaturedManager && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 dark:bg-opacity-70 z-50 overflow-y-auto">
+        <div className="fixed inset-0 bg-black bg-opacity-50 dark:bg-opacity-70 z-50 overflow-y-auto animate-fadeIn">
           <div className="min-h-screen py-8 px-4 flex items-start justify-center">
-            <div className="bg-white dark:bg-gray-800 rounded-lg max-w-6xl w-full">
+            <div className="bg-white dark:bg-gray-800 rounded-lg max-w-6xl w-full animate-slideUp shadow-2xl">
               <div className="sticky top-0 bg-white dark:bg-gray-800 border-b dark:border-gray-700 p-6 flex justify-between items-center z-10 rounded-t-lg">
                 <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Manage Untold Stories ({featuredImages.length} of 10)</h2>
                 <button onClick={() => setShowFeaturedManager(false)} className="hover:bg-gray-100 dark:hover:bg-gray-700 p-2 rounded-full">
@@ -2371,8 +2371,8 @@ const CineChatter = () => {
 
       {/* Treasure Box Modal */}
       {treasureBoxOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-90 z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-lg max-w-2xl w-full p-8 relative">
+        <div className="fixed inset-0 bg-black bg-opacity-50 dark:bg-opacity-70 z-50 flex items-center justify-center p-4 animate-fadeIn">
+          <div className="bg-white dark:bg-gray-800 rounded-lg max-w-2xl w-full p-8 relative animate-slideUp shadow-2xl">
             <button onClick={() => setTreasureBoxOpen(false)} className="absolute top-4 right-4 text-gray-500 hover:text-gray-700">
               <X className="w-6 h-6" />
             </button>
@@ -2416,9 +2416,9 @@ const CineChatter = () => {
 
       {/* Treasure Article Modal */}
       {selectedTreasureArticle && (
-        <div className="fixed inset-0 bg-black bg-opacity-90 z-50 overflow-y-auto">
+        <div className="fixed inset-0 bg-black bg-opacity-50 dark:bg-opacity-70 z-50 overflow-y-auto animate-fadeIn">
           <div className="min-h-screen py-12 px-4">
-            <div className="max-w-4xl mx-auto bg-white rounded-lg p-8">
+            <div className="max-w-4xl mx-auto bg-white dark:bg-gray-800 rounded-lg p-8 animate-slideUp shadow-2xl">
               <button
                 onClick={() => setSelectedTreasureArticle(null)}
                 className="mb-6 text-red-600 hover:text-red-700 flex items-center gap-2 font-semibold"
@@ -2441,8 +2441,8 @@ const CineChatter = () => {
 
       {/* Authentication Modal */}
       {showAuthModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 dark:bg-opacity-70 flex items-center justify-center p-4 z-50">
-          <div className="bg-white dark:bg-gray-800 rounded-lg p-8 max-w-md w-full">
+        <div className="fixed inset-0 bg-black bg-opacity-50 dark:bg-opacity-70 flex items-center justify-center p-4 z-50 animate-fadeIn">
+          <div className="bg-white dark:bg-gray-800 rounded-lg p-8 max-w-md w-full animate-slideUp shadow-2xl">
             <div className="flex justify-between items-center mb-6">
               <h2 className="text-2xl font-bold text-gray-900 dark:text-white">{authMode === 'signup' ? 'Create Account' : 'Welcome Back'}</h2>
               <button onClick={() => { setShowAuthModal(false); setAuthForm({ name: '', email: '', password: '' }); }}>
