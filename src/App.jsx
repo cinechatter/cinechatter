@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Film, TrendingUp, Plus, Edit2, Trash2, Eye, X, Menu, Search, ChevronDown, Upload, Settings } from 'lucide-react';
+import { Film, TrendingUp, Plus, Edit2, Trash2, Eye, X, Menu, Search, ChevronDown, Upload, Settings, User, LogOut, Download } from 'lucide-react';
+import { supabase, isSupabaseConfigured } from './lib/supabase';
+import { autoGenerateSEOFields } from './utils/seoHelpers';
 
 const categories = [
   { id: 'hollywood-movies', name: 'Hollywood Movies' },
@@ -14,9 +16,8 @@ const categories = [
 
 const CineChatter = () => {
   const [articles, setArticles] = useState([]);
-  const [isAdmin, setIsAdmin] = useState(false);
-  const [showAdminLogin, setShowAdminLogin] = useState(false);
-  const [loginPassword, setLoginPassword] = useState('');
+  const [showAdminRequestModal, setShowAdminRequestModal] = useState(false);
+  const [adminRequestForm, setAdminRequestForm] = useState({ name: '', email: '', password: '', message: '' });
   const [currentView, setCurrentView] = useState('home');
   const [selectedCategory, setSelectedCategory] = useState('hollywood-movies');
   const [showArticleForm, setShowArticleForm] = useState(false);
@@ -54,10 +55,90 @@ const CineChatter = () => {
   const [sheetArticles, setSheetArticles] = useState([]);
   const [showIntegrationSettings, setShowIntegrationSettings] = useState(false);
 
+  // Authentication State
+  const [user, setUser] = useState(null);
+  const [showAuthModal, setShowAuthModal] = useState(false);
+  const [authMode, setAuthMode] = useState('login'); // 'login' or 'signup'
+  const [authForm, setAuthForm] = useState({ name: '', email: '', password: '' });
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
+
+  // Admin Management State
+  const [showManageAdmins, setShowManageAdmins] = useState(false);
+  const [allUsers, setAllUsers] = useState([]);
+  const [userSearchQuery, setUserSearchQuery] = useState('');
+  const [adminRequests, setAdminRequests] = useState([]);
+  const [showRequestsTab, setShowRequestsTab] = useState(true); // true = requests, false = users
+
+  // CSV Export Selection State
+  const [selectedArticles, setSelectedArticles] = useState([])
+
   useEffect(() => {
     loadArticles();
     loadFeaturedImages();
+    checkUser();
+
+    // Expose supabase to window for testing (development only)
+    if (process.env.NODE_ENV === 'development') {
+      window.supabase = supabase;
+    }
   }, []);
+
+  // Check if user is logged in
+  const checkUser = async () => {
+    if (!isSupabaseConfigured()) return;
+
+    const { data: { user } } = await supabase.auth.getUser();
+    if (user) {
+      // Fetch user profile including admin status
+      const { data: profile } = await supabase
+        .from('users')
+        .select('*')
+        .eq('id', user.id)
+        .single();
+
+      if (profile) {
+        setUser({ ...user, profile });
+      } else {
+        setUser(user);
+      }
+    }
+  };
+
+  // Show admin request modal when accessing #admin
+  const showAdminAccessModal = () => {
+    if (currentView === 'admin' && !user) {
+      // User not logged in, show request modal
+      setShowAdminRequestModal(true);
+    }
+  };
+
+  // Check URL hash for secret admin access
+  useEffect(() => {
+    const checkUrlHash = () => {
+      const hash = window.location.hash;
+      if (hash === '#admin' || hash === '#/admin') {
+        setCurrentView('admin');
+        // Clear the hash to keep it secret
+        window.history.replaceState(null, '', window.location.pathname);
+      }
+    };
+
+    checkUrlHash();
+    window.addEventListener('hashchange', checkUrlHash);
+
+    return () => {
+      window.removeEventListener('hashchange', checkUrlHash);
+    };
+  }, []);
+
+  // Show admin request modal when navigating to admin view
+  useEffect(() => {
+    if (currentView === 'admin') {
+      showAdminAccessModal();
+    } else {
+      setShowAdminRequestModal(false);
+    }
+  }, [currentView, user]);
 
   // Close dropdowns when clicking outside
   useEffect(() => {
@@ -65,17 +146,329 @@ const CineChatter = () => {
       setHollywoodOpen(false);
       setBollywoodOpen(false);
       setMoreOpen(false);
+      setUserMenuOpen(false);
     };
 
-    if (hollywoodOpen || bollywoodOpen || moreOpen) {
+    if (hollywoodOpen || bollywoodOpen || moreOpen || userMenuOpen) {
       document.addEventListener('click', handleClickOutside);
     }
 
     return () => {
       document.removeEventListener('click', handleClickOutside);
     };
-  }, [hollywoodOpen, bollywoodOpen, moreOpen]);
+  }, [hollywoodOpen, bollywoodOpen, moreOpen, userMenuOpen]);
 
+  // Authentication Functions
+  const handleSignup = async () => {
+    if (!isSupabaseConfigured()) {
+      alert('Supabase is not configured. Please add VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY to your .env file.');
+      return;
+    }
+
+    if (!authForm.email || !authForm.password) {
+      alert('Please enter email and password');
+      return;
+    }
+
+    const { data, error } = await supabase.auth.signUp({
+      email: authForm.email,
+      password: authForm.password,
+      options: {
+        data: {
+          name: authForm.name || authForm.email.split('@')[0]
+        }
+      }
+    });
+
+    if (error) {
+      alert('Signup error: ' + error.message);
+    } else {
+      alert('Signup successful! Please check your email for verification.');
+      setAuthForm({ name: '', email: '', password: '' });
+      setShowAuthModal(false);
+      checkUser();
+    }
+  };
+
+  const handleLogin = async () => {
+    if (!isSupabaseConfigured()) {
+      alert('Supabase is not configured. Please add VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY to your .env file.');
+      return;
+    }
+
+    if (!authForm.email || !authForm.password) {
+      alert('Please enter email and password');
+      return;
+    }
+
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email: authForm.email,
+      password: authForm.password
+    });
+
+    if (error) {
+      alert('Login error: ' + error.message);
+    } else {
+      setAuthForm({ name: '', email: '', password: '' });
+      setShowAuthModal(false);
+      checkUser();
+    }
+  };
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    setUser(null);
+    setUserMenuOpen(false);
+  };
+
+  // Handle first-time admin setup
+  // Handle admin access request
+  const handleAdminRequest = async () => {
+    if (!isSupabaseConfigured()) {
+      alert('Supabase is not configured.');
+      return;
+    }
+
+    if (!adminRequestForm.name || !adminRequestForm.email || !adminRequestForm.password) {
+      alert('Please fill in all required fields');
+      return;
+    }
+
+    if (adminRequestForm.password.length < 6) {
+      alert('Password must be at least 6 characters');
+      return;
+    }
+
+    try {
+      console.log('Submitting admin access request...');
+
+      // Create Supabase auth user account
+      const { data: authData, error: authError } = await supabase.auth.signUp({
+        email: adminRequestForm.email,
+        password: adminRequestForm.password,
+        options: {
+          data: {
+            name: adminRequestForm.name
+          }
+        }
+      });
+
+      if (authError) {
+        if (authError.message.includes('already registered')) {
+          alert('An account with this email already exists. Please login or use a different email.');
+        } else {
+          alert('Error creating account: ' + authError.message);
+        }
+        console.error('Signup error:', authError);
+        return;
+      }
+
+      console.log('User created:', authData.user.id);
+
+      // Wait for trigger to create user record
+      await new Promise(resolve => setTimeout(resolve, 1500));
+
+      // Update user record with admin request status
+      const { error: updateError } = await supabase
+        .from('users')
+        .update({
+          admin_status: 'P',
+          admin_request_message: adminRequestForm.message || null,
+          admin_requested_at: new Date().toISOString()
+        })
+        .eq('id', authData.user.id);
+
+      if (updateError) {
+        console.error('Error updating user status:', updateError);
+      }
+
+      alert(
+        'Admin access request submitted successfully!\n\n' +
+        'Your account has been created.\n' +
+        'Your request has been sent to the site administrator (cinechattercontact@gmail.com).\n' +
+        'You will receive an email once your request is approved.\n\n' +
+        'This usually takes 24-48 hours.'
+      );
+
+      setAdminRequestForm({ name: '', email: '', password: '', message: '' });
+      setShowAdminRequestModal(false);
+      setCurrentView('home');
+    } catch (error) {
+      console.error('Request failed:', error);
+      alert('Failed to submit request: ' + error.message);
+    }
+  };
+
+  // Admin Management Functions
+  const loadAllUsers = async () => {
+    if (!isSupabaseConfigured()) return;
+
+    try {
+      const { data, error } = await supabase
+        .from('users')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        console.error('Error loading users:', error);
+        alert('Failed to load users: ' + error.message);
+        return;
+      }
+
+      setAllUsers(data || []);
+    } catch (error) {
+      console.error('Error loading users:', error);
+    }
+  };
+
+  const promoteToAdmin = async (userId, userEmail) => {
+    if (!isSupabaseConfigured()) return;
+
+    if (!confirm(`Promote ${userEmail} to admin?`)) return;
+
+    try {
+      const { error } = await supabase
+        .from('users')
+        .update({
+          admin_status: 'A',
+          admin_reviewed_at: new Date().toISOString(),
+          admin_reviewed_by: user.email
+        })
+        .eq('id', userId);
+
+      if (error) {
+        console.error('Error promoting user:', error);
+        alert('Failed to promote user: ' + error.message);
+        return;
+      }
+
+      alert(`${userEmail} is now an admin!`);
+      loadAllUsers(); // Refresh the list
+    } catch (error) {
+      console.error('Error:', error);
+      alert('Failed to promote user: ' + error.message);
+    }
+  };
+
+  const demoteAdmin = async (userId, userEmail) => {
+    if (!isSupabaseConfigured()) return;
+
+    // Prevent demoting yourself
+    if (userId === user?.id) {
+      alert('You cannot demote yourself!');
+      return;
+    }
+
+    if (!confirm(`Remove admin privileges from ${userEmail}?`)) return;
+
+    try {
+      const { error } = await supabase
+        .from('users')
+        .update({
+          admin_status: null,
+          admin_reviewed_at: new Date().toISOString(),
+          admin_reviewed_by: user.email
+        })
+        .eq('id', userId);
+
+      if (error) {
+        console.error('Error demoting admin:', error);
+        alert('Failed to demote admin: ' + error.message);
+        return;
+      }
+
+      alert(`${userEmail} is no longer an admin.`);
+      loadAllUsers(); // Refresh the list
+    } catch (error) {
+      console.error('Error:', error);
+      alert('Failed to demote admin: ' + error.message);
+    }
+  };
+
+  // Load admin requests (users with pending_approval status)
+  const loadAdminRequests = async () => {
+    if (!isSupabaseConfigured()) return;
+
+    try {
+      const { data, error } = await supabase
+        .from('users')
+        .select('*')
+        .eq('admin_status', 'P')
+        .order('admin_requested_at', { ascending: false });
+
+      if (error) {
+        console.error('Error loading requests:', error);
+        return;
+      }
+
+      setAdminRequests(data || []);
+    } catch (error) {
+      console.error('Error loading requests:', error);
+    }
+  };
+
+  // Approve admin request
+  const approveAdminRequest = async (request) => {
+    if (!isSupabaseConfigured()) return;
+
+    if (!confirm(`Approve admin request from ${request.name} (${request.email})?`)) return;
+
+    try {
+      // Update user: mark as approved admin
+      const { error: updateError } = await supabase
+        .from('users')
+        .update({
+          admin_status: 'A',
+          admin_reviewed_at: new Date().toISOString(),
+          admin_reviewed_by: user.email
+        })
+        .eq('id', request.id);
+
+      if (updateError) {
+        console.error('Error approving user:', updateError);
+        alert('Failed to approve: ' + updateError.message);
+        return;
+      }
+
+      alert(`✅ ${request.email} has been approved as admin!`);
+      loadAdminRequests();
+      loadAllUsers();
+    } catch (error) {
+      console.error('Approval failed:', error);
+      alert('Failed to approve request: ' + error.message);
+    }
+  };
+
+  // Reject admin request
+  const rejectAdminRequest = async (request) => {
+    if (!isSupabaseConfigured()) return;
+
+    const reason = prompt(`Reject request from ${request.email}?\n\nOptional rejection reason:`);
+    if (reason === null) return; // User cancelled
+
+    try {
+      const { error } = await supabase
+        .from('users')
+        .update({
+          admin_status: 'R',
+          rejection_reason: reason || 'No reason provided',
+          admin_reviewed_at: new Date().toISOString(),
+          admin_reviewed_by: user.email
+        })
+        .eq('id', request.id);
+
+      if (error) {
+        alert('Error rejecting request: ' + error.message);
+        return;
+      }
+
+      alert(`❌ Request from ${request.email} has been rejected.`);
+      loadAdminRequests();
+    } catch (error) {
+      console.error('Rejection failed:', error);
+      alert('Failed to reject request: ' + error.message);
+    }
+  };
 
   const loadArticles = async () => {
     try {
@@ -156,16 +549,7 @@ const CineChatter = () => {
     }
   };
 
-  const handleAdminLogin = () => {
-    if (loginPassword === 'admin123') {
-      setIsAdmin(true);
-      setShowAdminLogin(false);
-      setLoginPassword('');
-      setCurrentView('admin');
-    } else {
-      alert('Incorrect password');
-    }
-  };
+  // Admin login removed - now using Supabase authentication with is_admin check
 
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
@@ -499,6 +883,84 @@ const CineChatter = () => {
     setTreasureBoxOpen(false);
   };
 
+  // Checkbox handlers for article selection
+  const toggleArticleSelection = (articleId) => {
+    setSelectedArticles(prev =>
+      prev.includes(articleId)
+        ? prev.filter(id => id !== articleId)
+        : [...prev, articleId]
+    );
+  };
+
+  const toggleAllArticles = () => {
+    const allArticles = [...articles, ...sheetArticles].filter(a => a.status === 'published');
+    if (selectedArticles.length === allArticles.length) {
+      setSelectedArticles([]);
+    } else {
+      setSelectedArticles(allArticles.map(a => a.id));
+    }
+  };
+
+  // CSV Export functionality
+  const exportToCSV = () => {
+    // Get all articles based on data source
+    let allArticles = [];
+    if (dataSource === 'admin-only') {
+      allArticles = articles;
+    } else if (dataSource === 'sheets-only') {
+      allArticles = sheetArticles;
+    } else if (dataSource === 'both') {
+      allArticles = [...articles, ...sheetArticles];
+    } else {
+      allArticles = articles; // default
+    }
+
+    // Filter only published articles
+    let publishedArticles = allArticles.filter(a => a.status === 'published');
+
+    // If there are selected articles, only export those
+    if (selectedArticles.length > 0) {
+      publishedArticles = publishedArticles.filter(a => selectedArticles.includes(a.id));
+    }
+
+    if (publishedArticles.length === 0) {
+      alert(selectedArticles.length > 0 ? 'No selected articles to export' : 'No published articles to export');
+      return;
+    }
+
+    // CSV Headers
+    const headers = ['Category', 'Title', 'Description', 'Image URL', 'Date'];
+
+    // Convert articles to CSV rows
+    const rows = publishedArticles.map(article => {
+      const category = (article.category || '').replace(/"/g, '""');
+      const title = (article.title || '').replace(/"/g, '""');
+      const description = (article.content || '').replace(/"/g, '""').replace(/\n/g, ' ').replace(/\r/g, ' '); // Remove line breaks
+      const imageUrl = (article.image || '').replace(/"/g, '""'); // Escape quotes
+      const date = article.date || article.createdAt || new Date().toISOString().split('T')[0];
+
+      return `"${category}","${title}","${description}","${imageUrl}","${date}"`;
+    });
+
+    // Combine headers and rows
+    const csvContent = [headers.join(','), ...rows].join('\n');
+
+    // Create blob and download
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+
+    link.setAttribute('href', url);
+    link.setAttribute('download', `cinechatter-articles-${new Date().toISOString().split('T')[0]}.csv`);
+    link.style.visibility = 'hidden';
+
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
+    alert(`Exported ${publishedArticles.length} articles to CSV`);
+  };
+
   return (
     <div className="min-h-screen bg-white">
       <nav className="bg-white shadow-sm border-b sticky top-0 z-40">
@@ -510,19 +972,19 @@ const CineChatter = () => {
             </button>
 
             {/* Desktop Search */}
-            <div className="flex items-center flex-1 max-w-md mx-4">
+            <div className="flex items-center mx-2 flex-shrink-0" style={{ width: '280px', minWidth: '280px' }}>
               <div className="relative w-full">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-                <input type="text" placeholder="Search articles..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter' && searchQuery.trim()) { setCurrentView('search'); } }} className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-full focus:outline-none focus:border-red-500 text-sm" />
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                <input type="text" placeholder="Search articles..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter' && searchQuery.trim()) { setCurrentView('search'); } }} className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-full focus:outline-none focus:border-red-500 text-sm" />
               </div>
             </div>
 
             {/* Desktop Navigation - Always visible */}
-            <div className="flex items-center gap-2">
-              <button onClick={() => setCurrentView('home')} className="px-3 py-2 text-sm text-gray-700 hover:text-red-600 whitespace-nowrap">Home</button>
+            <div className="flex items-center gap-0.5">
+              <button onClick={() => setCurrentView('home')} className="px-2 py-2 text-sm text-gray-700 hover:text-red-600 whitespace-nowrap">Home</button>
 
               <div className="relative">
-                <button onClick={(e) => { e.stopPropagation(); setBollywoodOpen(false); setMoreOpen(false); setHollywoodOpen(!hollywoodOpen); }} className="flex items-center gap-1 px-3 py-2 text-sm text-gray-700 hover:text-red-600 whitespace-nowrap">
+                <button onClick={(e) => { e.stopPropagation(); setBollywoodOpen(false); setMoreOpen(false); setUserMenuOpen(false); setHollywoodOpen(!hollywoodOpen); }} className="flex items-center gap-1 px-2 py-2 text-sm text-gray-700 hover:text-red-600 whitespace-nowrap">
                   Hollywood <ChevronDown className="w-4 h-4" />
                 </button>
                 {hollywoodOpen && (
@@ -548,7 +1010,7 @@ const CineChatter = () => {
               </div>
 
               <div className="relative">
-                <button onClick={(e) => { e.stopPropagation(); setHollywoodOpen(false); setMoreOpen(false); setBollywoodOpen(!bollywoodOpen); }} className="flex items-center gap-1 px-3 py-2 text-sm text-gray-700 hover:text-red-600 whitespace-nowrap">
+                <button onClick={(e) => { e.stopPropagation(); setHollywoodOpen(false); setMoreOpen(false); setUserMenuOpen(false); setBollywoodOpen(!bollywoodOpen); }} className="flex items-center gap-1 px-2 py-2 text-sm text-gray-700 hover:text-red-600 whitespace-nowrap">
                   Bollywood <ChevronDown className="w-4 h-4" />
                 </button>
                 {bollywoodOpen && (
@@ -573,16 +1035,16 @@ const CineChatter = () => {
                 )}
               </div>
 
-              <button onClick={() => { setSelectedCategory('international'); setCurrentView('category'); }} className="px-3 py-2 text-sm text-gray-700 hover:text-red-600 whitespace-nowrap">International</button>
+              <button onClick={() => { setSelectedCategory('international'); setCurrentView('category'); }} className="px-2 py-2 text-sm text-gray-700 hover:text-red-600 whitespace-nowrap">International</button>
 
-              <button onClick={() => { setSelectedCategory('ott'); setCurrentView('category'); }} className="px-3 py-2 text-sm text-gray-700 hover:text-red-600 whitespace-nowrap">OTT</button>
+              <button onClick={() => { setSelectedCategory('ott'); setCurrentView('category'); }} className="px-2 py-2 text-sm text-gray-700 hover:text-red-600 whitespace-nowrap">OTT</button>
 
-              <button onClick={() => { setSelectedCategory('music'); setCurrentView('category'); }} className="px-3 py-2 text-sm text-gray-700 hover:text-red-600 whitespace-nowrap">Music</button>
+              <button onClick={() => { setSelectedCategory('music'); setCurrentView('category'); }} className="px-2 py-2 text-sm text-gray-700 hover:text-red-600 whitespace-nowrap">Music</button>
 
-              <button onClick={() => { setSelectedCategory('celebrity-style'); setCurrentView('category'); }} className="px-3 py-2 text-sm text-gray-700 hover:text-red-600 whitespace-nowrap">Celebrity Style</button>
+              <button onClick={() => { setSelectedCategory('celebrity-style'); setCurrentView('category'); }} className="px-2 py-2 text-sm text-gray-700 hover:text-red-600 whitespace-nowrap">Celebrity Style</button>
 
               <div className="relative">
-                <button onClick={(e) => { e.stopPropagation(); setHollywoodOpen(false); setBollywoodOpen(false); setMoreOpen(!moreOpen); }} className="flex items-center gap-1 px-3 py-2 text-sm text-gray-700 hover:text-red-600 whitespace-nowrap">
+                <button onClick={(e) => { e.stopPropagation(); setHollywoodOpen(false); setBollywoodOpen(false); setUserMenuOpen(false); setMoreOpen(!moreOpen); }} className="flex items-center gap-1 px-2 py-2 text-sm text-gray-700 hover:text-red-600 whitespace-nowrap">
                   More <ChevronDown className="w-4 h-4" />
                 </button>
                 {moreOpen && (
@@ -607,10 +1069,65 @@ const CineChatter = () => {
                 )}
               </div>
 
-              {!isAdmin ? (
-                <button onClick={() => setShowAdminLogin(true)} className="px-3 sm:px-4 py-2 bg-red-600 text-white rounded-md text-sm hover:bg-red-700 whitespace-nowrap">Admin</button>
+              {/* User Authentication */}
+              {!user ? (
+                <>
+                  <button
+                    onClick={() => { setAuthMode('signup'); setShowAuthModal(true); }}
+                    className="px-3 sm:px-4 py-2 bg-red-600 text-white rounded-md text-sm hover:bg-red-700 whitespace-nowrap"
+                  >
+                    Sign Up
+                  </button>
+                  <button
+                    onClick={() => { setAuthMode('login'); setShowAuthModal(true); }}
+                    className="px-3 sm:px-4 py-2 border border-red-600 text-red-600 rounded-md text-sm hover:bg-red-50 whitespace-nowrap"
+                  >
+                    Login
+                  </button>
+                </>
               ) : (
-                <button onClick={() => setCurrentView('admin')} className="px-3 sm:px-4 py-2 bg-green-600 text-white rounded-md text-sm hover:bg-green-700 whitespace-nowrap">Dashboard</button>
+                <div className="relative">
+                  <button
+                    onClick={(e) => { e.stopPropagation(); setHollywoodOpen(false); setBollywoodOpen(false); setMoreOpen(false); setUserMenuOpen(!userMenuOpen); }}
+                    className="flex items-center gap-2 px-3 py-2 text-sm text-gray-700 hover:text-red-600 whitespace-nowrap"
+                  >
+                    <User className="w-5 h-5" />
+                    <span>{user.profile?.name || user.email?.split('@')[0]}</span>
+                    <ChevronDown className="w-4 h-4" />
+                  </button>
+                  {userMenuOpen && (
+                    <div className="absolute top-full right-0 mt-1 bg-white shadow-lg rounded-lg py-2 w-48 z-50">
+                      <div className="px-4 py-2 border-b">
+                        <p className="font-semibold text-sm truncate">{user.email}</p>
+                      </div>
+                      <button
+                        onClick={() => { setUserMenuOpen(false); setCurrentView('profile'); }}
+                        className="block w-full text-left px-4 py-2 text-gray-700 hover:bg-red-50 hover:text-red-600 text-sm"
+                      >
+                        <User className="w-4 h-4 inline mr-2" />
+                        My Profile
+                      </button>
+                      <button
+                        onClick={handleLogout}
+                        className="block w-full text-left px-4 py-2 text-gray-700 hover:bg-red-50 hover:text-red-600 text-sm border-t"
+                      >
+                        <LogOut className="w-4 h-4 inline mr-2" />
+                        Logout
+                      </button>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Dashboard Button - Only visible for approved admin users */}
+              {user && user.profile?.admin_status === 'A' && (
+                <button
+                  onClick={() => setCurrentView('admin')}
+                  className="px-3 sm:px-4 py-2 bg-green-600 text-white rounded-md text-sm hover:bg-green-700 whitespace-nowrap flex items-center gap-2"
+                >
+                  <Settings className="w-4 h-4" />
+                  Dashboard
+                </button>
               )}
             </div>
 
@@ -867,6 +1384,95 @@ const CineChatter = () => {
         </div>
       )}
 
+      {currentView === 'profile' && user && (
+        <div className="max-w-4xl mx-auto px-4 py-8">
+          <button onClick={() => setCurrentView('home')} className="text-red-600 hover:underline mb-4">← Back to Home</button>
+          <div className="bg-white rounded-lg shadow-md p-8">
+            <div className="flex items-center gap-6 mb-8">
+              <div className="w-24 h-24 bg-red-100 rounded-full flex items-center justify-center">
+                <User className="w-12 h-12 text-red-600" />
+              </div>
+              <div>
+                <h1 className="text-3xl font-bold">{user.profile?.name || 'User'}</h1>
+                <p className="text-gray-600">{user.email}</p>
+                {user.profile?.admin_status === 'A' && (
+                  <span className="inline-block mt-2 bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-semibold">
+                    Admin
+                  </span>
+                )}
+                {user.profile?.admin_status === 'P' && (
+                  <span className="inline-block mt-2 bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-sm font-semibold">
+                    Pending Approval
+                  </span>
+                )}
+              </div>
+            </div>
+
+            <div className="grid md:grid-cols-2 gap-6">
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Name</label>
+                  <input
+                    type="text"
+                    value={user.profile?.name || ''}
+                    className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-red-500"
+                    readOnly
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                  <input
+                    type="email"
+                    value={user.email || ''}
+                    className="w-full px-4 py-2 border rounded-lg bg-gray-50"
+                    readOnly
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Member Since</label>
+                  <input
+                    type="text"
+                    value={new Date(user.profile?.created_at || Date.now()).toLocaleDateString()}
+                    className="w-full px-4 py-2 border rounded-lg bg-gray-50"
+                    readOnly
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Newsletter</label>
+                  <input
+                    type="text"
+                    value={user.profile?.newsletter_subscribed ? 'Subscribed' : 'Not Subscribed'}
+                    className="w-full px-4 py-2 border rounded-lg bg-gray-50"
+                    readOnly
+                  />
+                </div>
+              </div>
+            </div>
+
+            {user.profile?.bio && (
+              <div className="mt-6">
+                <label className="block text-sm font-medium text-gray-700 mb-2">Bio</label>
+                <textarea
+                  value={user.profile.bio}
+                  className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-red-500"
+                  rows="4"
+                  readOnly
+                />
+              </div>
+            )}
+
+            <div className="mt-8 p-4 bg-gray-50 rounded-lg">
+              <p className="text-sm text-gray-600">
+                <strong>Note:</strong> Profile editing feature coming soon! For now, you can view your profile information here.
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
       {currentView === 'contact' && (
         <div className="max-w-4xl mx-auto px-4 py-8">
           <button onClick={() => setCurrentView('home')} className="text-red-600 hover:underline mb-4">← Back to Home</button>
@@ -874,10 +1480,10 @@ const CineChatter = () => {
             <h1 className="text-4xl font-bold mb-6 text-red-600">Contact Us</h1>
             <div className="space-y-6">
               <p className="text-gray-700 text-lg">
-                We'd love to hear from you! Whether you have a question, feedback, or just want to say hello, 
+                We'd love to hear from you! Whether you have a question, feedback, or just want to say hello,
                 feel free to reach out to us.
               </p>
-              
+
               <div className="space-y-4">
                 <div className="border-l-4 border-red-600 pl-4">
                   <h3 className="font-bold text-lg mb-1">Social Media</h3>
@@ -890,7 +1496,7 @@ const CineChatter = () => {
                     </div>
                   </div>
                 </div>
-                
+
                 <div className="border-l-4 border-red-600 pl-4">
                   <h3 className="font-bold text-lg mb-1">Business Inquiries</h3>
                   <a href="mailto:cinechattercontact@gmail.com" className="text-red-600 hover:underline">
@@ -924,7 +1530,7 @@ const CineChatter = () => {
         </div>
       )}
 
-      {currentView === 'admin' && isAdmin && (
+      {currentView === 'admin' && user && user.profile?.admin_status === 'A' && (
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 sm:mb-8 gap-4">
             <h1 className="text-2xl sm:text-3xl font-bold">Admin Dashboard</h1>
@@ -941,6 +1547,12 @@ const CineChatter = () => {
               <button onClick={() => setShowArticleForm(true)} className="bg-red-600 text-white px-3 sm:px-4 py-2 rounded-lg hover:bg-red-700 flex items-center gap-2 whitespace-nowrap text-sm sm:text-base flex-1 sm:flex-initial justify-center">
                 <Plus className="w-4 h-4" />New Article
               </button>
+              <button onClick={() => { setShowManageAdmins(true); loadAdminRequests(); loadAllUsers(); }} className="bg-gray-600 text-white px-3 sm:px-4 py-2 rounded-lg hover:bg-gray-700 flex items-center gap-2 whitespace-nowrap text-sm sm:text-base flex-1 sm:flex-initial justify-center">
+                <User className="w-4 h-4" />Manage Admins
+              </button>
+              <button onClick={exportToCSV} className="bg-blue-600 text-white px-3 sm:px-4 py-2 rounded-lg hover:bg-blue-700 flex items-center gap-2 whitespace-nowrap text-sm sm:text-base flex-1 sm:flex-initial justify-center">
+                <Download className="w-4 h-4" />Export CSV {selectedArticles.length > 0 && `(${selectedArticles.length})`}
+              </button>
             </div>
           </div>
 
@@ -949,6 +1561,14 @@ const CineChatter = () => {
               <table className="w-full min-w-[640px]">
               <thead className="bg-gray-50">
                 <tr>
+                  <th className="px-4 py-3 text-left">
+                    <input
+                      type="checkbox"
+                      checked={selectedArticles.length === [...articles, ...sheetArticles].filter(a => a.status === 'published').length && selectedArticles.length > 0}
+                      onChange={toggleAllArticles}
+                      className="w-4 h-4 text-red-600 border-gray-300 rounded focus:ring-red-500"
+                    />
+                  </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Image</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Title</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Description</th>
@@ -964,7 +1584,7 @@ const CineChatter = () => {
                   const allArticles = [...articles, ...sheetArticles];
 
                   if (allArticles.length === 0) {
-                    return <tr><td colSpan="7" className="px-6 py-8 text-center text-gray-400">No articles yet</td></tr>;
+                    return <tr><td colSpan="8" className="px-6 py-8 text-center text-gray-400">No articles yet</td></tr>;
                   }
 
                   return allArticles
@@ -988,6 +1608,16 @@ const CineChatter = () => {
 
                       return (
                         <tr key={article.id} className="hover:bg-gray-50">
+                          <td className="px-4 py-4">
+                            {article.status === 'published' && (
+                              <input
+                                type="checkbox"
+                                checked={selectedArticles.includes(article.id)}
+                                onChange={() => toggleArticleSelection(article.id)}
+                                className="w-4 h-4 text-red-600 border-gray-300 rounded focus:ring-red-500"
+                              />
+                            )}
+                          </td>
                           <td className="px-6 py-4">
                             {article.image ? (
                               <img src={article.image} alt="" className="w-16 h-16 object-cover rounded" />
@@ -1033,6 +1663,41 @@ const CineChatter = () => {
               </tbody>
             </table>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Admin Access Control - When visiting #admin but not authorized */}
+      {currentView === 'admin' && (!user || user.profile?.admin_status !== 'A') && !showAdminRequestModal && (
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <div className="bg-white rounded-lg shadow-md p-8 text-center">
+            <Settings className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+
+            {!user ? (
+              <>
+                <h2 className="text-2xl font-bold mb-4">Admin Access</h2>
+                <p className="text-gray-600 mb-6">Please login to access the admin panel.</p>
+
+                <button
+                  onClick={() => { setShowAuthModal(true); setAuthMode('login'); }}
+                  className="bg-red-600 text-white px-6 py-3 rounded-lg hover:bg-red-700"
+                >
+                  Login
+                </button>
+              </>
+            ) : (
+              <>
+                <h2 className="text-2xl font-bold mb-4">Access Denied</h2>
+                <p className="text-gray-600 mb-6">You do not have admin privileges.</p>
+                <p className="text-sm text-gray-500 mb-4">If you need admin access, please contact the site administrator.</p>
+                <button
+                  onClick={() => setCurrentView('home')}
+                  className="bg-red-600 text-white px-6 py-3 rounded-lg hover:bg-red-700"
+                >
+                  Go to Home
+                </button>
+              </>
+            )}
           </div>
         </div>
       )}
@@ -1094,13 +1759,213 @@ const CineChatter = () => {
         </div>
       )}
 
-      {showAdminLogin && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-lg p-8 max-w-md w-full">
-            <h2 className="text-2xl font-bold mb-4">Admin Login</h2>
-            <input type="password" value={loginPassword} onChange={(e) => setLoginPassword(e.target.value)} onKeyPress={(e) => e.key === 'Enter' && handleAdminLogin()} className="w-full px-4 py-2 border rounded-lg mb-4" placeholder="Password" />
-            <button onClick={handleAdminLogin} className="w-full bg-red-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-red-700 mb-4">Login</button>
-            <button onClick={() => { setShowAdminLogin(false); setLoginPassword(''); }} className="w-full border px-6 py-3 rounded-lg font-semibold hover:bg-gray-50">Cancel</button>
+      {/* Admin Access Request Modal */}
+      {showAdminRequestModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-[100] overflow-y-auto">
+          <div className="bg-white rounded-lg p-6 max-w-lg w-full relative my-8 max-h-[90vh] overflow-y-auto">
+            {/* Close Button */}
+            <button
+              onClick={() => {setShowAdminRequestModal(false); setCurrentView('home');}}
+              className="absolute top-4 right-4 text-gray-400 hover:text-gray-600"
+            >
+              <X className="w-6 h-6" />
+            </button>
+
+            <div className="text-center mb-4">
+              <Settings className="w-12 h-12 text-red-600 mx-auto mb-3" />
+              <h2 className="text-xl font-bold mb-1">Request Admin Access</h2>
+              <p className="text-gray-600 text-xs">Submit your request and wait for approval</p>
+            </div>
+
+            <div className="space-y-3">
+              <div>
+                <label className="block text-xs font-medium mb-1">Name *</label>
+                <input
+                  type="text"
+                  value={adminRequestForm.name}
+                  onChange={(e) => setAdminRequestForm(p => ({ ...p, name: e.target.value }))}
+                  placeholder="Your full name"
+                  className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-red-500 text-sm"
+                  autoComplete="off"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-medium mb-1">Email *</label>
+                <input
+                  type="email"
+                  value={adminRequestForm.email}
+                  onChange={(e) => setAdminRequestForm(p => ({ ...p, email: e.target.value }))}
+                  placeholder="your.email@example.com"
+                  className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-red-500 text-sm"
+                  autoComplete="off"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-medium mb-1">Password *</label>
+                <input
+                  type="password"
+                  value={adminRequestForm.password}
+                  onChange={(e) => setAdminRequestForm(p => ({ ...p, password: e.target.value }))}
+                  placeholder="••••••••"
+                  className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-red-500 text-sm"
+                  autoComplete="new-password"
+                  required
+                />
+                <p className="text-xs text-gray-500 mt-0.5">Minimum 6 characters</p>
+              </div>
+
+              <div>
+                <label className="block text-xs font-medium mb-1">Message (Optional)</label>
+                <textarea
+                  value={adminRequestForm.message}
+                  onChange={(e) => setAdminRequestForm(p => ({ ...p, message: e.target.value }))}
+                  placeholder="Why do you need admin access?"
+                  rows="2"
+                  className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-red-500 resize-none text-sm"
+                />
+              </div>
+
+              <button
+                onClick={handleAdminRequest}
+                className="w-full bg-red-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-red-700 text-sm"
+              >
+                Submit Request
+              </button>
+
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 text-xs text-blue-800">
+                <p className="font-semibold mb-1">How it works:</p>
+                <ul className="list-disc list-inside space-y-0.5 text-xs">
+                  <li>Sent to: <strong>cinechattercontact@gmail.com</strong></li>
+                  <li>Reviewed by site administrator</li>
+                  <li>Notified via email once approved</li>
+                  <li>Usually takes 24-48 hours</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Manage Admins Modal */}
+      {showManageAdmins && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 overflow-y-auto">
+          <div className="min-h-screen py-8 px-4 flex items-start justify-center">
+            <div className="bg-white rounded-lg max-w-4xl w-full">
+              <div className="sticky top-0 bg-white border-b p-6 flex justify-between items-center z-10 rounded-t-lg">
+                <h2 className="text-2xl font-bold">Manage Admins</h2>
+                <button onClick={() => setShowManageAdmins(false)} className="text-gray-500 hover:text-gray-700">
+                  <X className="w-6 h-6" />
+                </button>
+              </div>
+
+              <div className="p-6">
+                <div className="mb-6">
+                  <div className="flex gap-4 items-center">
+                    <input
+                      type="text"
+                      placeholder="Search users by email..."
+                      value={userSearchQuery}
+                      onChange={(e) => setUserSearchQuery(e.target.value)}
+                      className="flex-1 px-4 py-2 border rounded-lg focus:outline-none focus:border-red-500"
+                    />
+                    <button onClick={loadAllUsers} className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700">
+                      Refresh
+                    </button>
+                  </div>
+                </div>
+
+                <div className="bg-gray-50 rounded-lg p-4 mb-4">
+                  <h3 className="font-semibold mb-2">Instructions:</h3>
+                  <ul className="text-sm text-gray-600 space-y-1">
+                    <li>• Only existing admins can promote users to admin</li>
+                    <li>• Users must have an account before they can be promoted</li>
+                    <li>• You cannot demote yourself</li>
+                    <li>• First admin was created during initial setup</li>
+                  </ul>
+                </div>
+
+                <div className="bg-white rounded-lg shadow overflow-hidden">
+                  <table className="w-full">
+                    <thead className="bg-gray-50">
+                      <tr>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Email</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Name</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Created</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-gray-200">
+                      {allUsers
+                        .filter(u => !userSearchQuery || u.email.toLowerCase().includes(userSearchQuery.toLowerCase()))
+                        .map((u) => (
+                          <tr key={u.id} className={u.id === user?.id ? 'bg-blue-50' : ''}>
+                            <td className="px-6 py-4 text-sm">
+                              {u.email}
+                              {u.id === user?.id && <span className="ml-2 text-xs text-blue-600">(You)</span>}
+                            </td>
+                            <td className="px-6 py-4 text-sm">{u.name || '-'}</td>
+                            <td className="px-6 py-4 text-sm">
+                              {u.admin_status === 'A' ? (
+                                <span className="bg-green-100 text-green-800 px-2 py-1 rounded text-xs font-semibold">
+                                  Admin
+                                </span>
+                              ) : u.admin_status === 'P' ? (
+                                <span className="bg-yellow-100 text-yellow-800 px-2 py-1 rounded text-xs font-semibold">
+                                  Pending
+                                </span>
+                              ) : u.admin_status === 'R' ? (
+                                <span className="bg-red-100 text-red-800 px-2 py-1 rounded text-xs">
+                                  Rejected
+                                </span>
+                              ) : (
+                                <span className="bg-gray-100 text-gray-800 px-2 py-1 rounded text-xs">
+                                  User
+                                </span>
+                              )}
+                            </td>
+                            <td className="px-6 py-4 text-sm text-gray-600">
+                              {new Date(u.created_at).toLocaleDateString()}
+                            </td>
+                            <td className="px-6 py-4 text-sm">
+                              {u.admin_status === 'A' ? (
+                                <button
+                                  onClick={() => demoteAdmin(u.id, u.email)}
+                                  disabled={u.id === user?.id}
+                                  className={`${
+                                    u.id === user?.id
+                                      ? 'bg-gray-300 cursor-not-allowed'
+                                      : 'bg-red-600 hover:bg-red-700'
+                                  } text-white px-3 py-1 rounded text-xs`}
+                                >
+                                  Remove Admin
+                                </button>
+                              ) : (
+                                <button
+                                  onClick={() => promoteToAdmin(u.id, u.email)}
+                                  className="bg-green-600 text-white px-3 py-1 rounded text-xs hover:bg-green-700"
+                                >
+                                  Make Admin
+                                </button>
+                              )}
+                            </td>
+                          </tr>
+                        ))}
+                    </tbody>
+                  </table>
+
+                  {allUsers.length === 0 && (
+                    <div className="text-center py-8 text-gray-500">
+                      No users found. Users appear here after they sign up.
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       )}
@@ -1125,7 +1990,7 @@ const CineChatter = () => {
                     <li><strong>IMPORTANT:</strong> File → Share → "Publish to web" → Select "Comma-separated values (.csv)" → Publish</li>
                     <li>OR: Share → "Anyone with the link" → "Viewer"</li>
                     <li>Copy the sheet URL and paste below</li>
-                    <li>Click "Connect Sheet"</li>
+                    <li>Click "Upload Sheet"</li>
                   </ol>
                 </div>
 
@@ -1166,7 +2031,7 @@ const CineChatter = () => {
                       disabled={!sheetUrl || sheetStatus === 'connecting'}
                       className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed"
                     >
-                      {sheetStatus === 'connecting' ? 'Connecting...' : 'Connect Sheet'}
+                      {sheetStatus === 'connecting' ? 'Uploading...' : 'Upload Sheet'}
                     </button>
                     {sheetStatus === 'connected' && (
                       <button
@@ -1238,7 +2103,7 @@ const CineChatter = () => {
                   <div className="text-sm text-yellow-800 space-y-2">
                     <p>Claude.ai artifacts have browser security restrictions (CORS) that prevent direct Google Sheets connections.</p>
                     <p className="font-medium">✅ Good News: Your sheet IS properly configured!</p>
-                    <p>When you click "Connect Sheet", the app will:</p>
+                    <p>When you click "Upload Sheet", the app will:</p>
                     <ul className="list-disc list-inside ml-2">
                       <li>Validate your URL ✅</li>
                       <li>Create demo articles to show how it works</li>
@@ -1503,21 +2368,108 @@ const CineChatter = () => {
         <div className="fixed inset-0 bg-black bg-opacity-90 z-50 overflow-y-auto">
           <div className="min-h-screen py-12 px-4">
             <div className="max-w-4xl mx-auto bg-white rounded-lg p-8">
-              <button 
-                onClick={() => setSelectedTreasureArticle(null)} 
+              <button
+                onClick={() => setSelectedTreasureArticle(null)}
                 className="mb-6 text-red-600 hover:text-red-700 flex items-center gap-2 font-semibold"
               >
                 <X className="w-6 h-6" />Close
               </button>
               {selectedTreasureArticle.image && (
-                <img 
-                  src={selectedTreasureArticle.image} 
-                  alt={selectedTreasureArticle.articleTitle} 
-                  className="w-full h-96 object-cover rounded-lg mb-6" 
+                <img
+                  src={selectedTreasureArticle.image}
+                  alt={selectedTreasureArticle.articleTitle}
+                  className="w-full h-96 object-cover rounded-lg mb-6"
                 />
               )}
               <h1 className="text-4xl font-bold mt-2 mb-4">{selectedTreasureArticle.articleTitle}</h1>
               <p className="text-gray-800 leading-relaxed whitespace-pre-wrap">{selectedTreasureArticle.articleDescription}</p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Authentication Modal */}
+      {showAuthModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-lg p-8 max-w-md w-full">
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-2xl font-bold">{authMode === 'signup' ? 'Create Account' : 'Welcome Back'}</h2>
+              <button onClick={() => { setShowAuthModal(false); setAuthForm({ name: '', email: '', password: '' }); }}>
+                <X className="w-6 h-6 text-gray-500 hover:text-gray-700" />
+              </button>
+            </div>
+
+            <div className="space-y-4">
+              {authMode === 'signup' && (
+                <div>
+                  <label className="block text-sm font-medium mb-2">Name (Optional)</label>
+                  <input
+                    type="text"
+                    value={authForm.name}
+                    onChange={(e) => setAuthForm(p => ({ ...p, name: e.target.value }))}
+                    placeholder="Your name"
+                    className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-red-500"
+                  />
+                </div>
+              )}
+
+              <div>
+                <label className="block text-sm font-medium mb-2">Email</label>
+                <input
+                  type="email"
+                  value={authForm.email}
+                  onChange={(e) => setAuthForm(p => ({ ...p, email: e.target.value }))}
+                  placeholder="your@email.com"
+                  className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-red-500"
+                  onKeyPress={(e) => e.key === 'Enter' && (authMode === 'login' ? handleLogin() : handleSignup())}
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-2">Password</label>
+                <input
+                  type="password"
+                  value={authForm.password}
+                  onChange={(e) => setAuthForm(p => ({ ...p, password: e.target.value }))}
+                  placeholder="••••••••"
+                  className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-red-500"
+                  onKeyPress={(e) => e.key === 'Enter' && (authMode === 'login' ? handleLogin() : handleSignup())}
+                />
+                {authMode === 'signup' && (
+                  <p className="text-xs text-gray-500 mt-1">Minimum 6 characters</p>
+                )}
+              </div>
+
+              <button
+                onClick={authMode === 'login' ? handleLogin : handleSignup}
+                className="w-full bg-red-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-red-700"
+              >
+                {authMode === 'signup' ? 'Sign Up' : 'Login'}
+              </button>
+
+              <div className="text-center text-sm text-gray-600">
+                {authMode === 'login' ? (
+                  <p>
+                    Don't have an account?{' '}
+                    <button
+                      onClick={() => setAuthMode('signup')}
+                      className="text-red-600 hover:underline font-semibold"
+                    >
+                      Sign up
+                    </button>
+                  </p>
+                ) : (
+                  <p>
+                    Already have an account?{' '}
+                    <button
+                      onClick={() => setAuthMode('login')}
+                      className="text-red-600 hover:underline font-semibold"
+                    >
+                      Login
+                    </button>
+                  </p>
+                )}
+              </div>
             </div>
           </div>
         </div>
