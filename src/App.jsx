@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Film, TrendingUp, Plus, Edit2, Trash2, Eye, X, Menu, Search, ChevronDown, Upload, Settings, User, LogOut, Download } from 'lucide-react';
+import { Film, TrendingUp, Plus, Edit2, Trash2, Eye, X, Menu, Search, ChevronDown, Upload, Settings, User, LogOut, Download, Moon, Sun } from 'lucide-react';
 import { supabase, isSupabaseConfigured } from './lib/supabase';
 import { autoGenerateSEOFields } from './utils/seoHelpers';
 
@@ -71,6 +71,34 @@ const CineChatter = () => {
 
   // CSV Export Selection State
   const [selectedArticles, setSelectedArticles] = useState([])
+
+  // Dark Mode State
+  const [darkMode, setDarkMode] = useState(() => {
+    // Check localStorage or system preference
+    const savedMode = localStorage.getItem('darkMode');
+    if (savedMode !== null) {
+      return savedMode === 'true';
+    }
+    return window.matchMedia('(prefers-color-scheme: dark)').matches;
+  });
+
+  // Toggle dark mode
+  const toggleDarkMode = () => {
+    setDarkMode(prev => {
+      const newMode = !prev;
+      localStorage.setItem('darkMode', newMode);
+      return newMode;
+    });
+  };
+
+  // Apply dark mode class to html element
+  useEffect(() => {
+    if (darkMode) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  }, [darkMode]);
 
   useEffect(() => {
     loadArticles();
@@ -964,8 +992,8 @@ const CineChatter = () => {
   };
 
   return (
-    <div className="min-h-screen bg-white">
-      <nav className="bg-white shadow-sm border-b sticky top-0 z-40">
+    <div className="min-h-screen bg-white dark:bg-gray-900 transition-colors">
+      <nav className="bg-white dark:bg-gray-800 shadow-sm border-b dark:border-gray-700 sticky top-0 z-40">
         <div className="max-w-7xl mx-auto px-4">
           <div className="flex justify-between items-center h-16">
             {/* Logo */}
@@ -976,34 +1004,30 @@ const CineChatter = () => {
             {/* Desktop Search - Hidden on mobile */}
             <div className="hidden lg:flex items-center mx-2 flex-shrink-0" style={{ width: '280px', minWidth: '280px' }}>
               <div className="relative w-full">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-                <input type="text" placeholder="Search articles..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter' && searchQuery.trim()) { setCurrentView('search'); } }} className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-full focus:outline-none focus:border-red-500 text-sm" />
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-gray-500 w-5 h-5" />
+                <input type="text" placeholder="Search articles..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter' && searchQuery.trim()) { setCurrentView('search'); } }} className="w-full pl-10 pr-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-full focus:outline-none focus:border-red-500 dark:focus:border-red-400 text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400" />
               </div>
             </div>
 
             {/* Desktop Navigation - Hidden on mobile */}
             <div className="hidden lg:flex items-center gap-0.5">
-              <button onClick={() => setCurrentView('home')} className="px-2 py-2 text-sm text-gray-700 hover:text-red-600 whitespace-nowrap">Home</button>
+              <button onClick={() => setCurrentView('home')} className="px-2 py-2 text-sm text-gray-700 dark:text-gray-300 hover:text-red-600 dark:hover:text-red-400 whitespace-nowrap">Home</button>
 
               <div className="relative">
-                <button onClick={(e) => { e.stopPropagation(); setBollywoodOpen(false); setMoreOpen(false); setUserMenuOpen(false); setHollywoodOpen(!hollywoodOpen); }} className="flex items-center gap-1 px-2 py-2 text-sm text-gray-700 hover:text-red-600 whitespace-nowrap">
+                <button onClick={(e) => { e.stopPropagation(); setBollywoodOpen(false); setMoreOpen(false); setUserMenuOpen(false); setHollywoodOpen(!hollywoodOpen); }} className="flex items-center gap-1 px-2 py-2 text-sm text-gray-700 dark:text-gray-300 hover:text-red-600 dark:hover:text-red-400 whitespace-nowrap">
                   Hollywood <ChevronDown className="w-4 h-4" />
                 </button>
                 {hollywoodOpen && (
-                  <div className="absolute top-full left-0 mt-1 bg-white shadow-lg rounded-lg py-2 w-48 z-50">
+                  <div className="absolute top-full left-0 mt-1 bg-white dark:bg-gray-800 shadow-lg rounded-lg py-2 w-48 z-50">
                     <button
                       onClick={() => { setSelectedCategory('hollywood-movies'); setCurrentView('category'); setHollywoodOpen(false); }}
-                      className="block w-full text-left px-4 py-2 text-gray-700 transition-colors duration-150"
-                      onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#dc2626'; e.currentTarget.style.color = '#ffffff'; }}
-                      onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = ''; e.currentTarget.style.color = ''; }}
+                      className="block w-full text-left px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-red-600 hover:text-white transition-colors duration-150"
                     >
                       Movies
                     </button>
                     <button
                       onClick={() => { setSelectedCategory('hollywood-news'); setCurrentView('category'); setHollywoodOpen(false); }}
-                      className="block w-full text-left px-4 py-2 text-gray-700 transition-colors duration-150"
-                      onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#dc2626'; e.currentTarget.style.color = '#ffffff'; }}
-                      onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = ''; e.currentTarget.style.color = ''; }}
+                      className="block w-full text-left px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-red-600 hover:text-white transition-colors duration-150"
                     >
                       News
                     </button>
@@ -1012,24 +1036,20 @@ const CineChatter = () => {
               </div>
 
               <div className="relative">
-                <button onClick={(e) => { e.stopPropagation(); setHollywoodOpen(false); setMoreOpen(false); setUserMenuOpen(false); setBollywoodOpen(!bollywoodOpen); }} className="flex items-center gap-1 px-2 py-2 text-sm text-gray-700 hover:text-red-600 whitespace-nowrap">
+                <button onClick={(e) => { e.stopPropagation(); setHollywoodOpen(false); setMoreOpen(false); setUserMenuOpen(false); setBollywoodOpen(!bollywoodOpen); }} className="flex items-center gap-1 px-2 py-2 text-sm text-gray-700 dark:text-gray-300 hover:text-red-600 dark:hover:text-red-400 whitespace-nowrap">
                   Bollywood <ChevronDown className="w-4 h-4" />
                 </button>
                 {bollywoodOpen && (
-                  <div className="absolute top-full left-0 mt-1 bg-white shadow-lg rounded-lg py-2 w-48 z-50">
+                  <div className="absolute top-full left-0 mt-1 bg-white dark:bg-gray-800 shadow-lg rounded-lg py-2 w-48 z-50">
                     <button
                       onClick={() => { setSelectedCategory('bollywood-movies'); setCurrentView('category'); setBollywoodOpen(false); }}
-                      className="block w-full text-left px-4 py-2 text-gray-700 transition-colors duration-150"
-                      onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#dc2626'; e.currentTarget.style.color = '#ffffff'; }}
-                      onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = ''; e.currentTarget.style.color = ''; }}
+                      className="block w-full text-left px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-red-600 hover:text-white transition-colors duration-150"
                     >
                       Movies
                     </button>
                     <button
                       onClick={() => { setSelectedCategory('bollywood-news'); setCurrentView('category'); setBollywoodOpen(false); }}
-                      className="block w-full text-left px-4 py-2 text-gray-700 transition-colors duration-150"
-                      onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#dc2626'; e.currentTarget.style.color = '#ffffff'; }}
-                      onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = ''; e.currentTarget.style.color = ''; }}
+                      className="block w-full text-left px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-red-600 hover:text-white transition-colors duration-150"
                     >
                       News
                     </button>
@@ -1037,9 +1057,9 @@ const CineChatter = () => {
                 )}
               </div>
 
-              <button onClick={() => { setSelectedCategory('international'); setCurrentView('category'); }} className="px-2 py-2 text-sm text-gray-700 hover:text-red-600 whitespace-nowrap">International</button>
+              <button onClick={() => { setSelectedCategory('international'); setCurrentView('category'); }} className="px-2 py-2 text-sm text-gray-700 dark:text-gray-300 hover:text-red-600 dark:hover:text-red-400 whitespace-nowrap">International</button>
 
-              <button onClick={() => { setSelectedCategory('ott'); setCurrentView('category'); }} className="px-2 py-2 text-sm text-gray-700 hover:text-red-600 whitespace-nowrap">OTT</button>
+              <button onClick={() => { setSelectedCategory('ott'); setCurrentView('category'); }} className="px-2 py-2 text-sm text-gray-700 dark:text-gray-300 hover:text-red-600 dark:hover:text-red-400 whitespace-nowrap">OTT</button>
 
               <button onClick={() => { setSelectedCategory('music'); setCurrentView('category'); }} className="px-2 py-2 text-sm text-gray-700 hover:text-red-600 whitespace-nowrap">Music</button>
 
@@ -1070,6 +1090,15 @@ const CineChatter = () => {
                   </div>
                 )}
               </div>
+
+              {/* Dark Mode Toggle */}
+              <button
+                onClick={toggleDarkMode}
+                className="p-2 text-gray-700 hover:text-red-600 rounded-md hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700 transition-colors"
+                aria-label="Toggle dark mode"
+              >
+                {darkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+              </button>
 
               {/* User Authentication */}
               {!user ? (
