@@ -211,17 +211,43 @@ const CineChatter = () => {
       return;
     }
 
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email: authForm.email,
-      password: authForm.password
-    });
+    // Trim and validate email/password format
+    const email = authForm.email.trim();
+    const password = authForm.password.trim();
 
-    if (error) {
-      alert('Login error: ' + error.message);
-    } else {
-      setAuthForm({ name: '', email: '', password: '' });
-      setShowAuthModal(false);
-      checkUser();
+    // Basic email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      alert('Please enter a valid email address');
+      return;
+    }
+
+    // Password length validation
+    if (password.length < 6) {
+      alert('Password must be at least 6 characters');
+      return;
+    }
+
+    try {
+      console.log('🔐 Attempting login with:', { email, passwordLength: password.length });
+
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email: email,
+        password: password
+      });
+
+      if (error) {
+        console.error('❌ Login error:', error);
+        alert('Login error: ' + error.message);
+      } else {
+        console.log('✅ Login successful:', data);
+        setAuthForm({ name: '', email: '', password: '' });
+        setShowAuthModal(false);
+        checkUser();
+      }
+    } catch (err) {
+      console.error('❌ Unexpected login error:', err);
+      alert('Login failed: ' + err.message);
     }
   };
 
