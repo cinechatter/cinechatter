@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Film, TrendingUp, Plus, Edit2, Trash2, Eye, X, Menu, Search, ChevronDown, Upload, Settings, User, LogOut, Download, Moon, Sun, Save, Type, Bold, Italic, List, ListOrdered, Heading2 } from 'lucide-react';
+import { Film, TrendingUp, Plus, Edit2, Trash2, Eye, X, Menu, Search, ChevronDown, Upload, Settings, User, LogOut, Download, Moon, Sun } from 'lucide-react';
 import { supabase, isSupabaseConfigured } from './lib/supabase';
 import { autoGenerateSEOFields } from './utils/seoHelpers';
 import AIArticleGenerator from './components/AIArticleGenerator';
@@ -85,12 +85,6 @@ const CineChatter = () => {
 
   // Admin Tab State (Gmail-style)
   const [activeAdminTab, setActiveAdminTab] = useState('articles');
-
-  // Inline Editing State
-  const [isInlineEditing, setIsInlineEditing] = useState(false);
-  const [inlineEditContent, setInlineEditContent] = useState('');
-  const [inlineEditingArticleId, setInlineEditingArticleId] = useState(null);
-  const [categoryInlineEditContent, setCategoryInlineEditContent] = useState('');
 
   // Toggle dark mode
   const toggleDarkMode = () => {
@@ -872,209 +866,10 @@ const CineChatter = () => {
     setShowArticleForm(false);
   };
 
-  // Inline Editing Functions
-  const startInlineEdit = () => {
-    if (selectedArticle) {
-      setInlineEditContent(selectedArticle.content);
-      setIsInlineEditing(true);
-    }
-  };
-
-  const cancelInlineEdit = () => {
-    setIsInlineEditing(false);
-    setInlineEditContent('');
-  };
-
-  const saveInlineEdit = async () => {
-    if (!selectedArticle) return;
-
-    const updatedArticle = {
-      ...selectedArticle,
-      content: inlineEditContent,
-      updatedAt: new Date().toISOString()
-    };
-
-    const updatedArticles = articles.map(a =>
-      a.id === selectedArticle.id ? updatedArticle : a
-    );
-
-    await saveArticles(updatedArticles);
-    setSelectedArticle(updatedArticle);
-    setIsInlineEditing(false);
-    setInlineEditContent('');
-  };
-
-  // Category page inline editing functions
-  const startCategoryInlineEdit = (articleId, content) => {
-    setInlineEditingArticleId(articleId);
-    setCategoryInlineEditContent(content);
-  };
-
-  const cancelCategoryInlineEdit = () => {
-    setInlineEditingArticleId(null);
-    setCategoryInlineEditContent('');
-  };
-
-  const saveCategoryInlineEdit = async (articleId) => {
-    const article = articles.find(a => a.id === articleId);
-    if (!article) return;
-
-    const updatedArticle = {
-      ...article,
-      content: categoryInlineEditContent,
-      updatedAt: new Date().toISOString()
-    };
-
-    const updatedArticles = articles.map(a =>
-      a.id === articleId ? updatedArticle : a
-    );
-
-    await saveArticles(updatedArticles);
-    setInlineEditingArticleId(null);
-    setCategoryInlineEditContent('');
-  };
-
-  // Text formatting for category page
-  const applyCategoryFormat = (format, articleId) => {
-    const textarea = document.getElementById(`category-editor-${articleId}`);
-    if (!textarea) return;
-
-    const start = textarea.selectionStart;
-    const end = textarea.selectionEnd;
-    const selectedText = categoryInlineEditContent.substring(start, end);
-    let newText = categoryInlineEditContent;
-
-    switch (format) {
-      case 'bold':
-        newText = categoryInlineEditContent.substring(0, start) + '**' + selectedText + '**' + categoryInlineEditContent.substring(end);
-        break;
-      case 'italic':
-        newText = categoryInlineEditContent.substring(0, start) + '*' + selectedText + '*' + categoryInlineEditContent.substring(end);
-        break;
-      case 'heading':
-        const lineStart = categoryInlineEditContent.lastIndexOf('\n', start - 1) + 1;
-        newText = categoryInlineEditContent.substring(0, lineStart) + '## ' + categoryInlineEditContent.substring(lineStart);
-        break;
-      case 'bullet':
-        const lines = selectedText.split('\n');
-        const bulletedLines = lines.map(line => line.trim() ? '• ' + line : line).join('\n');
-        newText = categoryInlineEditContent.substring(0, start) + bulletedLines + categoryInlineEditContent.substring(end);
-        break;
-      case 'number':
-        const numberLines = selectedText.split('\n');
-        const numberedLines = numberLines.map((line, i) => line.trim() ? `${i + 1}. ${line}` : line).join('\n');
-        newText = categoryInlineEditContent.substring(0, start) + numberedLines + categoryInlineEditContent.substring(end);
-        break;
-      case 'paragraph':
-        newText = categoryInlineEditContent.substring(0, end) + '\n\n' + categoryInlineEditContent.substring(end);
-        break;
-      default:
-        break;
-    }
-
-    setCategoryInlineEditContent(newText);
-    setTimeout(() => {
-      textarea.focus();
-      textarea.setSelectionRange(start, end);
-    }, 0);
-  };
-
-  // Text formatting functions
-  const applyFormat = (format, editorId = 'inline-editor') => {
-    const textarea = document.getElementById(editorId);
-    if (!textarea) return;
-
-    const start = textarea.selectionStart;
-    const end = textarea.selectionEnd;
-    const selectedText = inlineEditContent.substring(start, end);
-    let newText = inlineEditContent;
-
-    switch (format) {
-      case 'bold':
-        newText = inlineEditContent.substring(0, start) + '**' + selectedText + '**' + inlineEditContent.substring(end);
-        break;
-      case 'italic':
-        newText = inlineEditContent.substring(0, start) + '*' + selectedText + '*' + inlineEditContent.substring(end);
-        break;
-      case 'heading':
-        const lineStart = inlineEditContent.lastIndexOf('\n', start - 1) + 1;
-        newText = inlineEditContent.substring(0, lineStart) + '## ' + inlineEditContent.substring(lineStart);
-        break;
-      case 'bullet':
-        const lines = selectedText.split('\n');
-        const bulletedLines = lines.map(line => line.trim() ? '• ' + line : line).join('\n');
-        newText = inlineEditContent.substring(0, start) + bulletedLines + inlineEditContent.substring(end);
-        break;
-      case 'number':
-        const numberLines = selectedText.split('\n');
-        const numberedLines = numberLines.map((line, i) => line.trim() ? `${i + 1}. ${line}` : line).join('\n');
-        newText = inlineEditContent.substring(0, start) + numberedLines + inlineEditContent.substring(end);
-        break;
-      case 'paragraph':
-        newText = inlineEditContent.substring(0, end) + '\n\n' + inlineEditContent.substring(end);
-        break;
-      default:
-        break;
-    }
-
-    setInlineEditContent(newText);
-    setTimeout(() => {
-      textarea.focus();
-      textarea.setSelectionRange(start, end);
-    }, 0);
-  };
-
   // Handle AI Article Publishing
   const handleAIArticlePublish = (articleData) => {
     const updatedArticles = [articleData, ...articles];
     saveArticles(updatedArticles);
-  };
-
-  // Render markdown formatting in content
-  const renderMarkdown = (text) => {
-    if (!text) return '';
-
-    // Convert markdown to HTML
-    let html = text
-      // Bold: **text** -> <strong>text</strong>
-      .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-      // Italic: *text* -> <em>text</em>
-      .replace(/\*(.*?)\*/g, '<em>$1</em>')
-      // Headings: ## text -> <h2>text</h2>
-      .replace(/^## (.+)$/gm, '<h2 class="text-2xl font-bold mt-6 mb-3 text-gray-900 dark:text-white">$1</h2>')
-      // Bullet points: • text -> <li>text</li>
-      .replace(/^• (.+)$/gm, '<li class="ml-6">$1</li>')
-      // Numbered list: 1. text -> <li>text</li>
-      .replace(/^\d+\. (.+)$/gm, '<li class="ml-6">$1</li>')
-      // Paragraphs: double newlines
-      .replace(/\n\n/g, '</p><p class="mb-4">')
-      // Single newlines
-      .replace(/\n/g, '<br />');
-
-    // Wrap in paragraph if not already wrapped
-    if (!html.startsWith('<h2') && !html.startsWith('<li')) {
-      html = '<p class="mb-4">' + html + '</p>';
-    }
-
-    return html;
-  };
-
-  // Get clean preview text (strip markdown, keep first paragraph)
-  const getPreviewText = (text) => {
-    if (!text) return '';
-
-    // Remove markdown formatting
-    let cleanText = text
-      .replace(/\*\*(.*?)\*\*/g, '$1')  // Remove bold
-      .replace(/\*(.*?)\*/g, '$1')       // Remove italic
-      .replace(/^## (.+)$/gm, '$1')      // Remove heading markers
-      .replace(/^• /gm, '')              // Remove bullet points
-      .replace(/^\d+\. /gm, '')          // Remove numbered list markers
-      .trim();
-
-    // Return first paragraph or first 150 characters
-    const firstPara = cleanText.split('\n\n')[0];
-    return firstPara.length > 150 ? firstPara.substring(0, 150) + '...' : firstPara;
   };
 
   const getCategoryArticles = (cat) => {
@@ -1552,7 +1347,7 @@ const CineChatter = () => {
                         {featuredArticle.title}
                       </h3>
                       <p className="text-gray-600 dark:text-gray-400 text-base line-clamp-3 mb-4 leading-relaxed">
-                        {getPreviewText(featuredArticle.content)}
+                        {featuredArticle.content}
                       </p>
                       <div className="flex items-center justify-between text-sm text-gray-500 dark:text-gray-400">
                         <span>{new Date(featuredArticle.createdAt).toLocaleDateString()}</span>
@@ -1586,7 +1381,7 @@ const CineChatter = () => {
                             {article.title}
                           </h3>
                           <p className="text-gray-600 dark:text-gray-400 text-sm line-clamp-2 mb-2">
-                            {getPreviewText(article.content)}
+                            {article.content}
                           </p>
                           <p className="text-xs text-gray-400 dark:text-gray-500">
                             {new Date(article.createdAt).toLocaleDateString()}
@@ -1663,7 +1458,7 @@ const CineChatter = () => {
                               {article.title}
                             </h3>
                             <p className="text-gray-600 dark:text-gray-400 text-sm line-clamp-2 mb-3">
-                              {getPreviewText(article.content)}
+                              {article.content}
                             </p>
                             <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
                               <span>{new Date(article.createdAt).toLocaleDateString()}</span>
@@ -1770,122 +1565,17 @@ const CineChatter = () => {
           <div className="space-y-4">
             {getCategoryArticles(selectedCategory)
               .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
-              .map(article => {
-                const isEditing = inlineEditingArticleId === article.id;
-
-                return (
-                  <div key={article.id} className="bg-gradient-to-br from-red-50 via-orange-50 to-yellow-50 dark:from-slate-900 dark:via-gray-800 dark:to-slate-900 rounded-lg shadow-lg dark:shadow-xl overflow-hidden border border-red-100 dark:border-gray-700 mb-8">
-                    {article.image && <img src={article.image} alt={article.title} className="w-full h-64 sm:h-80 lg:h-96 object-cover" />}
-                    <div className="p-6">
-                      <div className="flex items-center justify-between mb-4">
-                        <h3 className="font-bold text-2xl text-gray-900 dark:text-white flex-1">{article.title}</h3>
-                        {user && user.profile?.admin_status === 'A' && !isEditing && (
-                          <button
-                            onClick={() => startCategoryInlineEdit(article.id, article.content)}
-                            className="ml-4 flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-semibold"
-                          >
-                            <Edit2 className="w-4 h-4" />
-                            Edit
-                          </button>
-                        )}
-                        {isEditing && (
-                          <div className="ml-4 flex items-center gap-2">
-                            <button
-                              onClick={() => saveCategoryInlineEdit(article.id)}
-                              className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm font-semibold"
-                            >
-                              <Save className="w-4 h-4" />
-                              Save
-                            </button>
-                            <button
-                              onClick={cancelCategoryInlineEdit}
-                              className="flex items-center gap-2 px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors text-sm font-semibold"
-                            >
-                              <X className="w-4 h-4" />
-                              Cancel
-                            </button>
-                          </div>
-                        )}
-                      </div>
-
-                      {!isEditing ? (
-                        <div
-                          className="text-gray-600 dark:text-gray-400 text-base leading-relaxed prose prose-lg dark:prose-invert max-w-none mb-4"
-                          dangerouslySetInnerHTML={{ __html: renderMarkdown(article.content) }}
-                        />
-                      ) : (
-                        <div className="space-y-4">
-                          {/* Rich Text Toolbar */}
-                          <div className="bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg p-3 flex flex-wrap gap-2">
-                            <button
-                              onClick={() => applyCategoryFormat('bold', article.id)}
-                              className="p-2 hover:bg-gray-100 dark:hover:bg-gray-600 rounded transition-colors"
-                              title="Bold"
-                            >
-                              <Bold className="w-5 h-5 text-gray-700 dark:text-gray-300" />
-                            </button>
-                            <button
-                              onClick={() => applyCategoryFormat('italic', article.id)}
-                              className="p-2 hover:bg-gray-100 dark:hover:bg-gray-600 rounded transition-colors"
-                              title="Italic"
-                            >
-                              <Italic className="w-5 h-5 text-gray-700 dark:text-gray-300" />
-                            </button>
-                            <div className="w-px bg-gray-300 dark:bg-gray-600"></div>
-                            <button
-                              onClick={() => applyCategoryFormat('heading', article.id)}
-                              className="p-2 hover:bg-gray-100 dark:hover:bg-gray-600 rounded transition-colors"
-                              title="Heading"
-                            >
-                              <Heading2 className="w-5 h-5 text-gray-700 dark:text-gray-300" />
-                            </button>
-                            <div className="w-px bg-gray-300 dark:bg-gray-600"></div>
-                            <button
-                              onClick={() => applyCategoryFormat('bullet', article.id)}
-                              className="p-2 hover:bg-gray-100 dark:hover:bg-gray-600 rounded transition-colors"
-                              title="Bullet List"
-                            >
-                              <List className="w-5 h-5 text-gray-700 dark:text-gray-300" />
-                            </button>
-                            <button
-                              onClick={() => applyCategoryFormat('number', article.id)}
-                              className="p-2 hover:bg-gray-100 dark:hover:bg-gray-600 rounded transition-colors"
-                              title="Numbered List"
-                            >
-                              <ListOrdered className="w-5 h-5 text-gray-700 dark:text-gray-300" />
-                            </button>
-                            <div className="w-px bg-gray-300 dark:bg-gray-600"></div>
-                            <button
-                              onClick={() => applyCategoryFormat('paragraph', article.id)}
-                              className="p-2 hover:bg-gray-100 dark:hover:bg-gray-600 rounded transition-colors"
-                              title="New Paragraph"
-                            >
-                              <Type className="w-5 h-5 text-gray-700 dark:text-gray-300" />
-                            </button>
-                            <div className="ml-auto text-xs text-gray-500 dark:text-gray-400 self-center px-2">
-                              Select text and click formatting
-                            </div>
-                          </div>
-
-                          {/* Editable Textarea */}
-                          <textarea
-                            id={`category-editor-${article.id}`}
-                            value={categoryInlineEditContent}
-                            onChange={(e) => setCategoryInlineEditContent(e.target.value)}
-                            className="w-full h-96 px-4 py-3 border-2 border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:border-blue-500 dark:focus:border-blue-400 font-normal leading-relaxed resize-y"
-                            placeholder="Edit article content..."
-                          />
-                          <p className="text-sm text-gray-500 dark:text-gray-400">
-                            Word count: {categoryInlineEditContent.split(/\s+/).filter(word => word.length > 0).length} words
-                          </p>
-                        </div>
-                      )}
-
-                      <p className="text-sm text-gray-400 dark:text-gray-500 pt-4 border-t border-gray-200 dark:border-gray-700">{new Date(article.createdAt).toLocaleDateString()}</p>
-                    </div>
-                  </div>
-                );
-              })}          </div>
+              .map(article => (
+              <div key={article.id} onClick={() => setSelectedArticle(article)} className="bg-gradient-to-br from-red-50 via-orange-50 to-yellow-50 dark:from-slate-900 dark:via-gray-800 dark:to-slate-900 rounded-lg shadow-lg dark:shadow-xl overflow-hidden hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 cursor-pointer border border-red-100 dark:border-gray-700">
+                {article.image && <img src={article.image} alt={article.title} className="w-full h-64 sm:h-80 lg:h-96 object-cover" />}
+                <div className="p-6">
+                  <h3 className="font-bold text-2xl mb-3 text-gray-900 dark:text-white">{article.title}</h3>
+                  <p className="text-gray-600 dark:text-gray-400 text-base leading-relaxed">{article.content}</p>
+                  <p className="text-sm text-gray-400 dark:text-gray-500 mt-4">{new Date(article.createdAt).toLocaleDateString()}</p>
+                </div>
+              </div>
+            ))}
+          </div>
           {getCategoryArticles(selectedCategory).length === 0 && (
             <p className="text-center text-gray-400 dark:text-gray-500 py-12">No articles in this category yet</p>
           )}
@@ -1907,7 +1597,7 @@ const CineChatter = () => {
                 <div className="p-4">
                   <span className="text-xs bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 px-2 py-1 rounded mb-2 inline-block">{categories.find(c => c.id === article.category)?.name}</span>
                   <h3 className="font-bold text-lg mb-2 line-clamp-2 text-gray-900 dark:text-white">{article.title}</h3>
-                  <p className="text-gray-600 dark:text-gray-400 text-sm line-clamp-3">{getPreviewText(article.content)}</p>
+                  <p className="text-gray-600 dark:text-gray-400 text-sm line-clamp-3">{article.content}</p>
                   <p className="text-xs text-gray-400 dark:text-gray-500 mt-2">{new Date(article.createdAt).toLocaleDateString()}</p>
                 </div>
               </div>
@@ -2147,7 +1837,7 @@ const CineChatter = () => {
                       : 'border-transparent text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 hover:border-gray-300 dark:hover:border-gray-600'
                   }`}
                 >
-                  AI Agent
+                  Agent
                 </button>
                 <button
                   onClick={() => setActiveAdminTab('new-article')}
@@ -2386,7 +2076,7 @@ const CineChatter = () => {
             </div>
           )}
 
-          {/* AI Agent Tab */}
+          {/* Agent Tab */}
           {activeAdminTab === 'agent' && (
             <AIArticleGenerator
               categories={categories}
@@ -2394,6 +2084,277 @@ const CineChatter = () => {
             />
           )}
 
+          {/* BACKUP: Old Agent Tab Code - Remove after testing */}
+          {false && !agentPreview && (
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  {/* Left Column - Form */}
+                  <div className="space-y-6">
+                    <div className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-sm border border-gray-200 dark:border-gray-700">
+                      <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Article Details</h3>
+
+                      {/* Movie Name */}
+                      <div className="mb-4">
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                          Movie Name *
+                        </label>
+                        <input
+                          type="text"
+                          value={agentForm.movieName}
+                          onChange={(e) => setAgentForm({...agentForm, movieName: e.target.value})}
+                          placeholder="e.g., Inception, RRR, Dune Part Two"
+                          className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                        />
+                      </div>
+
+                      {/* Script Type */}
+                      <div className="mb-4">
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                          Content Type *
+                        </label>
+                        <div className="grid grid-cols-2 gap-3">
+                          <button
+                            onClick={() => setAgentForm({...agentForm, scriptType: 'review'})}
+                            className={`px-4 py-3 rounded-lg border-2 font-medium transition-all ${
+                              agentForm.scriptType === 'review'
+                                ? 'border-red-600 bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-400'
+                                : 'border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:border-red-400'
+                            }`}
+                          >
+                            Review
+                          </button>
+                          <button
+                            onClick={() => setAgentForm({...agentForm, scriptType: 'story'})}
+                            className={`px-4 py-3 rounded-lg border-2 font-medium transition-all ${
+                              agentForm.scriptType === 'story'
+                                ? 'border-red-600 bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-400'
+                                : 'border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:border-red-400'
+                            }`}
+                          >
+                            Story Synopsis
+                          </button>
+                        </div>
+                      </div>
+
+                      {/* Category */}
+                      <div className="mb-4">
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                          Category *
+                        </label>
+                        <select
+                          value={agentForm.category}
+                          onChange={(e) => setAgentForm({...agentForm, category: e.target.value})}
+                          className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                        >
+                          {categories.map(cat => (
+                            <option key={cat.id} value={cat.id}>{cat.name}</option>
+                          ))}
+                        </select>
+                      </div>
+
+                      {/* Image URL */}
+                      <div className="mb-4">
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                          Image URL (Optional)
+                        </label>
+                        <input
+                          type="url"
+                          value={agentForm.imageUrl}
+                          onChange={(e) => setAgentForm({...agentForm, imageUrl: e.target.value})}
+                          placeholder="https://example.com/movie-poster.jpg"
+                          className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                        />
+                        <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Leave empty to use placeholder image</p>
+                      </div>
+
+                      {/* Error Display */}
+                      {agentError && (
+                        <div className="mb-4 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
+                          <p className="text-sm text-red-600 dark:text-red-400">{agentError}</p>
+                        </div>
+                      )}
+
+                      {/* Generate Button */}
+                      <button
+                        onClick={generateAIArticle}
+                        disabled={agentGenerating || !agentForm.movieName.trim()}
+                        className="w-full bg-gradient-to-r from-red-600 to-orange-600 text-white px-6 py-3 rounded-lg hover:from-red-700 hover:to-orange-700 disabled:from-gray-400 disabled:to-gray-500 disabled:cursor-not-allowed font-semibold shadow-lg transition-all flex items-center justify-center gap-2"
+                      >
+                        {agentGenerating ? (
+                          <>
+                            <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                            Generating...
+                          </>
+                        ) : (
+                          <>
+                            <Settings className="w-5 h-5" />
+                            Generate Article
+                          </>
+                        )}
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Right Column - Info */}
+                  <div className="space-y-6">
+                    <div className="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-lg p-6 border border-blue-200 dark:border-blue-800">
+                      <h3 className="text-lg font-semibold text-blue-900 dark:text-blue-300 mb-3">How It Works</h3>
+                      <ol className="space-y-3 text-sm text-blue-800 dark:text-blue-300">
+                        <li className="flex gap-3">
+                          <span className="flex-shrink-0 w-6 h-6 bg-blue-600 dark:bg-blue-500 text-white rounded-full flex items-center justify-center text-xs font-bold">1</span>
+                          <span>Enter the movie name you want to write about</span>
+                        </li>
+                        <li className="flex gap-3">
+                          <span className="flex-shrink-0 w-6 h-6 bg-blue-600 dark:bg-blue-500 text-white rounded-full flex items-center justify-center text-xs font-bold">2</span>
+                          <span>Choose between Review or Story Synopsis</span>
+                        </li>
+                        <li className="flex gap-3">
+                          <span className="flex-shrink-0 w-6 h-6 bg-blue-600 dark:bg-blue-500 text-white rounded-full flex items-center justify-center text-xs font-bold">3</span>
+                          <span>Select the appropriate category</span>
+                        </li>
+                        <li className="flex gap-3">
+                          <span className="flex-shrink-0 w-6 h-6 bg-blue-600 dark:bg-blue-500 text-white rounded-full flex items-center justify-center text-xs font-bold">4</span>
+                          <span>Add a poster image URL (optional)</span>
+                        </li>
+                        <li className="flex gap-3">
+                          <span className="flex-shrink-0 w-6 h-6 bg-blue-600 dark:bg-blue-500 text-white rounded-full flex items-center justify-center text-xs font-bold">5</span>
+                          <span>AI searches the web and generates a professional article</span>
+                        </li>
+                        <li className="flex gap-3">
+                          <span className="flex-shrink-0 w-6 h-6 bg-blue-600 dark:bg-blue-500 text-white rounded-full flex items-center justify-center text-xs font-bold">6</span>
+                          <span>Review and publish to your site</span>
+                        </li>
+                      </ol>
+                    </div>
+
+                    <div className="bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 rounded-lg p-6 border border-purple-200 dark:border-purple-800">
+                      <h3 className="text-lg font-semibold text-purple-900 dark:text-purple-300 mb-3">What You Get</h3>
+                      <ul className="space-y-2 text-sm text-purple-800 dark:text-purple-300">
+                        <li className="flex items-start gap-2">
+                          <span className="text-purple-600 dark:text-purple-400 mt-0.5">✓</span>
+                          <span><strong>Reviews:</strong> 800-1000 word professional movie reviews with analysis</span>
+                        </li>
+                        <li className="flex items-start gap-2">
+                          <span className="text-purple-600 dark:text-purple-400 mt-0.5">✓</span>
+                          <span><strong>Story Synopsis:</strong> 600-800 word engaging plot summaries</span>
+                        </li>
+                        <li className="flex items-start gap-2">
+                          <span className="text-purple-600 dark:text-purple-400 mt-0.5">✓</span>
+                          <span>Web-researched with real facts and data</span>
+                        </li>
+                        <li className="flex items-start gap-2">
+                          <span className="text-purple-600 dark:text-purple-400 mt-0.5">✓</span>
+                          <span>SEO-optimized for search engines</span>
+                        </li>
+                        <li className="flex items-start gap-2">
+                          <span className="text-purple-600 dark:text-purple-400 mt-0.5">✓</span>
+                          <span>Professional entertainment journalism style</span>
+                        </li>
+                      </ul>
+                    </div>
+
+                    <div className="bg-gradient-to-br from-amber-50 to-yellow-50 dark:from-amber-900/20 dark:to-yellow-900/20 rounded-lg p-4 border border-amber-200 dark:border-amber-800">
+                      <p className="text-xs text-amber-800 dark:text-amber-300">
+                        <strong>Note:</strong> This demo shows the prompt structure. To enable full AI generation, you'll need to integrate Claude API with web search capabilities on your backend.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                /* Preview Mode */
+                <div className="space-y-6">
+                  <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-4">
+                    <p className="text-green-800 dark:text-green-300 font-medium">✓ Article generated successfully! Review and edit the content below, then publish when ready.</p>
+                    <p className="text-green-700 dark:text-green-400 text-sm mt-1">💡 All fields are editable - make any last-minute changes before publishing.</p>
+                  </div>
+
+                  {/* Preview Card - Editable */}
+                  <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden border border-gray-200 dark:border-gray-700">
+                    {/* Image Section - Editable */}
+                    <div className="relative">
+                      {agentPreview.image && (
+                        <img src={agentPreview.image} alt={agentPreview.title} className="w-full h-64 object-cover" />
+                      )}
+                      <div className="absolute top-4 right-4">
+                        <input
+                          type="url"
+                          value={agentPreview.image}
+                          onChange={(e) => updatePreviewContent('image', e.target.value)}
+                          placeholder="Update image URL"
+                          className="px-3 py-1 bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm border border-gray-300 dark:border-gray-600 rounded text-sm text-gray-900 dark:text-white"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="p-6 space-y-4">
+                      {/* Category Tags */}
+                      <div className="flex items-center gap-2 mb-3">
+                        <span className="px-3 py-1 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 text-xs font-semibold rounded-full">
+                          {agentPreview.scriptType === 'review' ? 'Review' : 'Story'}
+                        </span>
+                        <select
+                          value={agentPreview.category}
+                          onChange={(e) => updatePreviewContent('category', e.target.value)}
+                          className="px-3 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 text-xs font-semibold rounded-full border-none cursor-pointer"
+                        >
+                          {categories.map(cat => (
+                            <option key={cat.id} value={cat.id}>{cat.name}</option>
+                          ))}
+                        </select>
+                        <span className="px-3 py-1 bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400 text-xs font-semibold rounded-full">
+                          AI Generated
+                        </span>
+                      </div>
+
+                      {/* Title - Editable */}
+                      <div>
+                        <label className="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">Article Title</label>
+                        <input
+                          type="text"
+                          value={agentPreview.title}
+                          onChange={(e) => updatePreviewContent('title', e.target.value)}
+                          className="w-full text-2xl font-bold text-gray-900 dark:text-white bg-transparent border-2 border-transparent hover:border-gray-300 dark:hover:border-gray-600 focus:border-red-500 dark:focus:border-red-500 rounded px-2 py-1 transition-all"
+                          placeholder="Article title..."
+                        />
+                      </div>
+
+                      {/* Content - Editable Textarea */}
+                      <div>
+                        <label className="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">Article Content</label>
+                        <textarea
+                          value={agentPreview.content}
+                          onChange={(e) => updatePreviewContent('content', e.target.value)}
+                          rows={20}
+                          className="w-full text-gray-700 dark:text-gray-300 bg-gray-50 dark:bg-gray-900 border-2 border-gray-300 dark:border-gray-600 focus:border-red-500 dark:focus:border-red-500 rounded-lg px-4 py-3 transition-all font-normal resize-y"
+                          placeholder="Article content..."
+                        />
+                        <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                          Word count: {agentPreview.content.split(/\s+/).filter(word => word.length > 0).length} words
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Action Buttons */}
+                  <div className="flex gap-4">
+                    <button
+                      onClick={publishAIArticle}
+                      className="flex-1 bg-gradient-to-r from-green-600 to-emerald-600 text-white px-6 py-3 rounded-lg hover:from-green-700 hover:to-emerald-700 font-semibold shadow-lg transition-all flex items-center justify-center gap-2"
+                    >
+                      <Upload className="w-5 h-5" />
+                      Publish Article
+                    </button>
+                    <button
+                      onClick={resetAgentForm}
+                      className="flex-1 bg-gray-600 text-white px-6 py-3 rounded-lg hover:bg-gray-700 font-semibold shadow-lg transition-all flex items-center justify-center gap-2"
+                    >
+                      <X className="w-5 h-5" />
+                      Start Over
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
 
           {/* New Article Tab */}
           {activeAdminTab === 'new-article' && (
@@ -2487,107 +2448,12 @@ const CineChatter = () => {
         <div className="fixed inset-0 bg-black bg-opacity-50 dark:bg-opacity-70 z-50 overflow-y-auto animate-fadeIn">
           <div className="min-h-screen py-12 px-4 sm:px-6 lg:px-8">
             <div className="max-w-full mx-auto bg-gradient-to-br from-red-50 via-orange-50 to-yellow-50 dark:from-slate-900 dark:via-gray-800 dark:to-slate-900 rounded-lg p-4 sm:p-6 lg:p-8 animate-slideUp shadow-2xl border border-red-100 dark:border-gray-700">
-              <div className="flex items-center justify-between mb-6">
-                <button onClick={() => { setSelectedArticle(null); setIsInlineEditing(false); setInlineEditContent(''); }} className="text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 flex items-center gap-2 font-semibold">
-                  <X className="w-6 h-6" />Close
-                </button>
-
-                {user && user.profile?.admin_status === 'A' && !isInlineEditing && (
-                  <button onClick={startInlineEdit} className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-semibold">
-                    <Edit2 className="w-4 h-4" />
-                    Edit Article
-                  </button>
-                )}
-
-                {isInlineEditing && (
-                  <div className="flex items-center gap-2">
-                    <button onClick={saveInlineEdit} className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-semibold">
-                      <Save className="w-4 h-4" />
-                      Save Changes
-                    </button>
-                    <button onClick={cancelInlineEdit} className="flex items-center gap-2 px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors font-semibold">
-                      <X className="w-4 h-4" />
-                      Cancel
-                    </button>
-                  </div>
-                )}
-              </div>
-
+              <button onClick={() => setSelectedArticle(null)} className="mb-6 text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 flex items-center gap-2 font-semibold">
+                <X className="w-6 h-6" />Close
+              </button>
               {selectedArticle.image && <img src={selectedArticle.image} alt={selectedArticle.title} className="w-full h-96 object-cover rounded-lg mb-6" />}
               <h1 className="text-4xl font-bold mt-2 mb-4 text-gray-900 dark:text-white">{selectedArticle.title}</h1>
-
-              {!isInlineEditing ? (
-                <div
-                  className="text-gray-800 dark:text-gray-300 leading-relaxed prose prose-lg dark:prose-invert max-w-none"
-                  dangerouslySetInnerHTML={{ __html: renderMarkdown(selectedArticle.content) }}
-                />
-              ) : (
-                <div className="space-y-4">
-                  {/* Rich Text Toolbar */}
-                  <div className="bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg p-3 flex flex-wrap gap-2">
-                    <button
-                      onClick={() => applyFormat('bold')}
-                      className="p-2 hover:bg-gray-100 dark:hover:bg-gray-600 rounded transition-colors"
-                      title="Bold (Markdown: **text**)"
-                    >
-                      <Bold className="w-5 h-5 text-gray-700 dark:text-gray-300" />
-                    </button>
-                    <button
-                      onClick={() => applyFormat('italic')}
-                      className="p-2 hover:bg-gray-100 dark:hover:bg-gray-600 rounded transition-colors"
-                      title="Italic (Markdown: *text*)"
-                    >
-                      <Italic className="w-5 h-5 text-gray-700 dark:text-gray-300" />
-                    </button>
-                    <div className="w-px bg-gray-300 dark:bg-gray-600"></div>
-                    <button
-                      onClick={() => applyFormat('heading')}
-                      className="p-2 hover:bg-gray-100 dark:hover:bg-gray-600 rounded transition-colors"
-                      title="Heading (Markdown: ## Heading)"
-                    >
-                      <Heading2 className="w-5 h-5 text-gray-700 dark:text-gray-300" />
-                    </button>
-                    <div className="w-px bg-gray-300 dark:bg-gray-600"></div>
-                    <button
-                      onClick={() => applyFormat('bullet')}
-                      className="p-2 hover:bg-gray-100 dark:hover:bg-gray-600 rounded transition-colors"
-                      title="Bullet List"
-                    >
-                      <List className="w-5 h-5 text-gray-700 dark:text-gray-300" />
-                    </button>
-                    <button
-                      onClick={() => applyFormat('number')}
-                      className="p-2 hover:bg-gray-100 dark:hover:bg-gray-600 rounded transition-colors"
-                      title="Numbered List"
-                    >
-                      <ListOrdered className="w-5 h-5 text-gray-700 dark:text-gray-300" />
-                    </button>
-                    <div className="w-px bg-gray-300 dark:bg-gray-600"></div>
-                    <button
-                      onClick={() => applyFormat('paragraph')}
-                      className="p-2 hover:bg-gray-100 dark:hover:bg-gray-600 rounded transition-colors"
-                      title="New Paragraph"
-                    >
-                      <Type className="w-5 h-5 text-gray-700 dark:text-gray-300" />
-                    </button>
-                    <div className="ml-auto text-xs text-gray-500 dark:text-gray-400 self-center px-2">
-                      Select text and click formatting buttons
-                    </div>
-                  </div>
-
-                  {/* Editable Textarea */}
-                  <textarea
-                    id="inline-editor"
-                    value={inlineEditContent}
-                    onChange={(e) => setInlineEditContent(e.target.value)}
-                    className="w-full h-96 px-4 py-3 border-2 border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:border-blue-500 dark:focus:border-blue-400 font-normal leading-relaxed resize-y"
-                    placeholder="Edit your article content here..."
-                  />
-                  <p className="text-sm text-gray-500 dark:text-gray-400">
-                    Word count: {inlineEditContent.split(/\s+/).filter(word => word.length > 0).length} words
-                  </p>
-                </div>
-              )}
+              <p className="text-gray-800 dark:text-gray-300 leading-relaxed whitespace-pre-wrap">{selectedArticle.content}</p>
             </div>
           </div>
         </div>
