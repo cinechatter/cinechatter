@@ -85,6 +85,17 @@ const CineChatter = () => {
   // Admin Tab State (Gmail-style)
   const [activeAdminTab, setActiveAdminTab] = useState('articles');
 
+  // AI Agent State
+  const [agentForm, setAgentForm] = useState({
+    movieName: '',
+    scriptType: 'review',
+    imageUrl: '',
+    category: 'hollywood-movies'
+  });
+  const [agentGenerating, setAgentGenerating] = useState(false);
+  const [agentPreview, setAgentPreview] = useState(null);
+  const [agentError, setAgentError] = useState(null);
+
   // Toggle dark mode
   const toggleDarkMode = () => {
     setDarkMode(prev => {
@@ -863,6 +874,167 @@ const CineChatter = () => {
     });
     setEditingArticle(null);
     setShowArticleForm(false);
+  };
+
+  // AI Agent Functions
+  const buildAgentPrompt = (movieName, scriptType, category) => {
+    const categoryMap = {
+      'hollywood-movies': 'Hollywood',
+      'hollywood-news': 'Hollywood',
+      'bollywood-movies': 'Bollywood',
+      'bollywood-news': 'Bollywood',
+      'ott': 'OTT Platform',
+      'music': 'Music Industry',
+      'celebrity-style': 'Celebrity Fashion',
+      'international': 'International Cinema'
+    };
+
+    const industryName = categoryMap[category] || 'Entertainment';
+    const contentType = scriptType === 'review' ? 'Movie Review' : 'Movie Story Synopsis';
+
+    return `You are an expert entertainment journalist writing for CineChatter, a premier entertainment news website.
+
+TASK: Write a compelling ${contentType.toLowerCase()} for "${movieName}" from the ${industryName} industry.
+
+INSTRUCTIONS:
+1. First, search the web for accurate, up-to-date information about "${movieName}"
+2. Gather details about:
+   - Release date and box office performance
+   - Director, cast, and crew
+   - Plot synopsis (avoid major spoilers for reviews)
+   - Critical reception and audience ratings
+   - Awards and nominations (if any)
+   - Interesting behind-the-scenes facts
+
+3. ${scriptType === 'review' ? `Write a professional movie REVIEW (800-1000 words) that includes:
+   - Engaging opening hook
+   - Brief plot overview (spoiler-free)
+   - Analysis of performances, direction, cinematography
+   - Discussion of themes and storytelling
+   - Technical aspects (music, editing, VFX if relevant)
+   - Comparison to similar films or director's previous work
+   - Final verdict and rating suggestion
+   - Who would enjoy this film` : `Write a captivating STORY SYNOPSIS (600-800 words) that includes:
+   - Intriguing introduction to the story world
+   - Main characters and their motivations
+   - Key plot points and story arc
+   - Central conflicts and themes
+   - Emotional journey of the characters
+   - Climactic moments (without spoiling the ending)
+   - Why this story resonates with audiences`}
+
+4. Writing Style:
+   - Professional yet conversational tone
+   - Engaging and easy to read
+   - Use vivid descriptions and specific examples
+   - Include quotes from reviews or interviews if available
+   - Maintain objectivity in reviews while being entertaining
+   - Structure with clear paragraphs and logical flow
+
+5. SEO Optimization:
+   - Naturally incorporate the movie name multiple times
+   - Use relevant keywords (${industryName}, ${scriptType}, film, cinema, etc.)
+   - Include searchable phrases fans might use
+
+6. Format the article in clean paragraphs suitable for web reading
+
+IMPORTANT: Base your content on real, factual information found through web search. Do not fabricate details about the movie.`;
+  };
+
+  const generateAIArticle = async () => {
+    const { movieName, scriptType, imageUrl, category } = agentForm;
+
+    // Validation
+    if (!movieName.trim()) {
+      setAgentError('Please enter a movie name');
+      return;
+    }
+
+    setAgentGenerating(true);
+    setAgentError(null);
+    setAgentPreview(null);
+
+    try {
+      // Build the prompt
+      const prompt = buildAgentPrompt(movieName, scriptType, category);
+
+      console.log('🤖 Generating AI article...');
+      console.log('Movie:', movieName);
+      console.log('Type:', scriptType);
+      console.log('Category:', category);
+
+      // Simulate AI generation (In production, this would call Claude API)
+      // For now, create a placeholder that shows the prompt structure
+      const articleTitle = `${scriptType === 'review' ? 'Review' : 'Story'}: ${movieName}`;
+      const articleContent = `[AI-Generated Content]\n\nThis article would be generated using Claude AI with web search capabilities.\n\nPrompt used:\n${prompt}\n\nIn production, this would:\n1. Search the web for "${movieName}"\n2. Analyze reviews, box office data, cast info\n3. Generate a ${scriptType === 'review' ? '800-1000' : '600-800'} word ${scriptType}\n4. Format it professionally for CineChatter\n\nTo implement this fully, you'll need:\n- Claude API key (from Anthropic)\n- Web search integration (using Claude's tools)\n- Backend API endpoint to handle the generation`;
+
+      // Create preview
+      const preview = {
+        title: articleTitle,
+        content: articleContent,
+        category: category,
+        image: imageUrl || 'https://via.placeholder.com/800x400?text=' + encodeURIComponent(movieName),
+        source: 'AI Agent',
+        scriptType: scriptType,
+        movieName: movieName
+      };
+
+      setAgentPreview(preview);
+      console.log('✅ Preview generated successfully');
+
+    } catch (error) {
+      console.error('❌ AI generation failed:', error);
+      setAgentError('Failed to generate article. Please try again.');
+    } finally {
+      setAgentGenerating(false);
+    }
+  };
+
+  const publishAIArticle = () => {
+    if (!agentPreview) return;
+
+    const articleData = {
+      id: Date.now(),
+      title: agentPreview.title,
+      content: agentPreview.content,
+      category: agentPreview.category,
+      image: agentPreview.image,
+      status: 'published',
+      source: 'AI Agent',
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      metadata: {
+        scriptType: agentPreview.scriptType,
+        movieName: agentPreview.movieName,
+        generatedBy: 'AI'
+      }
+    };
+
+    const updatedArticles = [articleData, ...articles];
+    saveArticles(updatedArticles);
+
+    // Reset agent form
+    setAgentForm({
+      movieName: '',
+      scriptType: 'review',
+      imageUrl: '',
+      category: 'hollywood-movies'
+    });
+    setAgentPreview(null);
+    setAgentError(null);
+
+    alert('✅ AI-generated article published successfully!');
+  };
+
+  const resetAgentForm = () => {
+    setAgentForm({
+      movieName: '',
+      scriptType: 'review',
+      imageUrl: '',
+      category: 'hollywood-movies'
+    });
+    setAgentPreview(null);
+    setAgentError(null);
   };
 
   const getCategoryArticles = (cat) => {
@@ -2071,15 +2243,239 @@ const CineChatter = () => {
 
           {/* Agent Tab */}
           {activeAdminTab === 'agent' && (
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
-              <div className="text-center py-12">
-                <Settings className="w-16 h-16 text-gray-400 dark:text-gray-500 mx-auto mb-4" />
-                <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Agent</h2>
-                <p className="text-gray-600 dark:text-gray-400 mb-6">AI-powered content management coming soon</p>
-                <button onClick={() => alert('Coming Soon...')} className="bg-red-600 text-white px-6 py-2 rounded-lg hover:bg-red-700 shadow-md">
-                  Learn More
-                </button>
+            <div className="bg-gradient-to-br from-red-50 via-orange-50 to-yellow-50 dark:from-slate-900 dark:via-gray-800 dark:to-slate-900 rounded-lg shadow-md p-6 border border-red-100 dark:border-gray-700">
+              <div className="mb-6">
+                <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2 flex items-center gap-2">
+                  <Settings className="w-7 h-7 text-red-600 dark:text-red-400" />
+                  AI Article Generator
+                </h2>
+                <p className="text-sm text-gray-600 dark:text-gray-400">Generate professional movie reviews and story synopses using AI</p>
               </div>
+
+              {!agentPreview ? (
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  {/* Left Column - Form */}
+                  <div className="space-y-6">
+                    <div className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-sm border border-gray-200 dark:border-gray-700">
+                      <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Article Details</h3>
+
+                      {/* Movie Name */}
+                      <div className="mb-4">
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                          Movie Name *
+                        </label>
+                        <input
+                          type="text"
+                          value={agentForm.movieName}
+                          onChange={(e) => setAgentForm({...agentForm, movieName: e.target.value})}
+                          placeholder="e.g., Inception, RRR, Dune Part Two"
+                          className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                        />
+                      </div>
+
+                      {/* Script Type */}
+                      <div className="mb-4">
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                          Content Type *
+                        </label>
+                        <div className="grid grid-cols-2 gap-3">
+                          <button
+                            onClick={() => setAgentForm({...agentForm, scriptType: 'review'})}
+                            className={`px-4 py-3 rounded-lg border-2 font-medium transition-all ${
+                              agentForm.scriptType === 'review'
+                                ? 'border-red-600 bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-400'
+                                : 'border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:border-red-400'
+                            }`}
+                          >
+                            Review
+                          </button>
+                          <button
+                            onClick={() => setAgentForm({...agentForm, scriptType: 'story'})}
+                            className={`px-4 py-3 rounded-lg border-2 font-medium transition-all ${
+                              agentForm.scriptType === 'story'
+                                ? 'border-red-600 bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-400'
+                                : 'border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:border-red-400'
+                            }`}
+                          >
+                            Story Synopsis
+                          </button>
+                        </div>
+                      </div>
+
+                      {/* Category */}
+                      <div className="mb-4">
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                          Category *
+                        </label>
+                        <select
+                          value={agentForm.category}
+                          onChange={(e) => setAgentForm({...agentForm, category: e.target.value})}
+                          className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                        >
+                          {categories.map(cat => (
+                            <option key={cat.id} value={cat.id}>{cat.name}</option>
+                          ))}
+                        </select>
+                      </div>
+
+                      {/* Image URL */}
+                      <div className="mb-4">
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                          Image URL (Optional)
+                        </label>
+                        <input
+                          type="url"
+                          value={agentForm.imageUrl}
+                          onChange={(e) => setAgentForm({...agentForm, imageUrl: e.target.value})}
+                          placeholder="https://example.com/movie-poster.jpg"
+                          className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                        />
+                        <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Leave empty to use placeholder image</p>
+                      </div>
+
+                      {/* Error Display */}
+                      {agentError && (
+                        <div className="mb-4 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
+                          <p className="text-sm text-red-600 dark:text-red-400">{agentError}</p>
+                        </div>
+                      )}
+
+                      {/* Generate Button */}
+                      <button
+                        onClick={generateAIArticle}
+                        disabled={agentGenerating || !agentForm.movieName.trim()}
+                        className="w-full bg-gradient-to-r from-red-600 to-orange-600 text-white px-6 py-3 rounded-lg hover:from-red-700 hover:to-orange-700 disabled:from-gray-400 disabled:to-gray-500 disabled:cursor-not-allowed font-semibold shadow-lg transition-all flex items-center justify-center gap-2"
+                      >
+                        {agentGenerating ? (
+                          <>
+                            <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                            Generating...
+                          </>
+                        ) : (
+                          <>
+                            <Settings className="w-5 h-5" />
+                            Generate Article
+                          </>
+                        )}
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Right Column - Info */}
+                  <div className="space-y-6">
+                    <div className="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-lg p-6 border border-blue-200 dark:border-blue-800">
+                      <h3 className="text-lg font-semibold text-blue-900 dark:text-blue-300 mb-3">How It Works</h3>
+                      <ol className="space-y-3 text-sm text-blue-800 dark:text-blue-300">
+                        <li className="flex gap-3">
+                          <span className="flex-shrink-0 w-6 h-6 bg-blue-600 dark:bg-blue-500 text-white rounded-full flex items-center justify-center text-xs font-bold">1</span>
+                          <span>Enter the movie name you want to write about</span>
+                        </li>
+                        <li className="flex gap-3">
+                          <span className="flex-shrink-0 w-6 h-6 bg-blue-600 dark:bg-blue-500 text-white rounded-full flex items-center justify-center text-xs font-bold">2</span>
+                          <span>Choose between Review or Story Synopsis</span>
+                        </li>
+                        <li className="flex gap-3">
+                          <span className="flex-shrink-0 w-6 h-6 bg-blue-600 dark:bg-blue-500 text-white rounded-full flex items-center justify-center text-xs font-bold">3</span>
+                          <span>Select the appropriate category</span>
+                        </li>
+                        <li className="flex gap-3">
+                          <span className="flex-shrink-0 w-6 h-6 bg-blue-600 dark:bg-blue-500 text-white rounded-full flex items-center justify-center text-xs font-bold">4</span>
+                          <span>Add a poster image URL (optional)</span>
+                        </li>
+                        <li className="flex gap-3">
+                          <span className="flex-shrink-0 w-6 h-6 bg-blue-600 dark:bg-blue-500 text-white rounded-full flex items-center justify-center text-xs font-bold">5</span>
+                          <span>AI searches the web and generates a professional article</span>
+                        </li>
+                        <li className="flex gap-3">
+                          <span className="flex-shrink-0 w-6 h-6 bg-blue-600 dark:bg-blue-500 text-white rounded-full flex items-center justify-center text-xs font-bold">6</span>
+                          <span>Review and publish to your site</span>
+                        </li>
+                      </ol>
+                    </div>
+
+                    <div className="bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 rounded-lg p-6 border border-purple-200 dark:border-purple-800">
+                      <h3 className="text-lg font-semibold text-purple-900 dark:text-purple-300 mb-3">What You Get</h3>
+                      <ul className="space-y-2 text-sm text-purple-800 dark:text-purple-300">
+                        <li className="flex items-start gap-2">
+                          <span className="text-purple-600 dark:text-purple-400 mt-0.5">✓</span>
+                          <span><strong>Reviews:</strong> 800-1000 word professional movie reviews with analysis</span>
+                        </li>
+                        <li className="flex items-start gap-2">
+                          <span className="text-purple-600 dark:text-purple-400 mt-0.5">✓</span>
+                          <span><strong>Story Synopsis:</strong> 600-800 word engaging plot summaries</span>
+                        </li>
+                        <li className="flex items-start gap-2">
+                          <span className="text-purple-600 dark:text-purple-400 mt-0.5">✓</span>
+                          <span>Web-researched with real facts and data</span>
+                        </li>
+                        <li className="flex items-start gap-2">
+                          <span className="text-purple-600 dark:text-purple-400 mt-0.5">✓</span>
+                          <span>SEO-optimized for search engines</span>
+                        </li>
+                        <li className="flex items-start gap-2">
+                          <span className="text-purple-600 dark:text-purple-400 mt-0.5">✓</span>
+                          <span>Professional entertainment journalism style</span>
+                        </li>
+                      </ul>
+                    </div>
+
+                    <div className="bg-gradient-to-br from-amber-50 to-yellow-50 dark:from-amber-900/20 dark:to-yellow-900/20 rounded-lg p-4 border border-amber-200 dark:border-amber-800">
+                      <p className="text-xs text-amber-800 dark:text-amber-300">
+                        <strong>Note:</strong> This demo shows the prompt structure. To enable full AI generation, you'll need to integrate Claude API with web search capabilities on your backend.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                /* Preview Mode */
+                <div className="space-y-6">
+                  <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-4">
+                    <p className="text-green-800 dark:text-green-300 font-medium">✓ Article generated successfully! Review and publish below.</p>
+                  </div>
+
+                  {/* Preview Card */}
+                  <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden border border-gray-200 dark:border-gray-700">
+                    {agentPreview.image && (
+                      <img src={agentPreview.image} alt={agentPreview.title} className="w-full h-64 object-cover" />
+                    )}
+                    <div className="p-6">
+                      <div className="flex items-center gap-2 mb-3">
+                        <span className="px-3 py-1 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 text-xs font-semibold rounded-full">
+                          {agentPreview.scriptType === 'review' ? 'Review' : 'Story'}
+                        </span>
+                        <span className="px-3 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 text-xs font-semibold rounded-full">
+                          {categories.find(c => c.id === agentPreview.category)?.name}
+                        </span>
+                        <span className="px-3 py-1 bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400 text-xs font-semibold rounded-full">
+                          AI Generated
+                        </span>
+                      </div>
+                      <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">{agentPreview.title}</h3>
+                      <div className="prose dark:prose-invert max-w-none">
+                        <p className="text-gray-700 dark:text-gray-300 whitespace-pre-wrap">{agentPreview.content}</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Action Buttons */}
+                  <div className="flex gap-4">
+                    <button
+                      onClick={publishAIArticle}
+                      className="flex-1 bg-gradient-to-r from-green-600 to-emerald-600 text-white px-6 py-3 rounded-lg hover:from-green-700 hover:to-emerald-700 font-semibold shadow-lg transition-all flex items-center justify-center gap-2"
+                    >
+                      <Upload className="w-5 h-5" />
+                      Publish Article
+                    </button>
+                    <button
+                      onClick={resetAgentForm}
+                      className="flex-1 bg-gray-600 text-white px-6 py-3 rounded-lg hover:bg-gray-700 font-semibold shadow-lg transition-all flex items-center justify-center gap-2"
+                    >
+                      <X className="w-5 h-5" />
+                      Start Over
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
           )}
 
