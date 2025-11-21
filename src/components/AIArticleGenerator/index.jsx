@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Settings, Upload, X, Sparkles, HelpCircle, Film, Zap, MessageSquare, Image as ImageIcon, Wand2 } from 'lucide-react';
+import { Settings, Upload, X, Sparkles, HelpCircle, Film, Zap, MessageSquare, Image as ImageIcon, Wand2, Download, Globe } from 'lucide-react';
 import { useAIArticleGenerator } from '../../hooks/useAIArticleGenerator';
 
 /**
@@ -22,6 +22,22 @@ const AIArticleGenerator = ({ categories, onPublish }) => {
 
   // Tooltip state
   const [showHelp, setShowHelp] = useState(false);
+
+  // Download YouTube script function
+  const handleDownloadScript = () => {
+    if (!agentPreview) return;
+
+    const scriptContent = `${agentPreview.title}\n\n${agentPreview.content}`;
+    const blob = new Blob([scriptContent], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `${agentPreview.movieName || 'youtube-script'}-script.txt`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-blue-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 -m-6 p-8">
@@ -110,8 +126,8 @@ const AIArticleGenerator = ({ categories, onPublish }) => {
               )}
             </div>
           </div>
-          <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
-            Create professional movie reviews and story synopses in seconds using advanced AI
+          <p className="text-lg text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">
+            Create professional movie reviews, story synopses, and YouTube scripts in seconds using advanced AI
           </p>
         </div>
       </div>
@@ -153,7 +169,7 @@ const AIArticleGenerator = ({ categories, onPublish }) => {
                   <MessageSquare className="w-4 h-4 text-purple-600 dark:text-purple-400" />
                   Content Type *
                 </label>
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-3 gap-4">
                   <button
                     onClick={() => updateFormField('scriptType', 'review')}
                     className={`group relative px-6 py-4 rounded-xl border-2 font-semibold transition-all ${
@@ -190,7 +206,28 @@ const AIArticleGenerator = ({ categories, onPublish }) => {
                       </div>
                     )}
                   </button>
+                  <button
+                    onClick={() => updateFormField('scriptType', 'youtube')}
+                    className={`group relative px-6 py-4 rounded-xl border-2 font-semibold transition-all ${
+                      agentForm.scriptType === 'youtube'
+                        ? 'border-purple-600 bg-gradient-to-br from-purple-50 to-blue-50 dark:from-purple-900/30 dark:to-blue-900/30 text-purple-700 dark:text-purple-300 shadow-lg scale-105'
+                        : 'border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:border-purple-400 hover:shadow-md'
+                    }`}
+                  >
+                    <div className="flex flex-col items-center gap-2">
+                      <Film className={`w-6 h-6 ${agentForm.scriptType === 'youtube' ? 'text-purple-600 dark:text-purple-400' : 'text-gray-400'}`} />
+                      <span>YouTube Script</span>
+                    </div>
+                    {agentForm.scriptType === 'youtube' && (
+                      <div className="absolute -top-2 -right-2 w-6 h-6 bg-purple-600 rounded-full flex items-center justify-center">
+                        <span className="text-white text-xs">✓</span>
+                      </div>
+                    )}
+                  </button>
                 </div>
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
+                  📺 YouTube Script includes visual cues [VISUAL CUE], timing markers, and copyright-safe guidelines
+                </p>
               </div>
 
               {/* Row: Category + AI Quality */}
@@ -223,13 +260,52 @@ const AIArticleGenerator = ({ categories, onPublish }) => {
                     onChange={(e) => updateFormField('model', e.target.value)}
                     className="w-full px-5 py-3.5 border-2 border-gray-200 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-all"
                   >
-                    <option value="sonnet">🌟 High Quality - Sonnet 4.5</option>
-                    <option value="haiku">⚡ Fast Draft - Haiku 3.5</option>
+                    <optgroup label="🤖 ChatGPT + Search">
+                      <option value="gpt-4o">💬 ChatGPT 4o + Search</option>
+                      <option value="gpt-4o-mini">💬 ChatGPT 4o-mini + Search (Fast)</option>
+                    </optgroup>
+                    <optgroup label="🔍 Claude + Search (Recommended)">
+                      <option value="hybrid-sonnet">🌟 Claude Sonnet 4.5 + Search (Best)</option>
+                      <option value="hybrid-haiku">⚡ Claude Haiku 3.5 + Search (Fast)</option>
+                    </optgroup>
+                    <optgroup label="📚 Claude Only (No Search)">
+                      <option value="sonnet">🌟 Claude Sonnet 4.5 - High Quality</option>
+                      <option value="haiku">⚡ Claude Haiku 3.5 - Fast Draft</option>
+                    </optgroup>
                   </select>
                   <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
-                    Sonnet: Better quality (~$0.02) • Haiku: Faster & cheaper (~$0.002)
+                    💡 Models with "Search" use Google Search for real-time data • Claude-only uses training data (up to Jan 2025)
                   </p>
                 </div>
+              </div>
+
+              {/* Platform Selection */}
+              <div>
+                <label className="flex items-center gap-2 text-sm font-semibold text-gray-800 dark:text-gray-200 mb-3">
+                  <Film className="w-4 h-4 text-purple-600 dark:text-purple-400" />
+                  Streaming Platform *
+                </label>
+                <select
+                  value={agentForm.platform}
+                  onChange={(e) => updateFormField('platform', e.target.value)}
+                  className="w-full px-5 py-3.5 border-2 border-gray-200 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-all"
+                >
+                  <option value="auto-detect">🔍 Auto-Detect (Recommended)</option>
+                  <option value="netflix">𝗡 Netflix</option>
+                  <option value="amazon-prime">𝗣 Amazon Prime Video</option>
+                  <option value="disney-plus">✨ Disney+</option>
+                  <option value="hulu">🟢 Hulu</option>
+                  <option value="apple-tv">🍎 Apple TV+</option>
+                  <option value="hbo-max">🎭 Max (HBO Max)</option>
+                  <option value="paramount-plus">⛰️ Paramount+</option>
+                  <option value="peacock">🦚 Peacock</option>
+                  <option value="youtube-premium">▶️ YouTube Premium</option>
+                  <option value="theatrical">🎥 Theatrical Release</option>
+                  <option value="other">📱 Other Platform</option>
+                </select>
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
+                  💡 Auto-detect will search all platforms. Select specific platform for better accuracy.
+                </p>
               </div>
 
               {/* Row: Image URL + Article Length */}
@@ -279,6 +355,57 @@ const AIArticleGenerator = ({ categories, onPublish }) => {
                     Target word count (100-1000 words)
                   </p>
                 </div>
+              </div>
+
+              {/* Language Selection */}
+              <div>
+                <label className="flex items-center gap-2 text-sm font-semibold text-gray-800 dark:text-gray-200 mb-3">
+                  <Globe className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+                  Language *
+                </label>
+                <div className="grid grid-cols-3 gap-4">
+                  <button
+                    type="button"
+                    onClick={() => updateFormField('language', 'english')}
+                    className={`p-4 border-2 rounded-xl transition-all duration-200 ${
+                      agentForm.language === 'english'
+                        ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20 shadow-md'
+                        : 'border-gray-200 dark:border-gray-600 hover:border-blue-300 hover:bg-blue-50/50 dark:hover:bg-blue-900/10'
+                    }`}
+                  >
+                    <div className="text-lg font-semibold text-gray-800 dark:text-gray-200">🇬🇧 English</div>
+                    <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">Standard English</div>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => updateFormField('language', 'hindi')}
+                    className={`p-4 border-2 rounded-xl transition-all duration-200 ${
+                      agentForm.language === 'hindi'
+                        ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20 shadow-md'
+                        : 'border-gray-200 dark:border-gray-600 hover:border-blue-300 hover:bg-blue-50/50 dark:hover:bg-blue-900/10'
+                    }`}
+                  >
+                    <div className="text-lg font-semibold text-gray-800 dark:text-gray-200">🇮🇳 हिंदी</div>
+                    <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">Pure Hindi (Devanagari)</div>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => updateFormField('language', 'hinglish')}
+                    className={`p-4 border-2 rounded-xl transition-all duration-200 ${
+                      agentForm.language === 'hinglish'
+                        ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20 shadow-md'
+                        : 'border-gray-200 dark:border-gray-600 hover:border-blue-300 hover:bg-blue-50/50 dark:hover:bg-blue-900/10'
+                    }`}
+                  >
+                    <div className="text-lg font-semibold text-gray-800 dark:text-gray-200">🇮🇳 Hinglish</div>
+                    <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">Hindi in Roman script</div>
+                  </button>
+                </div>
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
+                  💡 Choose the language for your generated content
+                </p>
               </div>
 
               {/* Custom Instructions */}
@@ -374,7 +501,7 @@ const AIArticleGenerator = ({ categories, onPublish }) => {
               {/* Category Tags */}
               <div className="flex items-center gap-2 flex-wrap">
                 <span className="px-4 py-1.5 bg-gradient-to-r from-red-500 to-orange-500 text-white text-xs font-bold rounded-full shadow-md">
-                  {agentPreview.scriptType === 'review' ? '⭐ REVIEW' : '📖 STORY'}
+                  {agentPreview.scriptType === 'review' ? '⭐ REVIEW' : agentPreview.scriptType === 'story' ? '📖 STORY' : '📺 YOUTUBE SCRIPT'}
                 </span>
                 <select
                   value={agentPreview.category}
@@ -449,12 +576,21 @@ const AIArticleGenerator = ({ categories, onPublish }) => {
 
           {/* Action Buttons */}
           <div className="flex gap-4">
+            {agentPreview.scriptType === 'youtube' && (
+              <button
+                onClick={handleDownloadScript}
+                className="flex-1 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white px-8 py-4 rounded-xl font-bold shadow-lg hover:shadow-xl transition-all flex items-center justify-center gap-3 text-lg"
+              >
+                <Download className="w-6 h-6" />
+                Download Script
+              </button>
+            )}
             <button
               onClick={handlePublish}
               className="flex-1 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white px-8 py-4 rounded-xl font-bold shadow-lg hover:shadow-xl transition-all flex items-center justify-center gap-3 text-lg"
             >
               <Upload className="w-6 h-6" />
-              Publish Article
+              Publish {agentPreview.scriptType === 'youtube' ? 'Script' : 'Article'}
             </button>
             <button
               onClick={resetForm}

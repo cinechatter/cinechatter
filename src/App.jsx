@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Film, TrendingUp, Plus, Edit2, Trash2, Eye, X, Menu, Search, ChevronDown, Upload, Settings, User, LogOut, Download, Moon, Sun, Save, Type, Bold, Italic, List, ListOrdered, Heading2 } from 'lucide-react';
+import { Film, TrendingUp, Plus, Edit2, Trash2, Eye, X, Menu, Search, ChevronDown, Upload, Settings, User, LogOut, Download, Moon, Sun, Save, Type, Bold, Italic, List, ListOrdered, Heading2, Play } from 'lucide-react';
 import { supabase, isSupabaseConfigured } from './lib/supabase';
 import { autoGenerateSEOFields } from './utils/seoHelpers';
 import AIArticleGenerator from './components/AIArticleGenerator';
@@ -12,7 +12,8 @@ const categories = [
   { id: 'ott', name: 'OTT' },
   { id: 'music', name: 'Music' },
   { id: 'celebrity-style', name: 'Celebrity Style' },
-  { id: 'international', name: 'International Cinema' }
+  { id: 'international', name: 'International Cinema' },
+  { id: 'youtube-scripts', name: 'YouTube Scripts' }
 ];
 
 const CineChatter = () => {
@@ -1242,12 +1243,16 @@ const CineChatter = () => {
             <div className="hidden lg:flex items-center gap-0.5 flex-1 justify-center">
               <button onClick={() => setCurrentView('home')} className="px-2 py-2 text-sm text-gray-700 dark:text-gray-300 hover:text-red-600 dark:hover:text-red-400 whitespace-nowrap">Home</button>
 
-              <div className="relative">
-                <button onClick={(e) => { e.stopPropagation(); setBollywoodOpen(false); setMoreOpen(false); setUserMenuOpen(false); setHollywoodOpen(!hollywoodOpen); }} className="flex items-center gap-1 px-2 py-2 text-sm text-gray-700 dark:text-gray-300 hover:text-red-600 dark:hover:text-red-400 whitespace-nowrap">
-                  Hollywood <ChevronDown className="w-4 h-4" />
+              <div
+                className="relative"
+                onMouseEnter={() => setHollywoodOpen(true)}
+                onMouseLeave={() => setHollywoodOpen(false)}
+              >
+                <button className="flex items-center gap-1 px-2 py-2 text-sm text-gray-700 dark:text-gray-300 hover:text-red-600 dark:hover:text-red-400 whitespace-nowrap transition-colors duration-200">
+                  Hollywood <ChevronDown className={`w-4 h-4 transition-transform duration-300 ${hollywoodOpen ? 'rotate-180' : ''}`} />
                 </button>
-                {hollywoodOpen && (
-                  <div className="absolute top-full left-0 mt-1 bg-white dark:bg-gray-800 shadow-lg rounded-lg py-2 w-48 z-50">
+                <div className={`absolute top-full left-0 pt-1 z-50 ${hollywoodOpen ? '' : 'pointer-events-none'}`}>
+                  <div className={`bg-white dark:bg-gray-800 shadow-lg rounded-lg py-2 w-48 transition-all duration-300 ease-in-out origin-top ${hollywoodOpen ? 'opacity-100 scale-y-100 translate-y-0' : 'opacity-0 scale-y-0 -translate-y-2'}`}>
                     <button
                       onClick={() => { setSelectedCategory('hollywood-movies'); setCurrentView('category'); setHollywoodOpen(false); }}
                       className="block w-full text-left px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-red-600 hover:text-white transition-colors duration-150"
@@ -1261,15 +1266,19 @@ const CineChatter = () => {
                       News
                     </button>
                   </div>
-                )}
+                </div>
               </div>
 
-              <div className="relative">
-                <button onClick={(e) => { e.stopPropagation(); setHollywoodOpen(false); setMoreOpen(false); setUserMenuOpen(false); setBollywoodOpen(!bollywoodOpen); }} className="flex items-center gap-1 px-2 py-2 text-sm text-gray-700 dark:text-gray-300 hover:text-red-600 dark:hover:text-red-400 whitespace-nowrap">
-                  Bollywood <ChevronDown className="w-4 h-4" />
+              <div
+                className="relative"
+                onMouseEnter={() => setBollywoodOpen(true)}
+                onMouseLeave={() => setBollywoodOpen(false)}
+              >
+                <button className="flex items-center gap-1 px-2 py-2 text-sm text-gray-700 dark:text-gray-300 hover:text-red-600 dark:hover:text-red-400 whitespace-nowrap transition-colors duration-200">
+                  Bollywood <ChevronDown className={`w-4 h-4 transition-transform duration-300 ${bollywoodOpen ? 'rotate-180' : ''}`} />
                 </button>
-                {bollywoodOpen && (
-                  <div className="absolute top-full left-0 mt-1 bg-white dark:bg-gray-800 shadow-lg rounded-lg py-2 w-48 z-50">
+                <div className={`absolute top-full left-0 pt-1 z-50 ${bollywoodOpen ? '' : 'pointer-events-none'}`}>
+                  <div className={`bg-white dark:bg-gray-800 shadow-lg rounded-lg py-2 w-48 transition-all duration-300 ease-in-out origin-top ${bollywoodOpen ? 'opacity-100 scale-y-100 translate-y-0' : 'opacity-0 scale-y-0 -translate-y-2'}`}>
                     <button
                       onClick={() => { setSelectedCategory('bollywood-movies'); setCurrentView('category'); setBollywoodOpen(false); }}
                       className="block w-full text-left px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-red-600 hover:text-white transition-colors duration-150"
@@ -1283,7 +1292,7 @@ const CineChatter = () => {
                       News
                     </button>
                   </div>
-                )}
+                </div>
               </div>
 
               <button onClick={() => { setSelectedCategory('international'); setCurrentView('category'); }} className="px-2 py-2 text-sm text-gray-700 dark:text-gray-300 hover:text-red-600 dark:hover:text-red-400 whitespace-nowrap">International</button>
@@ -1294,12 +1303,28 @@ const CineChatter = () => {
 
               <button onClick={() => { setSelectedCategory('celebrity-style'); setCurrentView('category'); }} className="px-2 py-2 text-sm text-gray-700 dark:text-gray-300 hover:text-red-600 dark:hover:text-red-400 whitespace-nowrap">Celebrity Style</button>
 
-              <div className="relative">
-                <button onClick={(e) => { e.stopPropagation(); setHollywoodOpen(false); setBollywoodOpen(false); setUserMenuOpen(false); setMoreOpen(!moreOpen); }} className="flex items-center gap-1 px-2 py-2 text-sm text-gray-700 dark:text-gray-300 hover:text-red-600 dark:hover:text-red-400 whitespace-nowrap">
-                  More <ChevronDown className="w-4 h-4" />
+              <div
+                className="relative"
+                onMouseEnter={() => setMoreOpen(true)}
+                onMouseLeave={() => setMoreOpen(false)}
+              >
+                <button className="flex items-center gap-1 px-2 py-2 text-sm text-gray-700 dark:text-gray-300 hover:text-red-600 dark:hover:text-red-400 whitespace-nowrap transition-colors duration-200">
+                  More <ChevronDown className={`w-4 h-4 transition-transform duration-300 ${moreOpen ? 'rotate-180' : ''}`} />
                 </button>
-                {moreOpen && (
-                  <div className="absolute top-full right-0 mt-1 bg-white dark:bg-gray-800 shadow-lg rounded-lg py-2 w-48 z-50">
+                <div className={`absolute top-full right-0 pt-1 z-50 ${moreOpen ? '' : 'pointer-events-none'}`}>
+                  <div className={`bg-white dark:bg-gray-800 shadow-lg rounded-lg py-2 w-48 transition-all duration-300 ease-in-out origin-top ${moreOpen ? 'opacity-100 scale-y-100 translate-y-0' : 'opacity-0 scale-y-0 -translate-y-2'}`}>
+                    {user?.profile?.admin_status === 'A' && (
+                      <>
+                        <button
+                          onClick={() => { setSelectedCategory('youtube-scripts'); setCurrentView('category'); setMoreOpen(false); }}
+                          className="flex items-center gap-2 w-full text-left px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-red-600 hover:text-white transition-colors duration-150"
+                        >
+                          <Play className="w-4 h-4 fill-red-600 text-red-600" />
+                          YouTube Scripts
+                        </button>
+                        <div className="border-t border-gray-200 dark:border-gray-700 my-1"></div>
+                      </>
+                    )}
                     <button
                       onClick={() => { setCurrentView('about'); setMoreOpen(false); }}
                       className="block w-full text-left px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-red-600 hover:text-white transition-colors duration-150"
@@ -1313,7 +1338,7 @@ const CineChatter = () => {
                       Contact
                     </button>
                   </div>
-                )}
+                </div>
               </div>
 
             </div>
@@ -1435,6 +1460,17 @@ const CineChatter = () => {
 
                 <button onClick={() => { setSelectedCategory('international'); setCurrentView('category'); setMobileMenuOpen(false); }} className="block w-full text-left px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-red-50 dark:hover:bg-gray-700 hover:text-red-600 dark:hover:text-red-400">International</button>
 
+                {user?.profile?.admin_status === 'A' && (
+                  <>
+                    <div className="border-t border-gray-200 dark:border-gray-700 my-1"></div>
+                    <div className="px-4 py-1 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">Admin Only</div>
+                    <button onClick={() => { setSelectedCategory('youtube-scripts'); setCurrentView('category'); setMobileMenuOpen(false); }} className="flex items-center gap-2 w-full text-left px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-red-50 dark:hover:bg-gray-700 hover:text-red-600 dark:hover:text-red-400">
+                      <Play className="w-4 h-4 fill-red-600 text-red-600" />
+                      YouTube Scripts
+                    </button>
+                  </>
+                )}
+
                 <div className="border-t border-gray-200 dark:border-gray-700 my-1"></div>
                 <button onClick={() => { setCurrentView('about'); setMobileMenuOpen(false); }} className="block w-full text-left px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-red-50 dark:hover:bg-gray-700 hover:text-red-600 dark:hover:text-red-400">About</button>
 
@@ -1467,26 +1503,6 @@ const CineChatter = () => {
           <div className="text-center py-8 mb-4">
             <h1 className="text-4xl font-bold mb-4 text-gray-900 dark:text-white leading-tight">Welcome to CineChatter</h1>
             <p className="text-red-600 dark:text-red-400 font-semibold text-xl leading-relaxed">Your ultimate destination for entertainment news and updates!</p>
-          </div>
-
-          {/* Treasure Box Section */}
-          <div className="max-w-2xl mx-auto py-8 sm:py-12 px-6 sm:px-8 mb-8 bg-gradient-to-br from-red-50 via-orange-50 to-yellow-50 dark:from-slate-900 dark:via-gray-800 dark:to-slate-900 rounded-2xl shadow-xl border border-red-100 dark:border-gray-700">
-            <div className="flex flex-col items-center">
-              <div className="relative mb-4">
-                <div className="treasure-box w-32 h-32 sm:w-48 sm:h-48 bg-gradient-to-br from-yellow-600 via-yellow-500 to-yellow-400 rounded-lg shadow-2xl flex items-center justify-center cursor-pointer hover:shadow-3xl" onClick={async () => {
-                  await loadFeaturedImages();
-                  const validImages = featuredImages.filter(f => f.image);
-                  if (validImages.length > 0) {
-                    setCurrentTreasureIndex(Math.floor(Math.random() * validImages.length));
-                  }
-                  setTreasureBoxOpen(true);
-                }}>
-                  <span className="text-6xl sm:text-9xl">🎁</span>
-                </div>
-                <div className="absolute -top-2 -right-2 w-10 h-10 bg-red-600 rounded-full flex items-center justify-center text-white text-sm font-bold animate-pulse-glow">NEW</div>
-              </div>
-              <p className="text-center text-red-600 dark:text-red-400 font-bold text-xl sm:text-2xl mt-2">Untold Stories!</p>
-            </div>
           </div>
 
           {/* Latest Articles Section - Magazine Grid */}
@@ -1598,6 +1614,26 @@ const CineChatter = () => {
                 </div>
               );
             })()}
+          </div>
+
+          {/* Treasure Box Section */}
+          <div className="max-w-2xl mx-auto py-8 sm:py-12 px-6 sm:px-8 mb-8 bg-gradient-to-br from-red-50 via-orange-50 to-yellow-50 dark:from-slate-900 dark:via-gray-800 dark:to-slate-900 rounded-2xl shadow-xl border border-red-100 dark:border-gray-700">
+            <div className="flex flex-col items-center">
+              <div className="relative mb-4">
+                <div className="treasure-box w-32 h-32 sm:w-48 sm:h-48 bg-gradient-to-br from-yellow-600 via-yellow-500 to-yellow-400 rounded-lg shadow-2xl flex items-center justify-center cursor-pointer hover:shadow-3xl" onClick={async () => {
+                  await loadFeaturedImages();
+                  const validImages = featuredImages.filter(f => f.image);
+                  if (validImages.length > 0) {
+                    setCurrentTreasureIndex(Math.floor(Math.random() * validImages.length));
+                  }
+                  setTreasureBoxOpen(true);
+                }}>
+                  <span className="text-6xl sm:text-9xl">🎁</span>
+                </div>
+                <div className="absolute -top-2 -right-2 w-10 h-10 bg-red-600 rounded-full flex items-center justify-center text-white text-sm font-bold animate-pulse-glow">NEW</div>
+              </div>
+              <p className="text-center text-red-600 dark:text-red-400 font-bold text-xl sm:text-2xl mt-2">Untold Stories!</p>
+            </div>
           </div>
 
           {/* Trending Now Section - Horizontal Scroll */}

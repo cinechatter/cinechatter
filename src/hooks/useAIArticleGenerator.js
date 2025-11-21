@@ -15,9 +15,11 @@ export const useAIArticleGenerator = (onPublish) => {
     scriptType: 'review',
     imageUrl: '',
     category: 'hollywood-movies',
-    model: 'haiku', // Default to fast/economical
+    platform: 'auto-detect', // Streaming platform
+    model: 'gpt-4o', // Default to ChatGPT 4o with search
     customInstructions: '', // Optional custom instructions
-    articleLength: 500 // Default word count (max 1000)
+    articleLength: 500, // Default word count (max 1000)
+    language: 'english' // Language selection: english, hindi, hinglish
   });
 
   // UI state
@@ -49,7 +51,7 @@ export const useAIArticleGenerator = (onPublish) => {
    * Generate AI article
    */
   const handleGenerate = async () => {
-    const { movieName, scriptType, imageUrl, category, model, customInstructions, articleLength } = agentForm;
+    const { movieName, scriptType, imageUrl, category, platform, model, customInstructions, articleLength, language } = agentForm;
 
     // Validate input
     const validation = validateGenerationInput(movieName);
@@ -70,9 +72,11 @@ export const useAIArticleGenerator = (onPublish) => {
         scriptType,
         imageUrl,
         category,
+        platform,  // Pass selected platform
         model,  // Pass selected model
         customInstructions,  // Pass custom instructions
-        articleLength  // Pass article length
+        articleLength,  // Pass article length
+        language  // Pass selected language
       });
 
       setAgentPreview(preview);
@@ -94,16 +98,19 @@ export const useAIArticleGenerator = (onPublish) => {
       id: Date.now(),
       title: agentPreview.title,
       content: agentPreview.content,
-      category: agentPreview.category,
+      // Route YouTube scripts to 'youtube-scripts' category, otherwise use selected category
+      category: agentPreview.scriptType === 'youtube' ? 'youtube-scripts' : agentPreview.category,
       image: agentPreview.image,
       status: 'published',
       source: 'AI Agent',
+      language: agentPreview.language || 'english', // Store language
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
       metadata: {
         scriptType: agentPreview.scriptType,
         movieName: agentPreview.movieName,
-        generatedBy: 'AI'
+        generatedBy: 'AI',
+        language: agentPreview.language || 'english' // Store in metadata too
       }
     };
 
@@ -113,7 +120,7 @@ export const useAIArticleGenerator = (onPublish) => {
     // Reset form
     resetForm();
 
-    alert('✅ AI-generated article published successfully!');
+    alert(`✅ ${agentPreview.scriptType === 'youtube' ? 'YouTube script' : 'Article'} published successfully!`);
   };
 
   /**
@@ -125,9 +132,11 @@ export const useAIArticleGenerator = (onPublish) => {
       scriptType: 'review',
       imageUrl: '',
       category: 'hollywood-movies',
-      model: 'haiku',
+      platform: 'auto-detect',
+      model: 'gpt-4o',
       customInstructions: '',
-      articleLength: 500
+      articleLength: 500,
+      language: 'english'
     });
     setAgentPreview(null);
     setAgentError(null);
