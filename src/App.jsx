@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Film, TrendingUp, Plus, Edit2, Trash2, Eye, X, Menu, Search, ChevronDown, Upload, Settings, User, LogOut, Download, Moon, Sun, Save, Type, Bold, Italic, List, ListOrdered, Heading2, Play } from 'lucide-react';
+import { Film, TrendingUp, Plus, Edit2, Trash2, Eye, X, Menu, Search, ChevronDown, Upload, Settings, User, LogOut, Download, Moon, Sun, Save, Type, Bold, Italic, List, ListOrdered, Heading2, Play, ChevronLeft, ChevronRight, Pause } from 'lucide-react';
 import { supabase, isSupabaseConfigured } from './lib/supabase';
 import { autoGenerateSEOFields } from './utils/seoHelpers';
 import AIArticleGenerator from './components/AIArticleGenerator';
@@ -63,6 +63,11 @@ const CineChatter = () => {
   const [authMode, setAuthMode] = useState('login'); // 'login' or 'signup'
   const [authForm, setAuthForm] = useState({ name: '', email: '', password: '' });
   const [userMenuOpen, setUserMenuOpen] = useState(false);
+
+  // Latest Articles Carousel State
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const [isCarouselPaused, setIsCarouselPaused] = useState(false);
+  const [carouselProgress, setCarouselProgress] = useState(0);
 
   // Admin Management State
   const [showManageAdmins, setShowManageAdmins] = useState(false);
@@ -129,6 +134,36 @@ const CineChatter = () => {
       window.supabase = supabase;
     }
   }, []);
+
+  // Carousel auto-advance effect
+  useEffect(() => {
+    if (isCarouselPaused || currentView !== 'home') return;
+
+    // Calculate carousel articles count
+    let allArticles = [];
+    if (dataSource === 'admin-only') {
+      allArticles = articles.filter(a => a.status === 'published');
+    } else if (dataSource === 'sheets-only') {
+      allArticles = sheetArticles.filter(a => a.status === 'published');
+    } else if (dataSource === 'both') {
+      allArticles = [...articles.filter(a => a.status === 'published'), ...sheetArticles.filter(a => a.status === 'published')];
+    }
+    const carouselCount = Math.min(allArticles.length, 5);
+
+    if (carouselCount <= 1) return;
+
+    const progressInterval = setInterval(() => {
+      setCarouselProgress(prev => {
+        if (prev >= 100) {
+          setCurrentSlide(s => (s + 1) % carouselCount);
+          return 0;
+        }
+        return prev + (100 / 70); // 7 seconds = 70 intervals of 100ms
+      });
+    }, 100);
+
+    return () => clearInterval(progressInterval);
+  }, [isCarouselPaused, currentView, dataSource, articles, sheetArticles, currentSlide]);
 
   // Check if user is logged in
   const checkUser = async () => {
@@ -1500,14 +1535,14 @@ const CineChatter = () => {
       {currentView === 'home' && (
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8">
           {/* Welcome Section */}
-          <div className="text-center py-8 mb-4">
-            <h1 className="text-4xl font-bold mb-4 text-gray-900 dark:text-white leading-tight">Welcome to CineChatter</h1>
+          <div className="text-center py-4 mb-2">
+            <h1 className="text-4xl font-bold mb-2 text-gray-900 dark:text-white leading-tight">Welcome to CineChatter</h1>
             <p className="text-red-600 dark:text-red-400 font-semibold text-xl leading-relaxed">Your ultimate destination for entertainment news and updates!</p>
           </div>
 
-          {/* Latest Articles Section - Magazine Grid */}
-          <div className="mb-8">
-            <div className="mb-6">
+          {/* Latest Articles Section - Ken Burns Carousel */}
+          <div className="mb-6">
+            <div className="mb-2">
               <h2 className="text-3xl font-bold text-gray-900 dark:text-white leading-tight">Latest Articles</h2>
             </div>
 
@@ -1522,118 +1557,127 @@ const CineChatter = () => {
                 allArticles = [...articles.filter(a => a.status === 'published'), ...sheetArticles.filter(a => a.status === 'published')];
               }
 
-              console.log('📰 Latest Articles - Data Source:', dataSource);
-              console.log('📊 Total admin articles:', articles.length, '| Published:', articles.filter(a => a.status === 'published').length);
-              console.log('📊 Total sheet articles:', sheetArticles.length, '| Published:', sheetArticles.filter(a => a.status === 'published').length);
-              console.log('📊 All articles to display:', allArticles.length);
-
-              // Sort by date and take top 7 (1 featured + 6 grid)
-              const recentArticles = allArticles
+              // Sort by date and take top 5 for carousel
+              const carouselArticles = allArticles
                 .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
-                .slice(0, 7);
+                .slice(0, 5);
 
-              if (recentArticles.length === 0) {
+              if (carouselArticles.length === 0) {
                 return <p className="text-gray-400 dark:text-gray-500 text-center py-8">No articles yet</p>;
               }
 
-              const featuredArticle = recentArticles[0];
-              const gridArticles = recentArticles.slice(1);
+              const currentArticle = carouselArticles[currentSlide] || carouselArticles[0];
+
+              const nextSlide = () => {
+                setCurrentSlide((currentSlide + 1) % carouselArticles.length);
+                setCarouselProgress(0);
+              };
+
+              const prevSlide = () => {
+                setCurrentSlide((currentSlide - 1 + carouselArticles.length) % carouselArticles.length);
+                setCarouselProgress(0);
+              };
 
               return (
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                  {/* Featured Article - Large Card */}
-                  <div
-                    onClick={() => setSelectedArticle(featuredArticle)}
-                    className="lg:row-span-2 bg-gradient-to-br from-red-50 via-orange-50 to-yellow-50 dark:from-slate-900 dark:via-gray-800 dark:to-slate-900 rounded-lg shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden cursor-pointer group border border-red-100 dark:border-gray-700"
-                  >
-                    {featuredArticle.image && (
-                      <div className="relative h-64 lg:h-80 overflow-hidden">
-                        <img
-                          src={featuredArticle.image}
-                          alt={featuredArticle.title}
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                        />
-                        <div className="absolute top-4 left-4">
-                          <span className="bg-red-600 text-white px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide shadow-lg">
-                            Featured
-                          </span>
-                        </div>
-                      </div>
-                    )}
-                    <div className="p-6">
-                      <span className="text-xs bg-red-100 dark:bg-red-900 text-red-600 dark:text-red-300 px-3 py-1 rounded-full mb-3 inline-block uppercase font-semibold">
-                        {categories.find(c => c.id === featuredArticle.category)?.name}
+                <div
+                  className="relative h-[450px] sm:h-[500px] rounded-2xl overflow-hidden shadow-2xl group bg-gradient-to-br from-red-100 via-orange-100 to-yellow-100 dark:from-slate-900 dark:via-gray-800 dark:to-slate-900 border border-red-200 dark:border-gray-700"
+                  onMouseEnter={() => setIsCarouselPaused(true)}
+                  onMouseLeave={() => setIsCarouselPaused(false)}
+                >
+                  {/* Background Image with Ken Burns Effect */}
+                  {currentArticle.image ? (
+                    <div className="absolute inset-0">
+                      <img
+                        key={`slide-${currentSlide}`}
+                        src={currentArticle.image}
+                        alt={currentArticle.title}
+                        className="w-full h-full object-cover animate-ken-burns"
+                      />
+                      {/* Gradient Overlay */}
+                      <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent"></div>
+                    </div>
+                  ) : null}
+
+                  {/* Content Overlay - Left aligned like Repoz.AI */}
+                  <div className="absolute inset-0 flex items-start pt-4 sm:pt-5 lg:pt-6 p-6 sm:p-10 lg:p-12">
+                    <div className="w-full sm:w-2/3 lg:w-1/2">
+                      {/* Category Badge */}
+                      <span className="inline-block w-fit bg-red-600 text-white px-4 py-2 rounded-full text-xs sm:text-sm font-bold uppercase tracking-wide mb-4 shadow-lg animate-fadeIn">
+                        {categories.find(c => c.id === currentArticle.category)?.name}
                       </span>
-                      <h3 className="font-bold text-2xl mb-3 text-gray-900 dark:text-white group-hover:text-red-600 dark:group-hover:text-red-400 transition-colors leading-tight">
-                        {featuredArticle.title}
+
+                      {/* Title */}
+                      <h3 className="text-2xl sm:text-4xl lg:text-5xl font-bold text-gray-900 dark:text-white mb-4 leading-tight animate-fadeIn" style={{ animationDelay: '0.1s' }}>
+                        {currentArticle.title}
                       </h3>
-                      <p className="text-gray-600 dark:text-gray-400 text-base line-clamp-3 mb-4 leading-relaxed">
-                        {getPreviewText(featuredArticle.content)}
+
+                      {/* Description */}
+                      <p className="text-sm sm:text-base lg:text-lg text-gray-700 dark:text-gray-200 mb-6 line-clamp-3 animate-fadeIn" style={{ animationDelay: '0.2s' }}>
+                        {getPreviewText(currentArticle.content)}
                       </p>
-                      <div className="flex items-center justify-between text-sm text-gray-500 dark:text-gray-400">
-                        <span>{new Date(featuredArticle.createdAt).toLocaleDateString()}</span>
-                        <span className="text-red-600 dark:text-red-400 font-medium group-hover:underline">Read More →</span>
+
+                      {/* Date & Read More */}
+                      <div className="flex items-center gap-4 animate-fadeIn" style={{ animationDelay: '0.3s' }}>
+                        <button
+                          onClick={() => setSelectedArticle(currentArticle)}
+                          className="bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-lg font-semibold transition-all duration-300 hover:scale-105 shadow-lg"
+                        >
+                          Read Article →
+                        </button>
+                        <span className="text-sm text-gray-600 dark:text-gray-300">
+                          {new Date(currentArticle.createdAt).toLocaleDateString()}
+                        </span>
                       </div>
                     </div>
                   </div>
 
-                  {/* Grid Articles - Smaller Cards */}
-                  {gridArticles.map(article => (
+                  {/* Navigation Arrows */}
+                  <button
+                    onClick={prevSlide}
+                    className="absolute left-4 top-1/2 -translate-y-1/2 bg-red-300/60 hover:bg-red-400/70 text-red-800/80 dark:bg-gray-600/40 dark:hover:bg-gray-500/50 dark:text-gray-300/80 p-3 rounded-full transition-all duration-300 opacity-0 group-hover:opacity-100"
+                  >
+                    <ChevronLeft className="w-6 h-6" />
+                  </button>
+                  <button
+                    onClick={nextSlide}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 bg-red-300/60 hover:bg-red-400/70 text-red-800/80 dark:bg-gray-600/40 dark:hover:bg-gray-500/50 dark:text-gray-300/80 p-3 rounded-full transition-all duration-300 opacity-0 group-hover:opacity-100"
+                  >
+                    <ChevronRight className="w-6 h-6" />
+                  </button>
+
+                  {/* Progress Bar */}
+                  <div className="absolute bottom-0 left-0 right-0 h-1 bg-gray-300 dark:bg-white/30">
                     <div
-                      key={`article-${article.id}`}
-                      onClick={() => setSelectedArticle(article)}
-                      className="bg-gradient-to-br from-red-50 via-orange-50 to-yellow-50 dark:from-slate-900 dark:via-gray-800 dark:to-slate-900 rounded-lg shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden cursor-pointer group border border-red-100 dark:border-gray-700"
-                    >
-                      <div className="flex gap-4 p-4">
-                        {article.image && (
-                          <div className="flex-shrink-0 w-24 h-24 sm:w-28 sm:h-28 overflow-hidden rounded-lg">
-                            <img
-                              src={article.image}
-                              alt={article.title}
-                              className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                            />
-                          </div>
-                        )}
-                        <div className="flex-1 min-w-0">
-                          <span className="text-xs bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 px-2 py-1 rounded mb-2 inline-block uppercase font-semibold">
-                            {categories.find(c => c.id === article.category)?.name}
-                          </span>
-                          <h3 className="font-bold text-base sm:text-lg mb-2 text-gray-900 dark:text-white group-hover:text-red-600 dark:group-hover:text-red-400 transition-colors line-clamp-2 leading-tight">
-                            {article.title}
-                          </h3>
-                          <p className="text-gray-600 dark:text-gray-400 text-sm line-clamp-2 mb-2">
-                            {getPreviewText(article.content)}
-                          </p>
-                          <p className="text-xs text-gray-400 dark:text-gray-500">
-                            {new Date(article.createdAt).toLocaleDateString()}
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
+                      className="h-full bg-red-600 transition-all duration-100 ease-linear"
+                      style={{ width: `${carouselProgress}%` }}
+                    ></div>
+                  </div>
+
+                  {/* Dot Navigation */}
+                  <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2">
+                    {carouselArticles.map((_, index) => (
+                      <button
+                        key={`dot-${index}`}
+                        onClick={() => {
+                          setCurrentSlide(index);
+                          setCarouselProgress(0);
+                        }}
+                        className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                          index === currentSlide
+                            ? 'bg-red-600 w-8'
+                            : 'bg-gray-400 dark:bg-white/50 hover:bg-gray-500 dark:hover:bg-white/80'
+                        }`}
+                      />
+                    ))}
+                  </div>
+
+                  {/* Pause Indicator - Centered, icon only, on hover */}
+                  <div className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-transparent text-red-800/80 dark:text-gray-300/80 p-4 transition-opacity duration-300 ${isCarouselPaused ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
+                    <Pause className="w-8 h-8" />
+                  </div>
                 </div>
               );
             })()}
-          </div>
-
-          {/* Treasure Box Section */}
-          <div className="max-w-2xl mx-auto py-8 sm:py-12 px-6 sm:px-8 mb-8 bg-gradient-to-br from-red-50 via-orange-50 to-yellow-50 dark:from-slate-900 dark:via-gray-800 dark:to-slate-900 rounded-2xl shadow-xl border border-red-100 dark:border-gray-700">
-            <div className="flex flex-col items-center">
-              <div className="relative mb-4">
-                <div className="treasure-box w-32 h-32 sm:w-48 sm:h-48 bg-gradient-to-br from-yellow-600 via-yellow-500 to-yellow-400 rounded-lg shadow-2xl flex items-center justify-center cursor-pointer hover:shadow-3xl" onClick={async () => {
-                  await loadFeaturedImages();
-                  const validImages = featuredImages.filter(f => f.image);
-                  if (validImages.length > 0) {
-                    setCurrentTreasureIndex(Math.floor(Math.random() * validImages.length));
-                  }
-                  setTreasureBoxOpen(true);
-                }}>
-                  <span className="text-6xl sm:text-9xl">🎁</span>
-                </div>
-                <div className="absolute -top-2 -right-2 w-10 h-10 bg-red-600 rounded-full flex items-center justify-center text-white text-sm font-bold animate-pulse-glow">NEW</div>
-              </div>
-              <p className="text-center text-red-600 dark:text-red-400 font-bold text-xl sm:text-2xl mt-2">Untold Stories!</p>
-            </div>
           </div>
 
           {/* Trending Now Section - Horizontal Scroll */}
@@ -1675,7 +1719,7 @@ const CineChatter = () => {
                         <div
                           key={`trending-${article.id}`}
                           onClick={() => setSelectedArticle(article)}
-                          className="flex-shrink-0 w-72 bg-gradient-to-br from-red-50 via-orange-50 to-yellow-50 dark:from-slate-900 dark:via-gray-800 dark:to-slate-900 rounded-lg shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden cursor-pointer group border border-red-100 dark:border-gray-700"
+                          className="flex-shrink-0 w-72 bg-gradient-to-br from-red-100 via-orange-100 to-yellow-100 dark:from-slate-900 dark:via-gray-800 dark:to-slate-900 rounded-lg shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden cursor-pointer group border border-red-200 dark:border-gray-700"
                         >
                           {article.image && (
                             <div className="relative h-40 overflow-hidden">
@@ -1717,6 +1761,26 @@ const CineChatter = () => {
                 </div>
               );
             })()}
+          </div>
+
+          {/* Treasure Box Section */}
+          <div className="max-w-2xl mx-auto py-8 sm:py-12 px-6 sm:px-8 mb-8 bg-gradient-to-br from-red-100 via-orange-100 to-yellow-100 dark:from-slate-900 dark:via-gray-800 dark:to-slate-900 rounded-2xl shadow-2xl border border-red-200 dark:border-gray-700">
+            <div className="flex flex-col items-center">
+              <div className="relative mb-4">
+                <div className="treasure-box w-32 h-32 sm:w-48 sm:h-48 bg-gradient-to-br from-yellow-600 via-yellow-500 to-yellow-400 rounded-lg shadow-2xl flex items-center justify-center cursor-pointer hover:shadow-3xl" onClick={async () => {
+                  await loadFeaturedImages();
+                  const validImages = featuredImages.filter(f => f.image);
+                  if (validImages.length > 0) {
+                    setCurrentTreasureIndex(Math.floor(Math.random() * validImages.length));
+                  }
+                  setTreasureBoxOpen(true);
+                }}>
+                  <span className="text-6xl sm:text-9xl">🎁</span>
+                </div>
+                <div className="absolute -top-2 -right-2 w-10 h-10 bg-red-600 rounded-full flex items-center justify-center text-white text-sm font-bold animate-pulse-glow">NEW</div>
+              </div>
+              <p className="text-center text-red-600 dark:text-red-400 font-bold text-xl sm:text-2xl mt-2">Untold Stories!</p>
+            </div>
           </div>
 
           {/* Newsletter Section - Full Width Redesign */}

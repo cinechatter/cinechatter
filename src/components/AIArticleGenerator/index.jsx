@@ -260,13 +260,13 @@ const AIArticleGenerator = ({ categories, onPublish }) => {
                     onChange={(e) => updateFormField('model', e.target.value)}
                     className="w-full px-5 py-3.5 border-2 border-gray-200 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-all"
                   >
-                    <optgroup label="🤖 ChatGPT + Search">
-                      <option value="gpt-4o">💬 ChatGPT 4o + Search</option>
-                      <option value="gpt-4o-mini">💬 ChatGPT 4o-mini + Search (Fast)</option>
+                    <optgroup label="🤖 ChatGPT + Google Search">
+                      <option value="gpt-4o">💬 ChatGPT 4o + Google Search</option>
+                      <option value="gpt-4o-mini">💬 ChatGPT 4o-mini + Google Search (Fast)</option>
                     </optgroup>
-                    <optgroup label="🔍 Claude + Search (Recommended)">
-                      <option value="hybrid-sonnet">🌟 Claude Sonnet 4.5 + Search (Best)</option>
-                      <option value="hybrid-haiku">⚡ Claude Haiku 3.5 + Search (Fast)</option>
+                    <optgroup label="🔍 Claude + Google Search (Recommended)">
+                      <option value="hybrid-sonnet">🌟 Claude Sonnet 4.5 + Google Search (Best)</option>
+                      <option value="hybrid-haiku">⚡ Claude Haiku 3.5 + Google Search (Fast)</option>
                     </optgroup>
                     <optgroup label="📚 Claude Only (No Search)">
                       <option value="sonnet">🌟 Claude Sonnet 4.5 - High Quality</option>
@@ -373,8 +373,8 @@ const AIArticleGenerator = ({ categories, onPublish }) => {
                         : 'border-gray-200 dark:border-gray-600 hover:border-blue-300 hover:bg-blue-50/50 dark:hover:bg-blue-900/10'
                     }`}
                   >
-                    <div className="text-lg font-semibold text-gray-800 dark:text-gray-200">🇬🇧 English</div>
-                    <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">Standard English</div>
+                    <div className="text-lg font-semibold text-gray-800 dark:text-gray-200">🇺🇸 English</div>
+                    <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">American English</div>
                   </button>
 
                   <button
