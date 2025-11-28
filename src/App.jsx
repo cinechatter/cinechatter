@@ -3,6 +3,7 @@ import { Film, TrendingUp, Plus, Edit2, Trash2, Eye, X, Menu, Search, ChevronDow
 import { supabase, isSupabaseConfigured } from './lib/supabase';
 import { autoGenerateSEOFields } from './utils/seoHelpers';
 import AIArticleGenerator from './components/AIArticleGenerator';
+import storageService from './services/storageService';
 
 const categories = [
   { id: 'hollywood-movies', name: 'Hollywood Movies' },
@@ -556,45 +557,44 @@ const CineChatter = () => {
 
   const loadArticles = async () => {
     try {
-      const result = await window.storage.get('cine-chatter-articles');
-      if (result) {
-        setArticles(JSON.parse(result.value));
-      }
+      const articles = await storageService.getArticles();
+      setArticles(articles);
+      console.log(`📚 Loaded ${articles.length} articles from ${storageService.getBackendType()}`);
     } catch (error) {
-      console.log('No articles');
+      console.error('Error loading articles:', error);
+      setArticles([]);
     }
   };
 
   const loadFeaturedImages = async () => {
     try {
-      const result = await window.storage.get('cine-chatter-featured-images');
-      if (result) {
-        const loaded = JSON.parse(result.value);
-        console.log('Loaded featured images from storage:', loaded);
-        setFeaturedImages(loaded);
+      const images = await storageService.getFeaturedImages();
+      if (images && images.length > 0) {
+        setFeaturedImages(images);
+        console.log(`🖼️ Loaded ${images.length} featured images from ${storageService.getBackendType()}`);
       } else {
         console.log('No featured images in storage');
       }
     } catch (error) {
-      console.log('Error loading featured images:', error);
+      console.error('Error loading featured images:', error);
     }
   };
 
   const saveArticles = async (updatedArticles) => {
     try {
-      await window.storage.set('cine-chatter-articles', JSON.stringify(updatedArticles));
+      await storageService.saveArticles(updatedArticles);
       setArticles(updatedArticles);
-      console.log('✅ Articles saved successfully. Total articles:', updatedArticles.length);
-      console.log('Latest article:', updatedArticles[0]);
+      console.log(`✅ Articles saved to ${storageService.getBackendType()}. Total: ${updatedArticles.length}`);
     } catch (error) {
       console.error('❌ Failed to save articles:', error);
+      throw error;
     }
   };
 
   const saveFeaturedImages = async (images) => {
     try {
       console.log('Saving featured images:', images);
-      await window.storage.set('cine-chatter-featured-images', JSON.stringify(images));
+      await storageService.saveFeaturedImages(images);
       setFeaturedImages(images);
 
       // Create articles for Untold Stories that have title and description
