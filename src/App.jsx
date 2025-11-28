@@ -926,44 +926,23 @@ const CineChatter = () => {
     }
   };
 
-  const testConnection = async () => {
+  const connectAndUploadSheet = async () => {
+    console.log('📤 Connecting and uploading sheet...');
+    // Clear old cached data
+    localStorage.removeItem('cine-chatter-sheet-articles');
+    setSheetArticles([]);
+    // Fetch fresh data from sheet
     await fetchGoogleSheetData();
   };
 
   const refreshSheetData = async () => {
     if (sheetStatus === 'connected') {
-      console.log('🔄 Refreshing sheet data - clearing cache first...');
+      console.log('🔄 Refreshing sheet data...');
       // Clear cached articles before fetching fresh data
       localStorage.removeItem('cine-chatter-sheet-articles');
       setSheetArticles([]);
       await fetchGoogleSheetData();
     }
-  };
-
-  const clearSheetCache = () => {
-    console.log('🗑️ Clearing all Google Sheets cache...');
-    localStorage.removeItem('cine-chatter-sheet-url');
-    localStorage.removeItem('cine-chatter-data-source');
-    localStorage.removeItem('cine-chatter-sheet-articles');
-    localStorage.removeItem('cine-chatter-sheet-status');
-    setSheetUrl('');
-    setSheetArticles([]);
-    setSheetStatus('not-connected');
-    setSheetsEnabled(false);
-    setDataSource('admin-only');
-    alert('✅ Google Sheets cache cleared! Please reconnect your sheet.');
-  };
-
-  const forcePublishAllSheetArticles = () => {
-    console.log('🔧 Force publishing all sheet articles...');
-    const updatedArticles = sheetArticles.map(article => ({
-      ...article,
-      status: 'published'
-    }));
-    setSheetArticles(updatedArticles);
-    saveSheetSettings(null, null, updatedArticles, null);
-    console.log('✅ All sheet articles forced to published status');
-    alert(`✅ Updated ${updatedArticles.length} articles to 'published' status`);
   };
 
   const handleSubmitArticle = () => {
@@ -3102,9 +3081,9 @@ const CineChatter = () => {
                   </div>
                   <div className="flex gap-2">
                     <button
-                      onClick={testConnection}
+                      onClick={connectAndUploadSheet}
                       disabled={!sheetUrl || sheetStatus === 'connecting'}
-                      className="bg-gradient-to-r from-blue-600 to-blue-700 text-white px-5 py-2.5 rounded-lg font-semibold hover:from-blue-700 hover:to-blue-800 disabled:from-gray-300 disabled:to-gray-400 disabled:cursor-not-allowed transition-all shadow-md hover:shadow-lg disabled:shadow-none flex items-center gap-2"
+                      className="bg-gradient-to-r from-blue-600 to-blue-700 text-white px-6 py-2.5 rounded-lg font-semibold hover:from-blue-700 hover:to-blue-800 disabled:from-gray-300 disabled:to-gray-400 disabled:cursor-not-allowed transition-all shadow-md hover:shadow-lg disabled:shadow-none flex items-center gap-2"
                     >
                       {sheetStatus === 'connecting' ? (
                         <>
@@ -3112,42 +3091,27 @@ const CineChatter = () => {
                             <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                             <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                           </svg>
-                          Connecting...
+                          Uploading...
                         </>
-                      ) : 'Test Connection'}
+                      ) : (
+                        <>
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+                          </svg>
+                          Upload Sheet
+                        </>
+                      )}
                     </button>
                     {sheetStatus === 'connected' && (
-                      <>
-                        <button
-                          onClick={refreshSheetData}
-                          className="bg-gradient-to-r from-green-600 to-green-700 text-white px-5 py-2.5 rounded-lg font-semibold hover:from-green-700 hover:to-green-800 transition-all shadow-md hover:shadow-lg flex items-center gap-2"
-                        >
-                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
-                          </svg>
-                          Refresh Data
-                        </button>
-                        <button
-                          onClick={forcePublishAllSheetArticles}
-                          className="bg-gradient-to-r from-purple-600 to-purple-700 text-white px-5 py-2.5 rounded-lg font-semibold hover:from-purple-700 hover:to-purple-800 transition-all shadow-md hover:shadow-lg flex items-center gap-2"
-                          title="Force all articles to published status"
-                        >
-                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                          </svg>
-                          Force Publish
-                        </button>
-                        <button
-                          onClick={clearSheetCache}
-                          className="bg-gradient-to-r from-red-600 to-red-700 text-white px-5 py-2.5 rounded-lg font-semibold hover:from-red-700 hover:to-red-800 transition-all shadow-md hover:shadow-lg flex items-center gap-2"
-                          title="Clear cache and reconnect"
-                        >
-                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-                          </svg>
-                          Clear Cache
-                        </button>
-                      </>
+                      <button
+                        onClick={refreshSheetData}
+                        className="bg-gradient-to-r from-green-600 to-green-700 text-white px-6 py-2.5 rounded-lg font-semibold hover:from-green-700 hover:to-green-800 transition-all shadow-md hover:shadow-lg flex items-center gap-2"
+                      >
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                        </svg>
+                        Refresh
+                      </button>
                     )}
                   </div>
                 </div>
