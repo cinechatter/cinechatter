@@ -882,9 +882,16 @@ const CineChatter = () => {
         // Debug logging for first article
         if (index === 0) {
           console.log('🔍 First row parsing debug:');
+          console.log('  Row length:', row.length);
           console.log('  Row data:', row);
+          console.log('  Column A (row[0]):', row[0]);
+          console.log('  Column B (row[1]):', row[1]);
+          console.log('  Column C (row[2]):', row[2]);
+          console.log('  Column D (row[3]):', row[3]);
+          console.log('  Column E (row[4]):', row[4]);
           console.log('  Column F (row[5]):', row[5]);
           console.log('  Status value (trimmed/lowercase):', statusValue);
+          console.log('  Status comparison:', `"${statusValue}" === "published"?`, statusValue === 'published');
           console.log('  Final status:', articleStatus);
         }
 
