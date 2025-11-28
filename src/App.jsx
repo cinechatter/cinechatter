@@ -878,6 +878,15 @@ const CineChatter = () => {
         let statusValue = (row[5] || '').trim().toLowerCase();
         let articleStatus = statusValue === 'published' ? 'published' : 'draft';
 
+        // Debug logging for first article
+        if (index === 0) {
+          console.log('🔍 First row parsing debug:');
+          console.log('  Row data:', row);
+          console.log('  Column F (row[5]):', row[5]);
+          console.log('  Status value (trimmed/lowercase):', statusValue);
+          console.log('  Final status:', articleStatus);
+        }
+
         return {
           id: `sheet-${Date.now()}-${index}`,
           category: category,
@@ -892,6 +901,7 @@ const CineChatter = () => {
       }).filter(article => article.title && article.category);
       
       console.log('📊 Parsed articles:', fetchedArticles);
+      console.log('📊 Article statuses:', fetchedArticles.map(a => ({ title: a.title, status: a.status })));
 
       setSheetArticles(fetchedArticles);
       setSheetStatus('connected');
