@@ -954,6 +954,18 @@ const CineChatter = () => {
     alert('✅ Google Sheets cache cleared! Please reconnect your sheet.');
   };
 
+  const forcePublishAllSheetArticles = () => {
+    console.log('🔧 Force publishing all sheet articles...');
+    const updatedArticles = sheetArticles.map(article => ({
+      ...article,
+      status: 'published'
+    }));
+    setSheetArticles(updatedArticles);
+    saveSheetSettings(null, null, updatedArticles, null);
+    console.log('✅ All sheet articles forced to published status');
+    alert(`✅ Updated ${updatedArticles.length} articles to 'published' status`);
+  };
+
   const handleSubmitArticle = () => {
     if (!formInputs.title || !formInputs.content) {
       alert('Please fill title and content');
@@ -3114,6 +3126,16 @@ const CineChatter = () => {
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
                           </svg>
                           Refresh Data
+                        </button>
+                        <button
+                          onClick={forcePublishAllSheetArticles}
+                          className="bg-gradient-to-r from-purple-600 to-purple-700 text-white px-5 py-2.5 rounded-lg font-semibold hover:from-purple-700 hover:to-purple-800 transition-all shadow-md hover:shadow-lg flex items-center gap-2"
+                          title="Force all articles to published status"
+                        >
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                          </svg>
+                          Force Publish
                         </button>
                         <button
                           onClick={clearSheetCache}
