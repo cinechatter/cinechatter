@@ -603,6 +603,7 @@ const CineChatter = () => {
         const articles = JSON.parse(savedSheetArticles);
         setSheetArticles(articles);
         console.log(`📋 Loaded ${articles.length} sheet articles from cache`);
+        console.log('📋 Cached article statuses:', articles.map(a => ({ title: a.title, status: a.status })));
       }
 
       if (savedSheetStatus) {
@@ -931,8 +932,26 @@ const CineChatter = () => {
 
   const refreshSheetData = async () => {
     if (sheetStatus === 'connected') {
+      console.log('🔄 Refreshing sheet data - clearing cache first...');
+      // Clear cached articles before fetching fresh data
+      localStorage.removeItem('cine-chatter-sheet-articles');
+      setSheetArticles([]);
       await fetchGoogleSheetData();
     }
+  };
+
+  const clearSheetCache = () => {
+    console.log('🗑️ Clearing all Google Sheets cache...');
+    localStorage.removeItem('cine-chatter-sheet-url');
+    localStorage.removeItem('cine-chatter-data-source');
+    localStorage.removeItem('cine-chatter-sheet-articles');
+    localStorage.removeItem('cine-chatter-sheet-status');
+    setSheetUrl('');
+    setSheetArticles([]);
+    setSheetStatus('not-connected');
+    setSheetsEnabled(false);
+    setDataSource('admin-only');
+    alert('✅ Google Sheets cache cleared! Please reconnect your sheet.');
   };
 
   const handleSubmitArticle = () => {
@@ -3086,15 +3105,27 @@ const CineChatter = () => {
                       ) : 'Test Connection'}
                     </button>
                     {sheetStatus === 'connected' && (
-                      <button
-                        onClick={refreshSheetData}
-                        className="bg-gradient-to-r from-green-600 to-green-700 text-white px-5 py-2.5 rounded-lg font-semibold hover:from-green-700 hover:to-green-800 transition-all shadow-md hover:shadow-lg flex items-center gap-2"
-                      >
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
-                        </svg>
-                        Refresh Data
-                      </button>
+                      <>
+                        <button
+                          onClick={refreshSheetData}
+                          className="bg-gradient-to-r from-green-600 to-green-700 text-white px-5 py-2.5 rounded-lg font-semibold hover:from-green-700 hover:to-green-800 transition-all shadow-md hover:shadow-lg flex items-center gap-2"
+                        >
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                          </svg>
+                          Refresh Data
+                        </button>
+                        <button
+                          onClick={clearSheetCache}
+                          className="bg-gradient-to-r from-red-600 to-red-700 text-white px-5 py-2.5 rounded-lg font-semibold hover:from-red-700 hover:to-red-800 transition-all shadow-md hover:shadow-lg flex items-center gap-2"
+                          title="Clear cache and reconnect"
+                        >
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                          </svg>
+                          Clear Cache
+                        </button>
+                      </>
                     )}
                   </div>
                 </div>
