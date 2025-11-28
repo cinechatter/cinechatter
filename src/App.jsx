@@ -129,6 +129,7 @@ const CineChatter = () => {
     loadArticles();
     loadFeaturedImages();
     checkUser();
+    loadSheetSettings(); // Load saved Google Sheets settings
 
     // Expose supabase to window for testing (development only)
     if (process.env.NODE_ENV === 'development') {
@@ -580,6 +581,51 @@ const CineChatter = () => {
     }
   };
 
+  const loadSheetSettings = async () => {
+    try {
+      // Load Google Sheets settings from localStorage
+      const savedSheetUrl = localStorage.getItem('cine-chatter-sheet-url');
+      const savedDataSource = localStorage.getItem('cine-chatter-data-source');
+      const savedSheetArticles = localStorage.getItem('cine-chatter-sheet-articles');
+      const savedSheetStatus = localStorage.getItem('cine-chatter-sheet-status');
+
+      if (savedSheetUrl) {
+        setSheetUrl(savedSheetUrl);
+        console.log('📋 Loaded saved sheet URL');
+      }
+
+      if (savedDataSource) {
+        setDataSource(savedDataSource);
+        console.log('📋 Loaded data source:', savedDataSource);
+      }
+
+      if (savedSheetArticles) {
+        const articles = JSON.parse(savedSheetArticles);
+        setSheetArticles(articles);
+        console.log(`📋 Loaded ${articles.length} sheet articles from cache`);
+      }
+
+      if (savedSheetStatus) {
+        setSheetStatus(savedSheetStatus);
+        setSheetsEnabled(savedSheetStatus === 'connected');
+      }
+    } catch (error) {
+      console.error('Error loading sheet settings:', error);
+    }
+  };
+
+  const saveSheetSettings = async (url, source, articles, status) => {
+    try {
+      if (url) localStorage.setItem('cine-chatter-sheet-url', url);
+      if (source) localStorage.setItem('cine-chatter-data-source', source);
+      if (articles) localStorage.setItem('cine-chatter-sheet-articles', JSON.stringify(articles));
+      if (status) localStorage.setItem('cine-chatter-sheet-status', status);
+      console.log('✅ Sheet settings saved');
+    } catch (error) {
+      console.error('Error saving sheet settings:', error);
+    }
+  };
+
   const saveArticles = async (updatedArticles) => {
     try {
       await storageService.saveArticles(updatedArticles);
@@ -827,7 +873,11 @@ const CineChatter = () => {
       const fetchedArticles = dataRows.map((row, index) => {
         // Normalize category to match app format (e.g., "Hollywood Movies" -> "hollywood-movies")
         let category = (row[0] || '').trim().toLowerCase().replace(/\s+/g, '-');
-        
+
+        // Parse status - handle "published", "PUBLISHED", "Published", etc.
+        let statusValue = (row[5] || '').trim().toLowerCase();
+        let articleStatus = statusValue === 'published' ? 'published' : 'draft';
+
         return {
           id: `sheet-${Date.now()}-${index}`,
           category: category,
@@ -835,25 +885,33 @@ const CineChatter = () => {
           content: (row[2] || '').trim(),
           image: (row[3] || '').trim(),
           date: (row[4] || new Date().toISOString().split('T')[0]).trim(),
-          status: (row[5] || 'draft').toLowerCase().trim() === 'published' ? 'published' : 'draft',
+          status: articleStatus,
           source: 'google-sheets',
           createdAt: (row[4] || new Date().toISOString())
         };
       }).filter(article => article.title && article.category);
       
       console.log('📊 Parsed articles:', fetchedArticles);
-      
+
       setSheetArticles(fetchedArticles);
       setSheetStatus('connected');
       setSheetsEnabled(true);
-      
+
+      // Auto-switch to 'sheets-only' when successfully connected
+      const newDataSource = 'sheets-only';
+      setDataSource(newDataSource);
+
+      // Save to localStorage for persistence
+      await saveSheetSettings(sheetUrl, newDataSource, fetchedArticles, 'connected');
+
       console.log(`✅ Successfully loaded ${fetchedArticles.length} articles from Google Sheets!`);
       console.log('Categories found:', [...new Set(fetchedArticles.map(a => a.category))]);
-      
+
     } catch (error) {
       console.error('❌ Error:', error.message);
       setSheetStatus('error');
       setSheetArticles([]);
+      await saveSheetSettings(sheetUrl, dataSource, [], 'error');
     }
   };
 
@@ -3005,15 +3063,26 @@ const CineChatter = () => {
                     <button
                       onClick={testConnection}
                       disabled={!sheetUrl || sheetStatus === 'connecting'}
-                      className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed"
+                      className="bg-gradient-to-r from-blue-600 to-blue-700 text-white px-5 py-2.5 rounded-lg font-semibold hover:from-blue-700 hover:to-blue-800 disabled:from-gray-300 disabled:to-gray-400 disabled:cursor-not-allowed transition-all shadow-md hover:shadow-lg disabled:shadow-none flex items-center gap-2"
                     >
-                      {sheetStatus === 'connecting' ? 'Uploading...' : 'Upload Sheet'}
+                      {sheetStatus === 'connecting' ? (
+                        <>
+                          <svg className="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                          </svg>
+                          Connecting...
+                        </>
+                      ) : 'Test Connection'}
                     </button>
                     {sheetStatus === 'connected' && (
                       <button
                         onClick={refreshSheetData}
-                        className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700"
+                        className="bg-gradient-to-r from-green-600 to-green-700 text-white px-5 py-2.5 rounded-lg font-semibold hover:from-green-700 hover:to-green-800 transition-all shadow-md hover:shadow-lg flex items-center gap-2"
                       >
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                        </svg>
                         Refresh Data
                       </button>
                     )}
@@ -3031,7 +3100,10 @@ const CineChatter = () => {
                         name="dataSource"
                         value="admin-only"
                         checked={dataSource === 'admin-only'}
-                        onChange={(e) => setDataSource(e.target.value)}
+                        onChange={(e) => {
+                          setDataSource(e.target.value);
+                          saveSheetSettings(null, e.target.value, null, null);
+                        }}
                         className="mr-3"
                       />
                       <div>
@@ -3046,7 +3118,10 @@ const CineChatter = () => {
                         name="dataSource"
                         value="both"
                         checked={dataSource === 'both'}
-                        onChange={(e) => setDataSource(e.target.value)}
+                        onChange={(e) => {
+                          setDataSource(e.target.value);
+                          saveSheetSettings(null, e.target.value, null, null);
+                        }}
                         className="mr-3"
                         disabled={sheetStatus !== 'connected'}
                       />
@@ -3062,7 +3137,10 @@ const CineChatter = () => {
                         name="dataSource"
                         value="sheets-only"
                         checked={dataSource === 'sheets-only'}
-                        onChange={(e) => setDataSource(e.target.value)}
+                        onChange={(e) => {
+                          setDataSource(e.target.value);
+                          saveSheetSettings(null, e.target.value, null, null);
+                        }}
                         className="mr-3"
                         disabled={sheetStatus !== 'connected'}
                       />
