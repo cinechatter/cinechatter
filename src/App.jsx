@@ -2393,6 +2393,34 @@ const CineChatter = () => {
                       </span>
                       <div className="flex-1"></div>
                       <button
+                        onClick={() => {
+                          if (window.confirm(`Delete ${selectedArticles.length} selected article(s)?`)) {
+                            // Filter out selected articles from both admin and sheet articles
+                            const updatedAdminArticles = articles.filter(a => !selectedArticles.includes(a.id));
+                            const updatedSheetArticles = sheetArticles.filter(a => !selectedArticles.includes(a.id));
+
+                            // Save updated admin articles
+                            saveArticles(updatedAdminArticles);
+
+                            // Update sheet articles in state and localStorage
+                            setSheetArticles(updatedSheetArticles);
+                            if (updatedSheetArticles.length > 0) {
+                              localStorage.setItem('cine-chatter-sheet-articles', JSON.stringify(updatedSheetArticles));
+                            } else {
+                              localStorage.removeItem('cine-chatter-sheet-articles');
+                            }
+
+                            // Clear selection
+                            setSelectedArticles([]);
+                          }
+                        }}
+                        className="flex items-center gap-2 px-3 py-1.5 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30 rounded transition-colors text-sm font-medium"
+                        title="Delete selected articles"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                        <span className="hidden sm:inline">Delete</span>
+                      </button>
+                      <button
                         onClick={exportToCSV}
                         className="flex items-center gap-2 px-3 py-1.5 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded transition-colors text-sm font-medium"
                         title="Export selected articles to CSV"
