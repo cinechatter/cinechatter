@@ -583,6 +583,20 @@ const CineChatter = () => {
 
   const loadSheetSettings = async () => {
     try {
+      // Cache version - increment this to invalidate old cached data
+      const CACHE_VERSION = '2';
+      const savedCacheVersion = localStorage.getItem('cine-chatter-cache-version');
+
+      // If cache version is old, clear all cached data
+      if (savedCacheVersion !== CACHE_VERSION) {
+        console.log('🔄 Cache version mismatch, clearing old data...');
+        localStorage.removeItem('cine-chatter-sheet-articles');
+        localStorage.removeItem('cine-chatter-sheet-status');
+        localStorage.setItem('cine-chatter-cache-version', CACHE_VERSION);
+        console.log('✅ Cache cleared, using fresh data');
+        return; // Don't load old cached data
+      }
+
       // Load Google Sheets settings from localStorage
       const savedSheetUrl = localStorage.getItem('cine-chatter-sheet-url');
       const savedDataSource = localStorage.getItem('cine-chatter-data-source');
