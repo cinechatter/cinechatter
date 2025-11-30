@@ -2546,7 +2546,30 @@ const CineChatter = () => {
                                     <Edit2 className="w-4 h-4" />
                                     <span>Edit</span>
                                   </button>
-                                  <button onClick={() => { if (window.confirm('Delete this article?')) saveArticles(articles.filter(a => a.id !== article.id)); }} className="flex items-center gap-1 px-2 py-1 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30 rounded transition-colors text-xs font-medium" title="Delete">
+                                  <button onClick={async () => {
+                                    if (window.confirm('Delete this article?')) {
+                                      // Check if this is an admin article or sheet article
+                                      const isAdminArticle = articles.some(a => a.id === article.id);
+                                      const isSheetArticle = sheetArticles.some(a => a.id === article.id);
+
+                                      if (isAdminArticle) {
+                                        // Delete from admin articles
+                                        const updatedArticles = articles.filter(a => a.id !== article.id);
+                                        await saveArticles(updatedArticles);
+                                        console.log('✅ Deleted admin article:', article.title);
+                                      } else if (isSheetArticle) {
+                                        // Delete from sheet articles
+                                        const updatedSheetArticles = sheetArticles.filter(a => a.id !== article.id);
+                                        setSheetArticles(updatedSheetArticles);
+                                        if (updatedSheetArticles.length > 0) {
+                                          localStorage.setItem('cine-chatter-sheet-articles', JSON.stringify(updatedSheetArticles));
+                                        } else {
+                                          localStorage.removeItem('cine-chatter-sheet-articles');
+                                        }
+                                        console.log('✅ Deleted sheet article:', article.title);
+                                      }
+                                    }
+                                  }} className="flex items-center gap-1 px-2 py-1 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30 rounded transition-colors text-xs font-medium" title="Delete">
                                     <Trash2 className="w-4 h-4" />
                                     <span>Delete</span>
                                   </button>
