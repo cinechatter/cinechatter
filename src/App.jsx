@@ -2548,18 +2548,29 @@ const CineChatter = () => {
                                   </button>
                                   <button onClick={async () => {
                                     if (window.confirm('Delete this article?')) {
+                                      console.log('🗑️ Deleting article:', article.title, 'ID:', article.id);
+                                      console.log('📊 Total admin articles:', articles.length);
+                                      console.log('📊 Total sheet articles:', sheetArticles.length);
+
                                       // Check if this is an admin article or sheet article
                                       const isAdminArticle = articles.some(a => a.id === article.id);
                                       const isSheetArticle = sheetArticles.some(a => a.id === article.id);
 
+                                      console.log('🔍 Is admin article?', isAdminArticle);
+                                      console.log('🔍 Is sheet article?', isSheetArticle);
+
                                       if (isAdminArticle) {
                                         // Delete from admin articles
+                                        console.log('💾 Deleting from admin articles...');
                                         const updatedArticles = articles.filter(a => a.id !== article.id);
+                                        console.log('📊 Updated admin articles count:', updatedArticles.length);
                                         await saveArticles(updatedArticles);
                                         console.log('✅ Deleted admin article:', article.title);
                                       } else if (isSheetArticle) {
                                         // Delete from sheet articles
+                                        console.log('📋 Deleting from sheet articles...');
                                         const updatedSheetArticles = sheetArticles.filter(a => a.id !== article.id);
+                                        console.log('📊 Updated sheet articles count:', updatedSheetArticles.length);
                                         setSheetArticles(updatedSheetArticles);
                                         if (updatedSheetArticles.length > 0) {
                                           localStorage.setItem('cine-chatter-sheet-articles', JSON.stringify(updatedSheetArticles));
@@ -2567,6 +2578,8 @@ const CineChatter = () => {
                                           localStorage.removeItem('cine-chatter-sheet-articles');
                                         }
                                         console.log('✅ Deleted sheet article:', article.title);
+                                      } else {
+                                        console.error('❌ Article not found in either array!');
                                       }
                                     }
                                   }} className="flex items-center gap-1 px-2 py-1 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30 rounded transition-colors text-xs font-medium" title="Delete">
