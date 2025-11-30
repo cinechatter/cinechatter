@@ -1273,7 +1273,7 @@ const CineChatter = () => {
   };
 
   const toggleAllArticles = () => {
-    const allArticles = [...articles, ...sheetArticles].filter(a => a.status === 'published');
+    const allArticles = [...articles, ...sheetArticles];
     if (selectedArticles.length === allArticles.length) {
       setSelectedArticles([]);
     } else {
@@ -2366,7 +2366,7 @@ const CineChatter = () => {
                 <div className="border-b border-gray-200 dark:border-gray-700 px-4 py-3 flex items-center gap-3">
                   <input
                     type="checkbox"
-                    checked={selectedArticles.length === [...articles, ...sheetArticles].filter(a => a.status === 'published').length && selectedArticles.length > 0}
+                    checked={selectedArticles.length === [...articles, ...sheetArticles].length && selectedArticles.length > 0}
                     onChange={toggleAllArticles}
                     className="w-4 h-4 text-red-600 border-gray-300 dark:border-gray-600 rounded focus:ring-red-500"
                     title="Select all"
@@ -2442,14 +2442,12 @@ const CineChatter = () => {
                       return (
                         <tr key={article.id} className="even:bg-gray-50 dark:even:bg-gray-700/50 hover:bg-gray-100 dark:hover:bg-gray-600/50 transition-colors">
                           <td className="px-4 py-4">
-                            {article.status === 'published' && (
-                              <input
-                                type="checkbox"
-                                checked={selectedArticles.includes(article.id)}
-                                onChange={() => toggleArticleSelection(article.id)}
-                                className="w-4 h-4 text-red-600 border-gray-300 dark:border-gray-600 rounded focus:ring-red-500"
-                              />
-                            )}
+                            <input
+                              type="checkbox"
+                              checked={selectedArticles.includes(article.id)}
+                              onChange={() => toggleArticleSelection(article.id)}
+                              className="w-4 h-4 text-red-600 border-gray-300 dark:border-gray-600 rounded focus:ring-red-500"
+                            />
                           </td>
                           <td className="px-6 py-4">
                             {article.image ? (
