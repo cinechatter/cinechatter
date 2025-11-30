@@ -2435,8 +2435,9 @@ const CineChatter = () => {
                                           article.source === 'untold-story' ? 'Untold Stories' :
                                           article.source === 'agent' ? 'Agent' : 'New Article';
 
-                      // Check if editable (only admin articles can be edited)
-                      const isEditable = article.source !== 'google-sheets' && articles.some(a => a.id === article.id);
+                      // Check if editable (all articles can be edited)
+                      // Note: Editing Google Sheets articles here won't update the source sheet
+                      const isEditable = true;
 
                       return (
                         <tr key={article.id} className="even:bg-gray-50 dark:even:bg-gray-700/50 hover:bg-gray-100 dark:hover:bg-gray-600/50 transition-colors">
