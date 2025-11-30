@@ -2393,25 +2393,44 @@ const CineChatter = () => {
                       </span>
                       <div className="flex-1"></div>
                       <button
-                        onClick={() => {
+                        onClick={async () => {
                           if (window.confirm(`Delete ${selectedArticles.length} selected article(s)?`)) {
-                            // Filter out selected articles from both admin and sheet articles
-                            const updatedAdminArticles = articles.filter(a => !selectedArticles.includes(a.id));
-                            const updatedSheetArticles = sheetArticles.filter(a => !selectedArticles.includes(a.id));
+                            console.log('🗑️ Deleting selected articles:', selectedArticles);
 
-                            // Save updated admin articles
-                            saveArticles(updatedAdminArticles);
+                            // Separate selected articles into admin and sheet articles
+                            const selectedAdminIds = selectedArticles.filter(id =>
+                              articles.some(a => a.id === id)
+                            );
+                            const selectedSheetIds = selectedArticles.filter(id =>
+                              sheetArticles.some(a => a.id === id)
+                            );
 
-                            // Update sheet articles in state and localStorage
-                            setSheetArticles(updatedSheetArticles);
-                            if (updatedSheetArticles.length > 0) {
-                              localStorage.setItem('cine-chatter-sheet-articles', JSON.stringify(updatedSheetArticles));
-                            } else {
-                              localStorage.removeItem('cine-chatter-sheet-articles');
+                            console.log('Admin article IDs to delete:', selectedAdminIds);
+                            console.log('Sheet article IDs to delete:', selectedSheetIds);
+
+                            // Delete admin articles if any
+                            if (selectedAdminIds.length > 0) {
+                              const updatedAdminArticles = articles.filter(a => !selectedAdminIds.includes(a.id));
+                              await saveArticles(updatedAdminArticles);
+                              console.log(`✅ Deleted ${selectedAdminIds.length} admin article(s)`);
+                            }
+
+                            // Delete sheet articles if any
+                            if (selectedSheetIds.length > 0) {
+                              const updatedSheetArticles = sheetArticles.filter(a => !selectedSheetIds.includes(a.id));
+                              setSheetArticles(updatedSheetArticles);
+
+                              if (updatedSheetArticles.length > 0) {
+                                localStorage.setItem('cine-chatter-sheet-articles', JSON.stringify(updatedSheetArticles));
+                              } else {
+                                localStorage.removeItem('cine-chatter-sheet-articles');
+                              }
+                              console.log(`✅ Deleted ${selectedSheetIds.length} sheet article(s)`);
                             }
 
                             // Clear selection
                             setSelectedArticles([]);
+                            console.log('✅ Bulk delete completed');
                           }
                         }}
                         className="flex items-center gap-2 px-3 py-1.5 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30 rounded transition-colors text-sm font-medium"
