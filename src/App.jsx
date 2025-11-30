@@ -844,39 +844,64 @@ const CineChatter = () => {
         return; // Exit here for demo mode
       }
       
-      // Parse real CSV data
+      // Parse real CSV data with proper handling of multi-line fields
       console.log('📊 Parsing CSV data...');
-      
+
       const rows = [];
-      const lines = csvText.split(/\r?\n/);
-      
-      for (let line of lines) {
-        if (!line.trim()) continue;
-        
-        const values = [];
-        let currentValue = '';
-        let insideQuotes = false;
-        
-        for (let i = 0; i < line.length; i++) {
-          const char = line[i];
-          const nextChar = line[i + 1];
-          
-          if (char === '"') {
-            if (insideQuotes && nextChar === '"') {
-              currentValue += '"';
-              i++;
-            } else {
-              insideQuotes = !insideQuotes;
-            }
-          } else if (char === ',' && !insideQuotes) {
-            values.push(currentValue.trim());
-            currentValue = '';
+      let currentRow = [];
+      let currentValue = '';
+      let insideQuotes = false;
+
+      // Parse character by character to handle newlines inside quoted fields
+      for (let i = 0; i < csvText.length; i++) {
+        const char = csvText[i];
+        const nextChar = csvText[i + 1];
+
+        if (char === '"') {
+          if (insideQuotes && nextChar === '"') {
+            // Escaped quote ("") becomes a single quote
+            currentValue += '"';
+            i++;
           } else {
-            currentValue += char;
+            // Toggle quote state
+            insideQuotes = !insideQuotes;
           }
+        } else if (char === ',' && !insideQuotes) {
+          // End of field
+          currentRow.push(currentValue.trim());
+          currentValue = '';
+        } else if ((char === '\n' || char === '\r') && !insideQuotes) {
+          // End of row (only if not inside quotes)
+          if (char === '\r' && nextChar === '\n') {
+            i++; // Skip \r\n combination
+          }
+          if (currentValue.trim() || currentRow.length > 0) {
+            currentRow.push(currentValue.trim());
+            if (currentRow.some(val => val)) { // Only add non-empty rows
+              rows.push(currentRow);
+            }
+            currentRow = [];
+            currentValue = '';
+          }
+        } else {
+          // Regular character
+          currentValue += char;
         }
-        values.push(currentValue.trim());
-        rows.push(values);
+      }
+
+      // Don't forget the last field/row
+      if (currentValue.trim() || currentRow.length > 0) {
+        currentRow.push(currentValue.trim());
+        if (currentRow.some(val => val)) {
+          rows.push(currentRow);
+        }
+      }
+
+      console.log('📊 Parsed rows:', rows.length);
+      console.log('📊 First row (headers):', rows[0]);
+      if (rows.length > 1) {
+        console.log('📊 Second row (first data):', rows[1]);
+        console.log('📊 Second row length:', rows[1].length);
       }
       
       if (rows.length < 2) {
