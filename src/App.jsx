@@ -950,34 +950,60 @@ const CineChatter = () => {
       console.log('📊 Parsed articles:', fetchedArticles);
       console.log('📊 Article statuses:', fetchedArticles.map(a => ({ title: a.title, status: a.status })));
 
+      // Check for duplicates by title (case-insensitive)
+      const existingTitles = articles.map(a => a.title.toLowerCase());
+      const newArticles = fetchedArticles.filter(article =>
+        !existingTitles.includes(article.title.toLowerCase())
+      );
+      const duplicateCount = fetchedArticles.length - newArticles.length;
+
+      if (duplicateCount > 0) {
+        console.log(`⚠️ Skipping ${duplicateCount} duplicate article(s)`);
+      }
+
+      if (newArticles.length > 0) {
+        // Save new articles to database (merging with existing articles)
+        const updatedArticles = [...newArticles, ...articles];
+        await saveArticles(updatedArticles);
+        console.log(`💾 Saved ${newArticles.length} new article(s) to database`);
+      } else {
+        console.log('ℹ️ No new articles to import (all already exist)');
+      }
+
+      // Also keep in sheetArticles for reference
       setSheetArticles(fetchedArticles);
       setSheetStatus('connected');
       setSheetsEnabled(true);
 
-      // Auto-switch to 'sheets-only' when successfully connected
-      const newDataSource = 'sheets-only';
+      // Auto-switch to 'admin-only' since articles are now in database
+      const newDataSource = 'admin-only';
       setDataSource(newDataSource);
 
       // Save to localStorage for persistence
       await saveSheetSettings(sheetUrl, newDataSource, fetchedArticles, 'connected');
 
-      console.log(`✅ Successfully loaded ${fetchedArticles.length} articles from Google Sheets!`);
-      console.log('Categories found:', [...new Set(fetchedArticles.map(a => a.category))]);
+      console.log(`✅ Successfully imported ${newArticles.length} article(s) from Google Sheets!`);
+      if (duplicateCount > 0) {
+        alert(`Imported ${newArticles.length} new article(s).\nSkipped ${duplicateCount} duplicate(s).`);
+      } else {
+        alert(`Successfully imported ${newArticles.length} article(s) to database!`);
+      }
 
     } catch (error) {
       console.error('❌ Error:', error.message);
       setSheetStatus('error');
       setSheetArticles([]);
       await saveSheetSettings(sheetUrl, dataSource, [], 'error');
+      alert(`Error importing articles: ${error.message}`);
     }
   };
 
   const connectAndUploadSheet = async () => {
-    console.log('📤 Connecting and uploading sheet...');
+    console.log('📤 Importing articles from Google Sheet to database...');
     // Clear old cached data
     localStorage.removeItem('cine-chatter-sheet-articles');
     setSheetArticles([]);
-    // Fetch fresh data from sheet
+    // Fetch and import data from sheet
     await fetchGoogleSheetData();
   };
 
@@ -1312,11 +1338,10 @@ const CineChatter = () => {
   };
 
   const toggleAllArticles = () => {
-    const allArticles = [...articles, ...sheetArticles];
-    if (selectedArticles.length === allArticles.length) {
+    if (selectedArticles.length === articles.length) {
       setSelectedArticles([]);
     } else {
-      setSelectedArticles(allArticles.map(a => a.id));
+      setSelectedArticles(articles.map(a => a.id));
     }
   };
 
@@ -2405,7 +2430,7 @@ const CineChatter = () => {
                 <div className="border-b border-gray-200 dark:border-gray-700 px-4 py-3 flex items-center gap-3">
                   <input
                     type="checkbox"
-                    checked={selectedArticles.length === [...articles, ...sheetArticles].length && selectedArticles.length > 0}
+                    checked={selectedArticles.length === articles.length && selectedArticles.length > 0}
                     onChange={toggleAllArticles}
                     className="w-4 h-4 text-red-600 border-gray-300 dark:border-gray-600 rounded focus:ring-red-500"
                     title="Select all"
@@ -2420,42 +2445,10 @@ const CineChatter = () => {
                       <button
                         onClick={async () => {
                           if (window.confirm(`Delete ${selectedArticles.length} selected article(s)?`)) {
-                            console.log('🗑️ Deleting selected articles:', selectedArticles);
-
-                            // Separate selected articles into admin and sheet articles
-                            const selectedAdminIds = selectedArticles.filter(id =>
-                              articles.some(a => a.id === id)
-                            );
-                            const selectedSheetIds = selectedArticles.filter(id =>
-                              sheetArticles.some(a => a.id === id)
-                            );
-
-                            console.log('Admin article IDs to delete:', selectedAdminIds);
-                            console.log('Sheet article IDs to delete:', selectedSheetIds);
-
-                            // Delete admin articles if any
-                            if (selectedAdminIds.length > 0) {
-                              const updatedAdminArticles = articles.filter(a => !selectedAdminIds.includes(a.id));
-                              await saveArticles(updatedAdminArticles);
-                              console.log(`✅ Deleted ${selectedAdminIds.length} admin article(s)`);
-                            }
-
-                            // Delete sheet articles if any
-                            if (selectedSheetIds.length > 0) {
-                              const updatedSheetArticles = sheetArticles.filter(a => !selectedSheetIds.includes(a.id));
-                              setSheetArticles(updatedSheetArticles);
-
-                              if (updatedSheetArticles.length > 0) {
-                                localStorage.setItem('cine-chatter-sheet-articles', JSON.stringify(updatedSheetArticles));
-                              } else {
-                                localStorage.removeItem('cine-chatter-sheet-articles');
-                              }
-                              console.log(`✅ Deleted ${selectedSheetIds.length} sheet article(s)`);
-                            }
-
-                            // Clear selection
+                            const updatedArticles = articles.filter(a => !selectedArticles.includes(a.id));
+                            await saveArticles(updatedArticles);
                             setSelectedArticles([]);
-                            console.log('✅ Bulk delete completed');
+                            console.log(`✅ Deleted ${selectedArticles.length} article(s)`);
                           }
                         }}
                         className="flex items-center gap-2 px-3 py-1.5 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30 rounded transition-colors text-sm font-medium"
@@ -2498,14 +2491,12 @@ const CineChatter = () => {
               </thead>
               <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
                 {(() => {
-                  // Combine admin articles and sheet articles
-                  const allArticles = [...articles, ...sheetArticles];
-
-                  if (allArticles.length === 0) {
+                  // Show all articles (now includes imported Google Sheets articles)
+                  if (articles.length === 0) {
                     return <tr><td colSpan="8" className="px-6 py-8 text-center text-gray-400 dark:text-gray-500">No articles yet</td></tr>;
                   }
 
-                  return allArticles
+                  return articles
                     .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
                     .map(article => {
                       // Truncate title to first 4 words
@@ -2573,39 +2564,9 @@ const CineChatter = () => {
                                   </button>
                                   <button onClick={async () => {
                                     if (window.confirm('Delete this article?')) {
-                                      console.log('🗑️ Deleting article:', article.title, 'ID:', article.id);
-                                      console.log('📊 Total admin articles:', articles.length);
-                                      console.log('📊 Total sheet articles:', sheetArticles.length);
-
-                                      // Check if this is an admin article or sheet article
-                                      const isAdminArticle = articles.some(a => a.id === article.id);
-                                      const isSheetArticle = sheetArticles.some(a => a.id === article.id);
-
-                                      console.log('🔍 Is admin article?', isAdminArticle);
-                                      console.log('🔍 Is sheet article?', isSheetArticle);
-
-                                      if (isAdminArticle) {
-                                        // Delete from admin articles
-                                        console.log('💾 Deleting from admin articles...');
-                                        const updatedArticles = articles.filter(a => a.id !== article.id);
-                                        console.log('📊 Updated admin articles count:', updatedArticles.length);
-                                        await saveArticles(updatedArticles);
-                                        console.log('✅ Deleted admin article:', article.title);
-                                      } else if (isSheetArticle) {
-                                        // Delete from sheet articles
-                                        console.log('📋 Deleting from sheet articles...');
-                                        const updatedSheetArticles = sheetArticles.filter(a => a.id !== article.id);
-                                        console.log('📊 Updated sheet articles count:', updatedSheetArticles.length);
-                                        setSheetArticles(updatedSheetArticles);
-                                        if (updatedSheetArticles.length > 0) {
-                                          localStorage.setItem('cine-chatter-sheet-articles', JSON.stringify(updatedSheetArticles));
-                                        } else {
-                                          localStorage.removeItem('cine-chatter-sheet-articles');
-                                        }
-                                        console.log('✅ Deleted sheet article:', article.title);
-                                      } else {
-                                        console.error('❌ Article not found in either array!');
-                                      }
+                                      const updatedArticles = articles.filter(a => a.id !== article.id);
+                                      await saveArticles(updatedArticles);
+                                      console.log('✅ Deleted article:', article.title);
                                     }
                                   }} className="flex items-center gap-1 px-2 py-1 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30 rounded transition-colors text-xs font-medium" title="Delete">
                                     <Trash2 className="w-4 h-4" />
@@ -3172,7 +3133,7 @@ const CineChatter = () => {
                     <li><strong>IMPORTANT:</strong> File → Share → "Publish to web" → Select "Comma-separated values (.csv)" → Publish</li>
                     <li>OR: Share → "Anyone with the link" → "Viewer"</li>
                     <li>Copy the sheet URL and paste below</li>
-                    <li>Click "Upload Sheet"</li>
+                    <li>Click "Import Articles" to save them to database</li>
                   </ol>
                 </div>
 
@@ -3226,7 +3187,7 @@ const CineChatter = () => {
                           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
                           </svg>
-                          Upload Sheet
+                          Import Articles
                         </>
                       )}
                     </button>
