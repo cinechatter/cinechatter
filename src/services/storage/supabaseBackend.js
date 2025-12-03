@@ -295,6 +295,12 @@ export const supabaseBackend = {
    */
   deleteArticle: async (id) => {
     try {
+      // Skip if ID is a temporary string ID (not from database)
+      if (typeof id === 'string' && (id.startsWith('sheet-') || id.startsWith('demo-'))) {
+        console.log('⚠️ Skipping delete for temporary ID:', id);
+        return; // Don't try to delete temporary IDs from database
+      }
+
       const { error } = await supabase
         .from('articles')
         .delete()
