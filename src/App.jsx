@@ -1234,10 +1234,28 @@ const CineChatter = () => {
 
     // 1. Process embedded media FIRST (before other markdown)
 
-    // [image]URL[/image] - Single inline image
+    // [image-left]URL[/image-left] - Image on left, text wraps on right
+    html = html.replace(/\[image-left\](.*?)\[\/image-left\]/g, (match, url) => {
+      console.log('✅ Found left-aligned image tag! URL:', url.trim());
+      return `<div class="float-left mr-4 mb-4 w-full sm:w-1/2 md:w-2/5"><img src="${url.trim()}" alt="Article image" class="w-full rounded-lg shadow-lg" /></div>`;
+    });
+
+    // [image-right]URL[/image-right] - Image on right, text wraps on left
+    html = html.replace(/\[image-right\](.*?)\[\/image-right\]/g, (match, url) => {
+      console.log('✅ Found right-aligned image tag! URL:', url.trim());
+      return `<div class="float-right ml-4 mb-4 w-full sm:w-1/2 md:w-2/5"><img src="${url.trim()}" alt="Article image" class="w-full rounded-lg shadow-lg" /></div>`;
+    });
+
+    // [image-center]URL[/image-center] or [image]URL[/image] - Full-width centered
+    html = html.replace(/\[image-center\](.*?)\[\/image-center\]/g, (match, url) => {
+      console.log('✅ Found center-aligned image tag! URL:', url.trim());
+      return `<div class="my-6 clear-both"><img src="${url.trim()}" alt="Article image" class="w-full rounded-lg shadow-lg mx-auto" /></div>`;
+    });
+
+    // [image]URL[/image] - Default: Full-width centered (backwards compatible)
     html = html.replace(/\[image\](.*?)\[\/image\]/g, (match, url) => {
       console.log('✅ Found image tag! URL:', url.trim());
-      return `<div class="my-6"><img src="${url.trim()}" alt="Article image" class="w-full rounded-lg shadow-lg" /></div>`;
+      return `<div class="my-6 clear-both"><img src="${url.trim()}" alt="Article image" class="w-full rounded-lg shadow-lg mx-auto" /></div>`;
     });
 
     // [gallery]URL1 URL2 URL3[/gallery] - Image gallery grid

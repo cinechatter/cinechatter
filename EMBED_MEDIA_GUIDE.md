@@ -11,11 +11,28 @@ This works in:
 
 ---
 
-## 📷 Single Image
+## 📷 Single Image with Positioning
 
+You can position images in three ways:
+
+### Center (Full-width) - Default
 **Syntax:**
 ```
 [image]IMAGE_URL[/image]
+or
+[image-center]IMAGE_URL[/image-center]
+```
+
+### Left-aligned (Text wraps on right)
+**Syntax:**
+```
+[image-left]IMAGE_URL[/image-left]
+```
+
+### Right-aligned (Text wraps on left)
+**Syntax:**
+```
+[image-right]IMAGE_URL[/image-right]
 ```
 
 **Example in Google Sheets:**
@@ -26,15 +43,22 @@ This is the first paragraph of your article.
 
 This is more content after the image.
 
-[image]https://res.cloudinary.com/your-cloud/image2.jpg[/image]
+[image-left]https://res.cloudinary.com/your-cloud/image2.jpg[/image-left]
 
-Final paragraph.
+This text will wrap around the left-aligned image. The image takes up about 40% width on desktop, 50% on tablet, and full width on mobile. This creates a magazine-style layout where text flows naturally around the image.
+
+[image-right]https://res.cloudinary.com/your-cloud/image3.jpg[/image-right]
+
+This text will wrap around the right-aligned image. You can use this to create visual variety in your articles and make them more engaging for readers.
+
+Final paragraph after images.
 ```
 
 **Result:**
-- Full-width responsive image
-- Rounded corners with shadow
-- Proper spacing above and below
+- **Center**: Full-width responsive image with spacing above and below
+- **Left**: Image floats left, text wraps on right (40% width on desktop)
+- **Right**: Image floats right, text wraps on left (40% width on desktop)
+- All images: Rounded corners with shadow, fully responsive
 
 ---
 
@@ -283,7 +307,9 @@ Emma Stone won Best Actress for her role in Poor Things.
 
 | Media Type | Tag | Example |
 |-----------|-----|---------|
-| Single Image | `[image]URL[/image]` | `[image]https://...[/image]` |
+| Image - Center (Full-width) | `[image]URL[/image]` | `[image]https://...[/image]` |
+| Image - Left-aligned | `[image-left]URL[/image-left]` | `[image-left]https://...[/image-left]` |
+| Image - Right-aligned | `[image-right]URL[/image-right]` | `[image-right]https://...[/image-right]` |
 | Gallery | `[gallery]URL1 URL2[/gallery]` | `[gallery]https://... https://...[/gallery]` |
 | YouTube | `[youtube]URL[/youtube]` | `[youtube]https://youtube.com/watch?v=...[/youtube]` |
 | Instagram | `[instagram]URL[/instagram]` | `[instagram]https://instagram.com/p/...[/instagram]` |
