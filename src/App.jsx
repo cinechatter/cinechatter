@@ -2572,7 +2572,7 @@ const CineChatter = () => {
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Category</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Source</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Status</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase w-48">Actions</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase w-64">Actions</th>
                 </tr>
               </thead>
               <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
@@ -2636,7 +2636,7 @@ const CineChatter = () => {
                               {article.status}
                             </span>
                           </td>
-                          <td className="px-6 py-4 w-48">
+                          <td className="px-6 py-4 w-64">
                             <div className="flex gap-2 items-center flex-nowrap">
                               <button onClick={() => setSelectedArticle(article)} className="flex items-center gap-1 px-2 py-1 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded transition-colors text-xs font-medium whitespace-nowrap" title="View">
                                 <Eye className="w-4 h-4" />
@@ -2664,7 +2664,7 @@ const CineChatter = () => {
                                         alert('Failed to delete article. Please try again.');
                                       }
                                     }
-                                  }} className="flex items-center gap-1 px-2 py-1 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30 rounded transition-colors text-xs font-medium" title="Delete">
+                                  }} className="flex items-center gap-1 px-2 py-1 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30 rounded transition-colors text-xs font-medium whitespace-nowrap" title="Delete">
                                     <Trash2 className="w-4 h-4" />
                                     <span>Delete</span>
                                   </button>
