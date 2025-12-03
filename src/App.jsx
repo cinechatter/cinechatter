@@ -1228,10 +1228,15 @@ const CineChatter = () => {
 
     let html = text;
 
+    // Debug logging
+    console.log('🔍 renderMarkdown input:', text.substring(0, 200));
+    console.log('🔍 Contains [image] tag?', text.includes('[image]'));
+
     // 1. Process embedded media FIRST (before other markdown)
 
     // [image]URL[/image] - Single inline image
     html = html.replace(/\[image\](.*?)\[\/image\]/g, (match, url) => {
+      console.log('✅ Found image tag! URL:', url.trim());
       return `<div class="my-6"><img src="${url.trim()}" alt="Article image" class="w-full rounded-lg shadow-lg" /></div>`;
     });
 
