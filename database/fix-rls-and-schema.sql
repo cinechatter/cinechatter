@@ -43,6 +43,10 @@ ADD COLUMN IF NOT EXISTS author_id UUID REFERENCES auth.users(id);
 ALTER TABLE articles
 ADD COLUMN IF NOT EXISTS excerpt TEXT;
 
+-- Add featured_image column if it doesn't exist
+ALTER TABLE articles
+ADD COLUMN IF NOT EXISTS featured_image TEXT;
+
 -- Add other potentially missing columns
 ALTER TABLE articles
 ADD COLUMN IF NOT EXISTS slug VARCHAR(255);
