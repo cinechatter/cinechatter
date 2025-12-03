@@ -32,12 +32,32 @@ USING (is_admin())
 WITH CHECK (is_admin());
 
 -- ============================================================================
--- PART 2: Add Missing author_id Column to Articles Table
+-- PART 2: Add Missing Columns to Articles Table
 -- ============================================================================
 
 -- Add author_id column if it doesn't exist
 ALTER TABLE articles
 ADD COLUMN IF NOT EXISTS author_id UUID REFERENCES auth.users(id);
+
+-- Add excerpt column if it doesn't exist
+ALTER TABLE articles
+ADD COLUMN IF NOT EXISTS excerpt TEXT;
+
+-- Add other potentially missing columns
+ALTER TABLE articles
+ADD COLUMN IF NOT EXISTS slug VARCHAR(255);
+
+ALTER TABLE articles
+ADD COLUMN IF NOT EXISTS meta_title VARCHAR(255);
+
+ALTER TABLE articles
+ADD COLUMN IF NOT EXISTS meta_description TEXT;
+
+ALTER TABLE articles
+ADD COLUMN IF NOT EXISTS meta_keywords TEXT;
+
+ALTER TABLE articles
+ADD COLUMN IF NOT EXISTS published_at TIMESTAMP;
 
 -- Set default author_id to NULL (articles can exist without authors for now)
 -- Or you can set a default admin user if you have one:
