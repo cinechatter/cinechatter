@@ -1220,8 +1220,50 @@ const CineChatter = () => {
   const renderMarkdown = (text) => {
     if (!text) return '';
 
-    // Convert markdown to HTML
-    let html = text
+    let html = text;
+
+    // 1. Process embedded media FIRST (before other markdown)
+
+    // [image]URL[/image] - Single inline image
+    html = html.replace(/\[image\](.*?)\[\/image\]/g, (match, url) => {
+      return `<div class="my-6"><img src="${url.trim()}" alt="Article image" class="w-full rounded-lg shadow-lg" /></div>`;
+    });
+
+    // [gallery]URL1 URL2 URL3[/gallery] - Image gallery grid
+    html = html.replace(/\[gallery\](.*?)\[\/gallery\]/gs, (match, urls) => {
+      const imageUrls = urls.trim().split(/\s+/).filter(url => url);
+      const images = imageUrls.map(url =>
+        `<img src="${url.trim()}" alt="Gallery image" class="w-full h-64 object-cover rounded-lg shadow-md hover:shadow-xl transition-shadow cursor-pointer" />`
+      ).join('');
+      return `<div class="my-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">${images}</div>`;
+    });
+
+    // [youtube]URL[/youtube] - YouTube embed
+    html = html.replace(/\[youtube\](.*?)\[\/youtube\]/g, (match, url) => {
+      let videoId = '';
+      // Extract video ID from various YouTube URL formats
+      if (url.includes('youtu.be/')) {
+        videoId = url.split('youtu.be/')[1]?.split('?')[0];
+      } else if (url.includes('youtube.com/watch')) {
+        videoId = url.split('v=')[1]?.split('&')[0];
+      } else if (url.includes('youtube.com/embed/')) {
+        videoId = url.split('embed/')[1]?.split('?')[0];
+      }
+
+      if (videoId) {
+        return `<div class="my-8 aspect-video"><iframe class="w-full h-full rounded-lg shadow-lg" src="https://www.youtube.com/embed/${videoId}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>`;
+      }
+      return match; // Return original if can't parse
+    });
+
+    // [instagram]URL[/instagram] - Instagram embed
+    html = html.replace(/\[instagram\](.*?)\[\/instagram\]/g, (match, url) => {
+      const postUrl = url.trim();
+      return `<div class="my-8 flex justify-center"><blockquote class="instagram-media" data-instgrm-permalink="${postUrl}" data-instgrm-version="14" style="max-width:540px; min-width:326px; width:100%;"></blockquote></div>`;
+    });
+
+    // 2. Then process regular markdown
+    html = html
       // Bold: **text** -> <strong>text</strong>
       .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
       // Italic: *text* -> <em>text</em>
@@ -1238,7 +1280,7 @@ const CineChatter = () => {
       .replace(/\n/g, '<br />');
 
     // Wrap in paragraph if not already wrapped
-    if (!html.startsWith('<h2') && !html.startsWith('<li')) {
+    if (!html.startsWith('<h2') && !html.startsWith('<li') && !html.startsWith('<div')) {
       html = '<p class="mb-4">' + html + '</p>';
     }
 
