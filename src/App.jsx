@@ -2493,10 +2493,25 @@ const CineChatter = () => {
                       <button
                         onClick={async () => {
                           if (window.confirm(`Delete ${selectedArticles.length} selected article(s)?`)) {
-                            const updatedArticles = articles.filter(a => !selectedArticles.includes(a.id));
-                            await saveArticles(updatedArticles);
-                            setSelectedArticles([]);
-                            console.log(`✅ Deleted ${selectedArticles.length} article(s)`);
+                            try {
+                              // Delete each article from storage
+                              await Promise.all(
+                                selectedArticles.map(articleId => {
+                                  const article = articles.find(a => a.id === articleId);
+                                  return storageService.deleteArticle(article?.id || article?.supabaseId);
+                                })
+                              );
+
+                              // Update local state
+                              const updatedArticles = articles.filter(a => !selectedArticles.includes(a.id));
+                              setArticles(updatedArticles);
+                              setSelectedArticles([]);
+
+                              console.log(`✅ Deleted ${selectedArticles.length} article(s)`);
+                            } catch (error) {
+                              console.error('❌ Error deleting articles:', error);
+                              alert('Failed to delete some articles. Please try again.');
+                            }
                           }
                         }}
                         className="flex items-center gap-2 px-3 py-1.5 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30 rounded transition-colors text-sm font-medium"
@@ -2612,9 +2627,19 @@ const CineChatter = () => {
                                   </button>
                                   <button onClick={async () => {
                                     if (window.confirm('Delete this article?')) {
-                                      const updatedArticles = articles.filter(a => a.id !== article.id);
-                                      await saveArticles(updatedArticles);
-                                      console.log('✅ Deleted article:', article.title);
+                                      try {
+                                        // Delete from storage (Supabase or localStorage)
+                                        await storageService.deleteArticle(article.id || article.supabaseId);
+
+                                        // Update local state
+                                        const updatedArticles = articles.filter(a => a.id !== article.id);
+                                        setArticles(updatedArticles);
+
+                                        console.log('✅ Deleted article:', article.title);
+                                      } catch (error) {
+                                        console.error('❌ Error deleting article:', error);
+                                        alert('Failed to delete article. Please try again.');
+                                      }
                                     }
                                   }} className="flex items-center gap-1 px-2 py-1 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30 rounded transition-colors text-xs font-medium" title="Delete">
                                     <Trash2 className="w-4 h-4" />
