@@ -97,7 +97,7 @@ const mapToSupabaseFormat = async (article, userId = null) => {
     category_id: categoryId,
     author_id: userId,
     status: article.status || 'published',
-    source: article.source || 'admin',
+    source: article.source || 'manual',
     published_at: article.status === 'published' ? (article.publishedAt || article.createdAt || new Date().toISOString()) : null,
     view_count: article.view_count || 0,
     is_featured: article.is_featured || false,
