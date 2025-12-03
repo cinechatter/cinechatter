@@ -950,6 +950,12 @@ const CineChatter = () => {
       console.log('📊 Parsed articles:', fetchedArticles);
       console.log('📊 Article statuses:', fetchedArticles.map(a => ({ title: a.title, status: a.status })));
 
+      // Debug: Log content with image tags
+      if (fetchedArticles.length > 0) {
+        console.log('🖼️ First article content preview:', fetchedArticles[0].content.substring(0, 500));
+        console.log('🔍 Image tags found:', (fetchedArticles[0].content.match(/\[image\]/g) || []).length);
+      }
+
       // Check for duplicates by title (case-insensitive)
       const existingTitles = articles.map(a => a.title.toLowerCase());
       const newArticles = fetchedArticles.filter(article =>
