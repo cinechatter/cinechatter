@@ -1861,7 +1861,7 @@ const CineChatter = () => {
                       </span>
 
                       {/* Title */}
-                      <h3 className="text-2xl sm:text-4xl lg:text-5xl font-bold text-gray-900 dark:text-white leading-tight animate-fadeIn" style={{ animationDelay: '0.1s' }}>
+                      <h3 className="text-2xl sm:text-4xl lg:text-5xl font-bold text-white leading-tight animate-fadeIn" style={{ animationDelay: '0.1s' }}>
                         {currentArticle.title}
                       </h3>
                     </div>
@@ -1874,7 +1874,7 @@ const CineChatter = () => {
                       >
                         Read Article →
                       </button>
-                      <span className="text-sm text-gray-600 dark:text-gray-300">
+                      <span className="text-sm text-white/90">
                         {new Date(currentArticle.createdAt).toLocaleDateString()}
                       </span>
                     </div>
