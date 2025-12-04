@@ -611,6 +611,10 @@ const CineChatter = () => {
       if (savedDataSource) {
         setDataSource(savedDataSource);
         console.log('📋 Loaded data source:', savedDataSource);
+      } else {
+        // Set default to sheets-only if nothing saved
+        setDataSource('sheets-only');
+        console.log('📋 Using default data source: sheets-only');
       }
 
       if (savedSheetArticles) {
