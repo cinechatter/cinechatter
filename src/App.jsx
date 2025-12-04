@@ -54,7 +54,7 @@ const CineChatter = () => {
   const [sheetsEnabled, setSheetsEnabled] = useState(false);
   const [sheetUrl, setSheetUrl] = useState('');
   const [sheetStatus, setSheetStatus] = useState('not-connected');
-  const [dataSource, setDataSource] = useState('admin-only');
+  const [dataSource, setDataSource] = useState('sheets-only');
   const [sheetArticles, setSheetArticles] = useState([]);
   const [showIntegrationSettings, setShowIntegrationSettings] = useState(false);
 
@@ -3316,17 +3316,18 @@ const CineChatter = () => {
                       <input
                         type="radio"
                         name="dataSource"
-                        value="admin-only"
-                        checked={dataSource === 'admin-only'}
+                        value="sheets-only"
+                        checked={dataSource === 'sheets-only'}
                         onChange={(e) => {
                           setDataSource(e.target.value);
                           saveSheetSettings(null, e.target.value, null, null);
                         }}
                         className="mr-3"
+                        disabled={sheetStatus !== 'connected'}
                       />
                       <div>
-                        <p className="font-medium text-gray-900 dark:text-white">Admin Panel Only</p>
-                        <p className="text-sm text-gray-600 dark:text-gray-400">Use only articles created in the admin panel (default)</p>
+                        <p className="font-medium text-gray-900 dark:text-white">Google Sheets Only</p>
+                        <p className="text-sm text-gray-600 dark:text-gray-400">Use only articles from Google Sheets (default)</p>
                       </div>
                     </label>
 
@@ -3353,18 +3354,17 @@ const CineChatter = () => {
                       <input
                         type="radio"
                         name="dataSource"
-                        value="sheets-only"
-                        checked={dataSource === 'sheets-only'}
+                        value="admin-only"
+                        checked={dataSource === 'admin-only'}
                         onChange={(e) => {
                           setDataSource(e.target.value);
                           saveSheetSettings(null, e.target.value, null, null);
                         }}
                         className="mr-3"
-                        disabled={sheetStatus !== 'connected'}
                       />
                       <div>
-                        <p className="font-medium text-gray-900 dark:text-white">Google Sheets Only</p>
-                        <p className="text-sm text-gray-600 dark:text-gray-400">Use only articles from Google Sheets</p>
+                        <p className="font-medium text-gray-900 dark:text-white">Admin Panel Only</p>
+                        <p className="text-sm text-gray-600 dark:text-gray-400">Use only articles created in the admin panel</p>
                       </div>
                     </label>
                   </div>
