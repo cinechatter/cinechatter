@@ -1852,9 +1852,9 @@ const CineChatter = () => {
                   ) : null}
 
                   {/* Content Overlay - Bottom left aligned */}
-                  <div className="absolute inset-0 flex flex-col justify-between p-6 sm:p-10 lg:p-12">
+                  <div className="absolute inset-0 flex flex-col justify-between p-6 sm:p-10 lg:p-12 pb-16">
                     {/* Top section - Category and Title */}
-                    <div className="w-full sm:w-2/3 lg:w-1/2">
+                    <div className="w-full sm:w-2/3 lg:w-1/2 pt-4 sm:pt-5 lg:pt-6">
                       {/* Category Badge */}
                       <span className="inline-block w-fit bg-red-600 text-white px-4 py-2 rounded-full text-xs sm:text-sm font-bold uppercase tracking-wide mb-4 shadow-lg animate-fadeIn">
                         {categories.find(c => c.id === currentArticle.category)?.name}
@@ -1866,8 +1866,8 @@ const CineChatter = () => {
                       </h3>
                     </div>
 
-                    {/* Bottom section - Read Article button and date */}
-                    <div className="flex items-center gap-4 animate-fadeIn" style={{ animationDelay: '0.2s' }}>
+                    {/* Bottom section - Read Article button and date (anchored to bottom) */}
+                    <div className="flex items-center gap-4 mb-4 animate-fadeIn" style={{ animationDelay: '0.2s' }}>
                       <button
                         onClick={() => setSelectedArticle(currentArticle)}
                         className="bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-lg font-semibold transition-all duration-300 hover:scale-105 shadow-lg"
