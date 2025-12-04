@@ -2125,9 +2125,9 @@ const CineChatter = () => {
               <div className="w-20 h-20 sm:w-24 sm:h-24 bg-gradient-to-br from-yellow-500 via-yellow-400 to-yellow-300 rounded-xl shadow-2xl flex items-center justify-center transform transition-all duration-300 hover:scale-110 hover:rotate-12 group-hover:shadow-3xl">
                 <span className="text-5xl sm:text-6xl animate-bounce-slow">🎁</span>
               </div>
-              {/* "NEW" Badge */}
-              <div className="absolute -top-2 -right-2 w-8 h-8 bg-red-600 rounded-full flex items-center justify-center text-white text-xs font-bold animate-pulse shadow-lg">
-                NEW
+              {/* "Untold Stories" Badge */}
+              <div className="absolute -top-3 -right-3 bg-red-600 rounded-full px-2 py-1 flex items-center justify-center text-white text-[10px] font-bold animate-pulse shadow-lg whitespace-nowrap">
+                Untold Stories
               </div>
               {/* Sparkle Effect */}
               <div className="absolute -top-1 -left-1 w-3 h-3 bg-yellow-300 rounded-full animate-ping opacity-75"></div>
