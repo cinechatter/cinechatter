@@ -1348,8 +1348,12 @@ const CineChatter = () => {
   const getPreviewText = (text) => {
     if (!text) return '';
 
-    // Remove markdown formatting
+    // Remove media tags first (before other formatting)
     let cleanText = text
+      .replace(/\[image(-left|-right|-center)?\].*?\[\/image(-left|-right|-center)?\]/g, '') // Remove image tags
+      .replace(/\[gallery\].*?\[\/gallery\]/gs, '') // Remove gallery tags
+      .replace(/\[youtube\].*?\[\/youtube\]/g, '') // Remove YouTube tags
+      .replace(/\[instagram\].*?\[\/instagram\]/g, '') // Remove Instagram tags
       .replace(/\*\*(.*?)\*\*/g, '$1')  // Remove bold
       .replace(/\*(.*?)\*/g, '$1')       // Remove italic
       .replace(/^## (.+)$/gm, '$1')      // Remove heading markers
