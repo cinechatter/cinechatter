@@ -1860,17 +1860,12 @@ const CineChatter = () => {
                       </span>
 
                       {/* Title */}
-                      <h3 className="text-2xl sm:text-4xl lg:text-5xl font-bold text-gray-900 dark:text-white mb-4 leading-tight animate-fadeIn" style={{ animationDelay: '0.1s' }}>
+                      <h3 className="text-2xl sm:text-4xl lg:text-5xl font-bold text-gray-900 dark:text-white mb-6 leading-tight animate-fadeIn" style={{ animationDelay: '0.1s' }}>
                         {currentArticle.title}
                       </h3>
 
-                      {/* Description */}
-                      <p className="text-sm sm:text-base lg:text-lg text-gray-700 dark:text-gray-200 mb-6 line-clamp-3 animate-fadeIn" style={{ animationDelay: '0.2s' }}>
-                        {getPreviewText(currentArticle.content)}
-                      </p>
-
                       {/* Date & Read More */}
-                      <div className="flex items-center gap-4 animate-fadeIn" style={{ animationDelay: '0.3s' }}>
+                      <div className="flex items-center gap-4 animate-fadeIn" style={{ animationDelay: '0.2s' }}>
                         <button
                           onClick={() => setSelectedArticle(currentArticle)}
                           className="bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-lg font-semibold transition-all duration-300 hover:scale-105 shadow-lg"
