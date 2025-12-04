@@ -972,10 +972,22 @@ const CineChatter = () => {
       }
 
       if (newArticles.length > 0) {
-        // Save new articles to database (merging with existing articles)
-        const updatedArticles = [...newArticles, ...articles];
-        await saveArticles(updatedArticles);
-        console.log(`💾 Saved ${newArticles.length} new article(s) to database`);
+        // Add each new article individually to database
+        const addedArticles = [];
+        for (const article of newArticles) {
+          try {
+            const savedArticle = await storageService.addArticle(article);
+            addedArticles.push(savedArticle);
+            console.log(`✅ Added article: ${article.title}`);
+          } catch (error) {
+            console.error(`❌ Failed to add article "${article.title}":`, error);
+          }
+        }
+
+        // Merge with existing articles and update state
+        const updatedArticles = [...addedArticles, ...articles];
+        setArticles(updatedArticles);
+        console.log(`💾 Saved ${addedArticles.length} new article(s) to database`);
       } else {
         console.log('ℹ️ No new articles to import (all already exist)');
       }
