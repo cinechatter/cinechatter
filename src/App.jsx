@@ -2589,8 +2589,14 @@ const CineChatter = () => {
                       const titleWords = (article.title || '').split(' ');
                       const truncatedTitle = titleWords.slice(0, 4).join(' ') + (titleWords.length > 4 ? '...' : '');
 
-                      // Truncate description to first 4 words
-                      const words = (article.content || '').split(' ');
+                      // Truncate description to first 4 words (strip out media tags first)
+                      const contentWithoutTags = (article.content || '')
+                        .replace(/\[image(-left|-right|-center)?\].*?\[\/image(-left|-right|-center)?\]/g, '')
+                        .replace(/\[gallery\].*?\[\/gallery\]/gs, '')
+                        .replace(/\[youtube\].*?\[\/youtube\]/g, '')
+                        .replace(/\[instagram\].*?\[\/instagram\]/g, '')
+                        .trim();
+                      const words = contentWithoutTags.split(' ');
                       const truncatedDesc = words.slice(0, 4).join(' ') + (words.length > 4 ? '...' : '');
 
                       // Determine source display
@@ -2623,7 +2629,7 @@ const CineChatter = () => {
                             <span className="font-semibold text-gray-900 dark:text-white">{truncatedTitle}</span>
                           </td>
                           <td className="px-6 py-4 max-w-xs">
-                            <p className="text-sm text-gray-600 dark:text-gray-400">{truncatedDesc}</p>
+                            <p className="text-sm text-gray-600 dark:text-gray-400 break-words overflow-hidden">{truncatedDesc}</p>
                           </td>
                           <td className="px-6 py-4 text-sm text-gray-700 dark:text-gray-300 whitespace-nowrap">{categories.find(c => c.id === article.category)?.name}</td>
                           <td className="px-6 py-4 text-sm whitespace-nowrap">
