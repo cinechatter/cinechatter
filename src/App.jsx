@@ -1809,8 +1809,9 @@ const CineChatter = () => {
                 allArticles = [...articles.filter(a => a.status === 'published'), ...sheetArticles.filter(a => a.status === 'published')];
               }
 
-              // Sort by date and take top 5 for carousel
+              // Sort by date, filter articles with images, and take top 5 for carousel
               const carouselArticles = allArticles
+                .filter(a => a.image && a.image.trim() !== '') // Only show articles with featured images
                 .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
                 .slice(0, 5);
 
