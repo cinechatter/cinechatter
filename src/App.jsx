@@ -2122,8 +2122,8 @@ const CineChatter = () => {
             {/* Gift Box Container */}
             <div className="relative">
               {/* Gift Box */}
-              <div className="w-20 h-20 sm:w-24 sm:h-24 bg-gradient-to-br from-yellow-500 via-yellow-400 to-yellow-300 rounded-xl shadow-2xl flex items-center justify-center transform transition-all duration-300 hover:scale-110 hover:rotate-12 group-hover:shadow-3xl">
-                <span className="text-5xl sm:text-6xl animate-bounce-slow">🎁</span>
+              <div className="w-28 h-28 sm:w-32 sm:h-32 bg-gradient-to-br from-yellow-500 via-yellow-400 to-yellow-300 rounded-xl shadow-2xl flex items-center justify-center transform transition-all duration-300 hover:scale-110 hover:rotate-12 group-hover:shadow-3xl">
+                <span className="text-6xl sm:text-7xl animate-bounce-slow">🎁</span>
               </div>
               {/* "Untold Stories" Badge */}
               <div className="absolute -top-4 -right-4 bg-red-600 rounded-lg px-2 py-1 flex flex-col items-center justify-center text-white text-xs font-bold animate-pulse shadow-lg leading-tight">
