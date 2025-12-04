@@ -1851,8 +1851,9 @@ const CineChatter = () => {
                     </div>
                   ) : null}
 
-                  {/* Content Overlay - Left aligned like Repoz.AI */}
-                  <div className="absolute inset-0 flex items-start pt-4 sm:pt-5 lg:pt-6 p-6 sm:p-10 lg:p-12">
+                  {/* Content Overlay - Bottom left aligned */}
+                  <div className="absolute inset-0 flex flex-col justify-between p-6 sm:p-10 lg:p-12">
+                    {/* Top section - Category and Title */}
                     <div className="w-full sm:w-2/3 lg:w-1/2">
                       {/* Category Badge */}
                       <span className="inline-block w-fit bg-red-600 text-white px-4 py-2 rounded-full text-xs sm:text-sm font-bold uppercase tracking-wide mb-4 shadow-lg animate-fadeIn">
@@ -1860,22 +1861,22 @@ const CineChatter = () => {
                       </span>
 
                       {/* Title */}
-                      <h3 className="text-2xl sm:text-4xl lg:text-5xl font-bold text-gray-900 dark:text-white mb-6 leading-tight animate-fadeIn" style={{ animationDelay: '0.1s' }}>
+                      <h3 className="text-2xl sm:text-4xl lg:text-5xl font-bold text-gray-900 dark:text-white leading-tight animate-fadeIn" style={{ animationDelay: '0.1s' }}>
                         {currentArticle.title}
                       </h3>
+                    </div>
 
-                      {/* Date & Read More */}
-                      <div className="flex items-center gap-4 animate-fadeIn" style={{ animationDelay: '0.2s' }}>
-                        <button
-                          onClick={() => setSelectedArticle(currentArticle)}
-                          className="bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-lg font-semibold transition-all duration-300 hover:scale-105 shadow-lg"
-                        >
-                          Read Article →
-                        </button>
-                        <span className="text-sm text-gray-600 dark:text-gray-300">
-                          {new Date(currentArticle.createdAt).toLocaleDateString()}
-                        </span>
-                      </div>
+                    {/* Bottom section - Read Article button and date */}
+                    <div className="flex items-center gap-4 animate-fadeIn" style={{ animationDelay: '0.2s' }}>
+                      <button
+                        onClick={() => setSelectedArticle(currentArticle)}
+                        className="bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-lg font-semibold transition-all duration-300 hover:scale-105 shadow-lg"
+                      >
+                        Read Article →
+                      </button>
+                      <span className="text-sm text-gray-600 dark:text-gray-300">
+                        {new Date(currentArticle.createdAt).toLocaleDateString()}
+                      </span>
                     </div>
                   </div>
 
