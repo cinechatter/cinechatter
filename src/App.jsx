@@ -1304,6 +1304,18 @@ const CineChatter = () => {
     // [instagram]URL[/instagram] - Instagram embed
     html = html.replace(/\[instagram\](.*?)\[\/instagram\]/g, (match, url) => {
       const postUrl = url.trim();
+      console.log('✅ Found Instagram tag! URL:', postUrl);
+
+      // Trigger Instagram embed processing after render
+      setTimeout(() => {
+        if (window.instgrm) {
+          console.log('📱 Processing Instagram embeds...');
+          window.instgrm.Embeds.process();
+        } else {
+          console.warn('⚠️ Instagram embed script not loaded yet');
+        }
+      }, 100);
+
       return `<div class="my-8 flex justify-center"><blockquote class="instagram-media" data-instgrm-permalink="${postUrl}" data-instgrm-version="14" style="max-width:540px; min-width:326px; width:100%;"></blockquote></div>`;
     });
 
