@@ -2107,6 +2107,40 @@ const CineChatter = () => {
               </div>
             </div>
           </div>
+          {/* Floating Animated Gift Box - Bottom Right Corner */}
+          <div
+            className="fixed bottom-8 right-8 z-40 animate-slide-up-bounce cursor-pointer group"
+            onClick={async () => {
+              await loadFeaturedImages();
+              const validImages = featuredImages.filter(f => f.image);
+              if (validImages.length > 0) {
+                setCurrentTreasureIndex(Math.floor(Math.random() * validImages.length));
+              }
+              setTreasureBoxOpen(true);
+            }}
+          >
+            {/* Gift Box Container */}
+            <div className="relative">
+              {/* Gift Box */}
+              <div className="w-20 h-20 sm:w-24 sm:h-24 bg-gradient-to-br from-yellow-500 via-yellow-400 to-yellow-300 rounded-xl shadow-2xl flex items-center justify-center transform transition-all duration-300 hover:scale-110 hover:rotate-12 group-hover:shadow-3xl">
+                <span className="text-5xl sm:text-6xl animate-bounce-slow">🎁</span>
+              </div>
+              {/* "NEW" Badge */}
+              <div className="absolute -top-2 -right-2 w-8 h-8 bg-red-600 rounded-full flex items-center justify-center text-white text-xs font-bold animate-pulse shadow-lg">
+                NEW
+              </div>
+              {/* Sparkle Effect */}
+              <div className="absolute -top-1 -left-1 w-3 h-3 bg-yellow-300 rounded-full animate-ping opacity-75"></div>
+              <div className="absolute -bottom-1 -right-1 w-2 h-2 bg-yellow-300 rounded-full animate-ping opacity-75" style={{ animationDelay: '0.5s' }}></div>
+            </div>
+            {/* Tooltip */}
+            <div className="absolute bottom-full right-0 mb-2 hidden group-hover:block animate-fadeIn">
+              <div className="bg-gray-900 text-white text-xs px-3 py-2 rounded-lg shadow-lg whitespace-nowrap">
+                Click for Untold Stories! 🎬
+                <div className="absolute top-full right-4 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-900"></div>
+              </div>
+            </div>
+          </div>
         </div>
       )}
 

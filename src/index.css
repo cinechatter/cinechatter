@@ -166,3 +166,39 @@ body {
 .animate-ken-burns {
   animation: ken-burns 20s ease-in-out infinite alternate;
 }
+
+/* Slide up with bounce - for floating gift box */
+@keyframes slide-up-bounce {
+  0% {
+    transform: translateY(100px);
+    opacity: 0;
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+  70% {
+    transform: translateY(5px);
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.animate-slide-up-bounce {
+  animation: slide-up-bounce 1s ease-out forwards;
+}
+
+/* Slow bounce for gift emoji */
+@keyframes bounce-slow {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.animate-bounce-slow {
+  animation: bounce-slow 2s ease-in-out infinite;
+}
