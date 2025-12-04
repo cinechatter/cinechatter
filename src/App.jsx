@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Film, TrendingUp, Plus, Edit2, Trash2, Eye, X, Menu, Search, ChevronDown, Upload, Settings, User, LogOut, Download, Moon, Sun, Save, Type, Bold, Italic, List, ListOrdered, Heading2, Play, ChevronLeft, ChevronRight, Pause } from 'lucide-react';
+import { Film, TrendingUp, Plus, Edit2, Trash2, Eye, X, Menu, Search, ChevronDown, ChevronUp, Upload, Settings, User, LogOut, Download, Moon, Sun, Save, Type, Bold, Italic, List, ListOrdered, Heading2, Play, ChevronLeft, ChevronRight, Pause } from 'lucide-react';
 import { supabase, isSupabaseConfigured } from './lib/supabase';
 import { autoGenerateSEOFields } from './utils/seoHelpers';
 import AIArticleGenerator from './components/AIArticleGenerator';
