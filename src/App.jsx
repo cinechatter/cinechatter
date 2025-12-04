@@ -49,6 +49,7 @@ const CineChatter = () => {
   const [currentTreasureIndex, setCurrentTreasureIndex] = useState(0);
   const [selectedTreasureArticle, setSelectedTreasureArticle] = useState(null);
   const [newsletterEmail, setNewsletterEmail] = useState('');
+  const [giftBoxCollapsed, setGiftBoxCollapsed] = useState(false);
   
   // Google Sheets Integration
   const [sheetsEnabled, setSheetsEnabled] = useState(false);
@@ -2108,38 +2109,66 @@ const CineChatter = () => {
             </div>
           </div>
           {/* Floating Animated Gift Box - Bottom Right Corner */}
-          <div
-            className="fixed bottom-8 right-8 z-40 animate-slide-up-bounce cursor-pointer group"
-            onClick={async () => {
-              await loadFeaturedImages();
-              const validImages = featuredImages.filter(f => f.image);
-              if (validImages.length > 0) {
-                setCurrentTreasureIndex(Math.floor(Math.random() * validImages.length));
-              }
-              setTreasureBoxOpen(true);
-            }}
-          >
-            {/* Gift Box Container */}
-            <div className="relative">
-              {/* Gift Box */}
-              <div className="w-28 h-28 sm:w-32 sm:h-32 bg-gradient-to-br from-yellow-500 via-yellow-400 to-yellow-300 rounded-xl shadow-2xl flex items-center justify-center transform transition-all duration-300 hover:scale-110 hover:rotate-12 group-hover:shadow-3xl">
-                <span className="text-6xl sm:text-7xl animate-bounce-slow">🎁</span>
+          <div className="fixed bottom-8 right-8 z-40 animate-slide-up-bounce">
+            {!giftBoxCollapsed ? (
+              <div className="group relative">
+                {/* Gift Box Container */}
+                <div
+                  className="cursor-pointer"
+                  onClick={async () => {
+                    await loadFeaturedImages();
+                    const validImages = featuredImages.filter(f => f.image);
+                    if (validImages.length > 0) {
+                      setCurrentTreasureIndex(Math.floor(Math.random() * validImages.length));
+                    }
+                    setTreasureBoxOpen(true);
+                  }}
+                >
+                  <div className="relative">
+                    {/* Gift Box */}
+                    <div className="w-28 h-28 sm:w-32 sm:h-32 bg-gradient-to-br from-yellow-500 via-yellow-400 to-yellow-300 rounded-xl shadow-2xl flex items-center justify-center transform transition-all duration-300 hover:scale-110 hover:rotate-12 group-hover:shadow-3xl">
+                      <span className="text-6xl sm:text-7xl animate-bounce-slow">🎁</span>
+                    </div>
+                    {/* "Untold Stories" Badge */}
+                    <div className="absolute -top-3 -right-3 bg-red-600 rounded-full px-3 py-1 flex items-center justify-center text-white text-xs font-bold animate-pulse shadow-lg whitespace-nowrap">
+                      Untold Stories
+                    </div>
+                    {/* Sparkle Effect */}
+                    <div className="absolute -top-1 -left-1 w-3 h-3 bg-yellow-300 rounded-full animate-ping opacity-75"></div>
+                    <div className="absolute -bottom-1 -right-1 w-2 h-2 bg-yellow-300 rounded-full animate-ping opacity-75" style={{ animationDelay: '0.5s' }}></div>
+                  </div>
+                  {/* Tooltip */}
+                  <div className="absolute bottom-full right-0 mb-2 hidden group-hover:block animate-fadeIn">
+                    <div className="bg-gray-900 text-white text-xs px-3 py-2 rounded-lg shadow-lg whitespace-nowrap">
+                      Click for Untold Stories! 🎬
+                      <div className="absolute top-full right-4 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-900"></div>
+                    </div>
+                  </div>
+                </div>
+                {/* Collapse Button */}
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setGiftBoxCollapsed(true);
+                  }}
+                  className="absolute -top-2 -left-2 w-6 h-6 bg-gray-800 dark:bg-gray-700 text-white rounded-full flex items-center justify-center hover:bg-gray-700 dark:hover:bg-gray-600 transition-colors shadow-lg"
+                  title="Collapse"
+                >
+                  <ChevronDown className="w-4 h-4" />
+                </button>
               </div>
-              {/* "Untold Stories" Badge */}
-              <div className="absolute -top-3 -right-3 bg-red-600 rounded-full px-3 py-1 flex items-center justify-center text-white text-xs font-bold animate-pulse shadow-lg whitespace-nowrap">
-                Untold Stories
-              </div>
-              {/* Sparkle Effect */}
-              <div className="absolute -top-1 -left-1 w-3 h-3 bg-yellow-300 rounded-full animate-ping opacity-75"></div>
-              <div className="absolute -bottom-1 -right-1 w-2 h-2 bg-yellow-300 rounded-full animate-ping opacity-75" style={{ animationDelay: '0.5s' }}></div>
-            </div>
-            {/* Tooltip */}
-            <div className="absolute bottom-full right-0 mb-2 hidden group-hover:block animate-fadeIn">
-              <div className="bg-gray-900 text-white text-xs px-3 py-2 rounded-lg shadow-lg whitespace-nowrap">
-                Click for Untold Stories! 🎬
-                <div className="absolute top-full right-4 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-900"></div>
-              </div>
-            </div>
+            ) : (
+              /* Collapsed State - Small button */
+              <button
+                onClick={() => setGiftBoxCollapsed(false)}
+                className="w-12 h-12 bg-gradient-to-br from-yellow-500 via-yellow-400 to-yellow-300 rounded-full shadow-xl flex items-center justify-center hover:scale-110 transition-all duration-300 group"
+                title="Show Untold Stories"
+              >
+                <ChevronUp className="w-6 h-6 text-gray-800 animate-bounce" />
+                {/* Small badge on collapsed state */}
+                <div className="absolute -top-1 -right-1 w-3 h-3 bg-red-600 rounded-full animate-pulse"></div>
+              </button>
+            )}
           </div>
         </div>
       )}
