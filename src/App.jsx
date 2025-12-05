@@ -3457,7 +3457,6 @@ const CineChatter = () => {
                           saveSheetSettings(null, e.target.value, null, null);
                         }}
                         className="mr-3"
-                        disabled={sheetStatus !== 'connected'}
                       />
                       <div>
                         <p className="font-medium text-gray-900 dark:text-white">Google Sheets Only</p>
@@ -3476,7 +3475,6 @@ const CineChatter = () => {
                           saveSheetSettings(null, e.target.value, null, null);
                         }}
                         className="mr-3"
-                        disabled={sheetStatus !== 'connected'}
                       />
                       <div>
                         <p className="font-medium text-gray-900 dark:text-white">Admin Panel + Google Sheets</p>
