@@ -2161,17 +2161,17 @@ const CineChatter = () => {
                   }}
                 >
                   {/* Did You Know Box */}
-                  <div className="w-32 h-32 sm:w-36 sm:h-36 bg-gradient-to-br from-blue-500 via-blue-400 to-blue-300 rounded-2xl shadow-2xl flex flex-col items-center justify-center transform transition-all duration-300 hover:scale-110 hover:rotate-3 group-hover:shadow-3xl p-3 border-4 border-white relative overflow-hidden">
+                  <div className="w-32 h-32 sm:w-36 sm:h-36 bg-gradient-to-br from-red-600 via-orange-500 to-yellow-500 dark:from-red-700 dark:via-orange-600 dark:to-yellow-600 rounded-2xl shadow-2xl flex flex-col items-center justify-center transform transition-all duration-300 hover:scale-110 hover:rotate-3 group-hover:shadow-3xl p-3 border-4 border-red-200 dark:border-red-800 relative overflow-hidden">
                     {/* Light bulb icon */}
                     <div className="text-5xl sm:text-6xl mb-1 animate-bounce-slow">💡</div>
                     {/* Text */}
                     <div className="text-center">
-                      <div className="text-yellow-300 font-black text-sm sm:text-base leading-tight">DID YOU</div>
-                      <div className="text-orange-400 font-black text-lg sm:text-xl leading-tight">KNOW?</div>
+                      <div className="text-white font-black text-sm sm:text-base leading-tight drop-shadow-lg">DID YOU</div>
+                      <div className="text-white font-black text-lg sm:text-xl leading-tight drop-shadow-lg">KNOW?</div>
                     </div>
                     {/* Decorative elements */}
-                    <div className="absolute top-1 right-1 w-2 h-2 bg-yellow-300 rounded-full opacity-75"></div>
-                    <div className="absolute bottom-1 left-1 w-2 h-2 bg-yellow-300 rounded-full opacity-75"></div>
+                    <div className="absolute top-1 right-1 w-2 h-2 bg-white rounded-full opacity-75"></div>
+                    <div className="absolute bottom-1 left-1 w-2 h-2 bg-white rounded-full opacity-75"></div>
                   </div>
                   {/* Sparkle Effect */}
                   <div className="absolute -top-1 -left-1 w-3 h-3 bg-yellow-300 rounded-full animate-ping opacity-75 pointer-events-none"></div>
@@ -2202,12 +2202,12 @@ const CineChatter = () => {
               /* Collapsed State - Small button */
               <button
                 onClick={() => setGiftBoxCollapsed(false)}
-                className="w-12 h-12 bg-gradient-to-br from-blue-500 via-blue-400 to-blue-300 rounded-full shadow-xl flex items-center justify-center hover:scale-110 transition-all duration-300 group border-2 border-white"
+                className="w-12 h-12 bg-gradient-to-br from-red-600 via-orange-500 to-yellow-500 dark:from-red-700 dark:via-orange-600 dark:to-yellow-600 rounded-full shadow-xl flex items-center justify-center hover:scale-110 transition-all duration-300 group border-2 border-red-200 dark:border-red-800"
                 title="Show Do You Know?"
               >
                 <ChevronUp className="w-6 h-6 text-white animate-bounce" />
                 {/* Small badge on collapsed state */}
-                <div className="absolute -top-1 -right-1 w-3 h-3 bg-red-600 rounded-full animate-pulse"></div>
+                <div className="absolute -top-1 -right-1 w-3 h-3 bg-white rounded-full animate-pulse shadow-md"></div>
               </button>
             )}
           </div>
