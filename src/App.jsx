@@ -2164,9 +2164,9 @@ const CineChatter = () => {
                   <div className="w-28 h-28 sm:w-32 sm:h-32 bg-gradient-to-br from-yellow-500 via-yellow-400 to-yellow-300 rounded-xl shadow-2xl flex items-center justify-center transform transition-all duration-300 hover:scale-110 hover:rotate-12 group-hover:shadow-3xl">
                     <span className="text-6xl sm:text-7xl animate-bounce-slow">🎁</span>
                   </div>
-                  {/* "Untold Stories" Badge */}
+                  {/* "Do You Know" Badge */}
                   <div className="absolute -top-3 -right-3 bg-red-600 rounded-full px-3 py-1 flex items-center justify-center text-white text-xs font-bold animate-pulse shadow-lg whitespace-nowrap pointer-events-none">
-                    Untold Stories
+                    Do You Know
                   </div>
                   {/* Sparkle Effect */}
                   <div className="absolute -top-1 -left-1 w-3 h-3 bg-yellow-300 rounded-full animate-ping opacity-75 pointer-events-none"></div>
@@ -2175,7 +2175,7 @@ const CineChatter = () => {
                   {/* Tooltip */}
                   <div className="absolute bottom-full right-0 mb-2 hidden group-hover:block animate-fadeIn pointer-events-none">
                     <div className="bg-gray-900 text-white text-xs px-3 py-2 rounded-lg shadow-lg whitespace-nowrap">
-                      Click for Untold Stories! 🎬
+                      Click to discover! 🎬
                       <div className="absolute top-full right-4 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-900"></div>
                     </div>
                   </div>
@@ -2198,7 +2198,7 @@ const CineChatter = () => {
               <button
                 onClick={() => setGiftBoxCollapsed(false)}
                 className="w-12 h-12 bg-gradient-to-br from-yellow-500 via-yellow-400 to-yellow-300 rounded-full shadow-xl flex items-center justify-center hover:scale-110 transition-all duration-300 group"
-                title="Show Untold Stories"
+                title="Show Do You Know"
               >
                 <ChevronUp className="w-6 h-6 text-gray-800 animate-bounce" />
                 {/* Small badge on collapsed state */}
