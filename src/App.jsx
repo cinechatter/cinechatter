@@ -2160,39 +2160,13 @@ const CineChatter = () => {
                     setTreasureBoxOpen(true);
                   }}
                 >
-                  {/* Did You Know Box - Dynamic Comic Style */}
-                  <div className="relative w-40 h-40 sm:w-44 sm:h-44">
-                    {/* Animated rotating gradient background */}
-                    <div className="absolute inset-0 bg-gradient-to-br from-red-600 via-orange-500 to-yellow-500 dark:from-red-700 dark:via-orange-600 dark:to-yellow-600 rounded-3xl animate-pulse shadow-2xl"></div>
-
-                    {/* Main content box */}
-                    <div className="absolute inset-2 bg-white dark:bg-gray-900 rounded-2xl shadow-inner flex flex-col items-center justify-center transform transition-all duration-300 hover:scale-95 border-2 border-dashed border-red-400 dark:border-orange-400">
-                      {/* Animated light bulb */}
-                      <div className="relative">
-                        {/* Glowing rays animation */}
-                        <div className="absolute -inset-4">
-                          <div className="w-full h-full">
-                            <div className="absolute top-0 left-1/2 w-1 h-6 bg-yellow-400 opacity-75 -translate-x-1/2 animate-ping"></div>
-                            <div className="absolute top-1/2 right-0 h-1 w-6 bg-yellow-400 opacity-75 -translate-y-1/2 animate-ping" style={{ animationDelay: '0.2s' }}></div>
-                            <div className="absolute bottom-0 left-1/2 w-1 h-6 bg-yellow-400 opacity-75 -translate-x-1/2 animate-ping" style={{ animationDelay: '0.4s' }}></div>
-                            <div className="absolute top-1/2 left-0 h-1 w-6 bg-yellow-400 opacity-75 -translate-y-1/2 animate-ping" style={{ animationDelay: '0.6s' }}></div>
-                          </div>
-                        </div>
-                        <div className="relative text-5xl sm:text-6xl animate-bounce-slow filter drop-shadow-2xl">💡</div>
-                      </div>
-
-                      {/* Comic-style text bubble */}
-                      <div className="relative mt-2 bg-gradient-to-r from-red-600 to-orange-500 dark:from-red-700 dark:to-orange-600 px-4 py-1.5 rounded-full shadow-lg transform -rotate-2">
-                        <div className="text-white font-black text-sm sm:text-base tracking-wide drop-shadow-md">
-                          Do You Know?
-                        </div>
-                        {/* Speech bubble pointer */}
-                        <div className="absolute -top-2 left-1/2 -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-b-4 border-transparent border-b-red-600 dark:border-b-red-700"></div>
-                      </div>
-
-                      {/* Decorative stars */}
-                      <div className="absolute top-2 right-2 text-yellow-500 text-xs animate-ping">✨</div>
-                      <div className="absolute bottom-2 left-2 text-red-500 text-xs animate-ping" style={{ animationDelay: '0.5s' }}>⭐</div>
+                  {/* Did You Know Box - Simple & Clean */}
+                  <div className="w-32 h-32 sm:w-36 sm:h-36 bg-gradient-to-br from-red-600 via-orange-500 to-yellow-500 dark:from-red-700 dark:via-orange-600 dark:to-yellow-600 rounded-xl shadow-2xl flex flex-col items-center justify-center transform transition-all duration-300 hover:scale-110 group-hover:shadow-3xl p-3">
+                    {/* Light bulb */}
+                    <div className="text-5xl sm:text-6xl mb-2">💡</div>
+                    {/* Text */}
+                    <div className="text-center">
+                      <div className="text-white font-bold text-sm sm:text-base leading-tight">Do You Know?</div>
                     </div>
                   </div>
                   {/* Sparkle Effect */}
