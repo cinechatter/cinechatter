@@ -2160,13 +2160,18 @@ const CineChatter = () => {
                     setTreasureBoxOpen(true);
                   }}
                 >
-                  {/* Gift Box */}
-                  <div className="w-28 h-28 sm:w-32 sm:h-32 bg-gradient-to-br from-yellow-500 via-yellow-400 to-yellow-300 rounded-xl shadow-2xl flex items-center justify-center transform transition-all duration-300 hover:scale-110 hover:rotate-12 group-hover:shadow-3xl">
-                    <span className="text-6xl sm:text-7xl animate-bounce-slow">🎁</span>
-                  </div>
-                  {/* "Do You Know?" Badge */}
-                  <div className="absolute -top-3 -right-3 bg-red-600 rounded-full px-3 py-1 flex items-center justify-center text-white text-xs font-bold animate-pulse shadow-lg whitespace-nowrap pointer-events-none">
-                    Do You Know?
+                  {/* Did You Know Box */}
+                  <div className="w-32 h-32 sm:w-36 sm:h-36 bg-gradient-to-br from-blue-500 via-blue-400 to-blue-300 rounded-2xl shadow-2xl flex flex-col items-center justify-center transform transition-all duration-300 hover:scale-110 hover:rotate-3 group-hover:shadow-3xl p-3 border-4 border-white relative overflow-hidden">
+                    {/* Light bulb icon */}
+                    <div className="text-5xl sm:text-6xl mb-1 animate-bounce-slow">💡</div>
+                    {/* Text */}
+                    <div className="text-center">
+                      <div className="text-yellow-300 font-black text-sm sm:text-base leading-tight">DID YOU</div>
+                      <div className="text-orange-400 font-black text-lg sm:text-xl leading-tight">KNOW?</div>
+                    </div>
+                    {/* Decorative elements */}
+                    <div className="absolute top-1 right-1 w-2 h-2 bg-yellow-300 rounded-full opacity-75"></div>
+                    <div className="absolute bottom-1 left-1 w-2 h-2 bg-yellow-300 rounded-full opacity-75"></div>
                   </div>
                   {/* Sparkle Effect */}
                   <div className="absolute -top-1 -left-1 w-3 h-3 bg-yellow-300 rounded-full animate-ping opacity-75 pointer-events-none"></div>
@@ -2197,10 +2202,10 @@ const CineChatter = () => {
               /* Collapsed State - Small button */
               <button
                 onClick={() => setGiftBoxCollapsed(false)}
-                className="w-12 h-12 bg-gradient-to-br from-yellow-500 via-yellow-400 to-yellow-300 rounded-full shadow-xl flex items-center justify-center hover:scale-110 transition-all duration-300 group"
+                className="w-12 h-12 bg-gradient-to-br from-blue-500 via-blue-400 to-blue-300 rounded-full shadow-xl flex items-center justify-center hover:scale-110 transition-all duration-300 group border-2 border-white"
                 title="Show Do You Know?"
               >
-                <ChevronUp className="w-6 h-6 text-gray-800 animate-bounce" />
+                <ChevronUp className="w-6 h-6 text-white animate-bounce" />
                 {/* Small badge on collapsed state */}
                 <div className="absolute -top-1 -right-1 w-3 h-3 bg-red-600 rounded-full animate-pulse"></div>
               </button>
