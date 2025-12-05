@@ -2161,12 +2161,12 @@ const CineChatter = () => {
                   }}
                 >
                   {/* Did You Know Box - Simple & Clean */}
-                  <div className="w-32 h-32 sm:w-36 sm:h-36 bg-gradient-to-br from-red-600 via-orange-500 to-yellow-500 dark:from-red-700 dark:via-orange-600 dark:to-yellow-600 rounded-xl shadow-2xl flex flex-col items-center justify-center transform transition-all duration-300 hover:scale-110 group-hover:shadow-3xl p-3">
+                  <div className="w-28 h-28 sm:w-32 sm:h-32 bg-gradient-to-br from-red-600 via-orange-500 to-yellow-500 dark:from-red-700 dark:via-orange-600 dark:to-yellow-600 rounded-xl shadow-2xl flex flex-col items-center justify-center transform transition-all duration-300 hover:scale-110 group-hover:shadow-3xl p-2">
                     {/* Light bulb */}
-                    <div className="text-5xl sm:text-6xl mb-2">💡</div>
+                    <div className="text-4xl sm:text-5xl mb-1">💡</div>
                     {/* Text */}
                     <div className="text-center">
-                      <div className="text-white font-bold text-sm sm:text-base leading-tight">Do You Know?</div>
+                      <div className="text-white font-bold text-xs sm:text-sm leading-tight">Do You Know?</div>
                     </div>
                   </div>
                   {/* Sparkle Effect */}
