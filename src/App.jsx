@@ -1998,8 +1998,8 @@ const CineChatter = () => {
                   )}
 
                   {/* Horizontal Scrollable Container */}
-                  <div className="overflow-x-auto scrollbar-hide -mx-4 sm:mx-0">
-                    <div className="flex gap-4 px-4 sm:px-0 pb-2">
+                  <div className="overflow-x-auto scrollbar-hide">
+                    <div className="flex gap-4 pl-8 sm:pl-12 pr-4 pb-2">
                       {trendingArticles.map((article, index) => {
                         const isExternal = article.isExternal;
                         const handleClick = () => {
@@ -2014,7 +2014,7 @@ const CineChatter = () => {
                           <div
                             key={`trending-${article.id}`}
                             onClick={handleClick}
-                            className="flex-shrink-0 w-72 bg-gradient-to-br from-red-100 via-orange-100 to-yellow-100 dark:from-slate-900 dark:via-gray-800 dark:to-slate-900 rounded-lg shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden cursor-pointer group border border-red-200 dark:border-gray-700"
+                            className="flex-shrink-0 w-64 sm:w-60 lg:w-64 bg-gradient-to-br from-red-100 via-orange-100 to-yellow-100 dark:from-slate-900 dark:via-gray-800 dark:to-slate-900 rounded-lg shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden cursor-pointer group border border-red-200 dark:border-gray-700"
                           >
                             {article.image && (
                               <div className="relative h-40 overflow-hidden">
@@ -2063,7 +2063,7 @@ const CineChatter = () => {
                   </div>
 
                   {/* Scroll Fade Indicators */}
-                  <div className="pointer-events-none absolute inset-y-0 left-0 w-8 bg-gradient-to-r from-white dark:from-gray-900 to-transparent"></div>
+                  <div className="pointer-events-none absolute inset-y-0 left-0 w-16 sm:w-20 bg-gradient-to-r from-white dark:from-gray-900 to-transparent"></div>
                   <div className="pointer-events-none absolute inset-y-0 right-0 w-8 bg-gradient-to-l from-white dark:from-gray-900 to-transparent"></div>
                 </div>
               );
