@@ -4,6 +4,7 @@ import { supabase, isSupabaseConfigured } from './lib/supabase';
 import { autoGenerateSEOFields } from './utils/seoHelpers';
 import AIArticleGenerator from './components/AIArticleGenerator';
 import storageService from './services/storageService';
+import { getTrendingNews } from './services/rssFeedService';
 
 const categories = [
   { id: 'hollywood-movies', name: 'Hollywood Movies' },
@@ -50,6 +51,10 @@ const CineChatter = () => {
   const [selectedTreasureArticle, setSelectedTreasureArticle] = useState(null);
   const [newsletterEmail, setNewsletterEmail] = useState('');
   const [giftBoxCollapsed, setGiftBoxCollapsed] = useState(false);
+
+  // RSS Feed State
+  const [rssArticles, setRssArticles] = useState([]);
+  const [rssLoading, setRssLoading] = useState(false);
   
   // Google Sheets Integration
   const [sheetsEnabled, setSheetsEnabled] = useState(false);
@@ -131,6 +136,7 @@ const CineChatter = () => {
     loadFeaturedImages();
     checkUser();
     loadSheetSettings(); // Load saved Google Sheets settings
+    loadRSSFeed(); // Load RSS feed articles
 
     // Expose supabase to window for testing (development only)
     if (process.env.NODE_ENV === 'development') {
@@ -579,6 +585,21 @@ const CineChatter = () => {
       }
     } catch (error) {
       console.error('Error loading featured images:', error);
+    }
+  };
+
+  const loadRSSFeed = async () => {
+    try {
+      setRssLoading(true);
+      console.log('📰 Fetching RSS feed articles...');
+      const news = await getTrendingNews(10);
+      setRssArticles(news);
+      console.log(`📰 Loaded ${news.length} RSS articles from Google News`);
+    } catch (error) {
+      console.error('Error loading RSS feed:', error);
+      setRssArticles([]);
+    } finally {
+      setRssLoading(false);
     }
   };
 
@@ -1952,56 +1973,92 @@ const CineChatter = () => {
               }
 
               // Get different articles than the featured ones (skip first 7)
-              const trendingArticles = allArticles
+              const localArticles = allArticles
                 .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
                 .slice(7, 15); // Get next 8 articles
 
-              if (trendingArticles.length === 0) {
+              // Combine local articles and RSS articles
+              // Show 4 local articles + 6 RSS articles
+              const trendingArticles = [
+                ...localArticles.slice(0, 4),
+                ...rssArticles.slice(0, 6)
+              ];
+
+              if (trendingArticles.length === 0 && !rssLoading) {
                 return null; // Don't show section if no articles
               }
 
               return (
                 <div className="relative">
+                  {/* Loading State */}
+                  {rssLoading && trendingArticles.length === 0 && (
+                    <div className="flex items-center justify-center py-8">
+                      <div className="text-gray-500 dark:text-gray-400">Loading trending news...</div>
+                    </div>
+                  )}
+
                   {/* Horizontal Scrollable Container */}
                   <div className="overflow-x-auto scrollbar-hide -mx-4 sm:mx-0">
                     <div className="flex gap-4 px-4 sm:px-0 pb-2">
-                      {trendingArticles.map((article, index) => (
-                        <div
-                          key={`trending-${article.id}`}
-                          onClick={() => setSelectedArticle(article)}
-                          className="flex-shrink-0 w-72 bg-gradient-to-br from-red-100 via-orange-100 to-yellow-100 dark:from-slate-900 dark:via-gray-800 dark:to-slate-900 rounded-lg shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden cursor-pointer group border border-red-200 dark:border-gray-700"
-                        >
-                          {article.image && (
-                            <div className="relative h-40 overflow-hidden">
-                              <img
-                                src={article.image}
-                                alt={article.title}
-                                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                              />
-                              {/* Trending Badge */}
-                              <div className="absolute top-3 left-3 bg-gradient-to-r from-red-600 to-orange-500 text-white px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1 shadow-lg">
-                                <TrendingUp className="w-3 h-3" />
-                                #{index + 1}
+                      {trendingArticles.map((article, index) => {
+                        const isExternal = article.isExternal;
+                        const handleClick = () => {
+                          if (isExternal) {
+                            window.open(article.link, '_blank', 'noopener,noreferrer');
+                          } else {
+                            setSelectedArticle(article);
+                          }
+                        };
+
+                        return (
+                          <div
+                            key={`trending-${article.id}`}
+                            onClick={handleClick}
+                            className="flex-shrink-0 w-72 bg-gradient-to-br from-red-100 via-orange-100 to-yellow-100 dark:from-slate-900 dark:via-gray-800 dark:to-slate-900 rounded-lg shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden cursor-pointer group border border-red-200 dark:border-gray-700"
+                          >
+                            {article.image && (
+                              <div className="relative h-40 overflow-hidden">
+                                <img
+                                  src={article.image}
+                                  alt={article.title}
+                                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                                  onError={(e) => {
+                                    e.target.style.display = 'none';
+                                  }}
+                                />
+                                {/* Trending Badge */}
+                                <div className="absolute top-3 left-3 bg-gradient-to-r from-red-600 to-orange-500 text-white px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1 shadow-lg">
+                                  <TrendingUp className="w-3 h-3" />
+                                  #{index + 1}
+                                </div>
+                                {/* External Link Badge */}
+                                {isExternal && (
+                                  <div className="absolute top-3 right-3 bg-blue-600 text-white px-2 py-1 rounded-full text-xs font-bold shadow-lg">
+                                    Google News
+                                  </div>
+                                )}
+                              </div>
+                            )}
+                            <div className="p-4">
+                              <span className="text-xs bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 px-2 py-1 rounded-full mb-2 inline-block uppercase font-semibold">
+                                {isExternal ? article.source : categories.find(c => c.id === article.category)?.name}
+                              </span>
+                              <h3 className="font-bold text-base mb-2 text-gray-900 dark:text-white group-hover:text-red-600 dark:group-hover:text-red-400 transition-colors line-clamp-2 leading-tight">
+                                {article.title}
+                              </h3>
+                              <p className="text-gray-600 dark:text-gray-400 text-sm line-clamp-2 mb-3">
+                                {isExternal ? article.excerpt : getPreviewText(article.content)}
+                              </p>
+                              <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
+                                <span>{new Date(article.createdAt || article.publishedAt).toLocaleDateString()}</span>
+                                <span className="text-red-600 dark:text-red-400 font-medium group-hover:underline">
+                                  {isExternal ? 'View →' : 'Read →'}
+                                </span>
                               </div>
                             </div>
-                          )}
-                          <div className="p-4">
-                            <span className="text-xs bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 px-2 py-1 rounded-full mb-2 inline-block uppercase font-semibold">
-                              {categories.find(c => c.id === article.category)?.name}
-                            </span>
-                            <h3 className="font-bold text-base mb-2 text-gray-900 dark:text-white group-hover:text-red-600 dark:group-hover:text-red-400 transition-colors line-clamp-2 leading-tight">
-                              {article.title}
-                            </h3>
-                            <p className="text-gray-600 dark:text-gray-400 text-sm line-clamp-2 mb-3">
-                              {getPreviewText(article.content)}
-                            </p>
-                            <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
-                              <span>{new Date(article.createdAt).toLocaleDateString()}</span>
-                              <span className="text-red-600 dark:text-red-400 font-medium group-hover:underline">Read →</span>
-                            </div>
                           </div>
-                        </div>
-                      ))}
+                        );
+                      })}
                     </div>
                   </div>
 
