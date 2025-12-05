@@ -606,7 +606,7 @@ const CineChatter = () => {
   const loadSheetSettings = async () => {
     try {
       // Cache version - increment this to invalidate old cached data
-      const CACHE_VERSION = '2';
+      const CACHE_VERSION = '3';
       const savedCacheVersion = localStorage.getItem('cine-chatter-cache-version');
 
       // If cache version is old, clear all cached data
@@ -614,8 +614,11 @@ const CineChatter = () => {
         console.log('🔄 Cache version mismatch, clearing old data...');
         localStorage.removeItem('cine-chatter-sheet-articles');
         localStorage.removeItem('cine-chatter-sheet-status');
+        localStorage.removeItem('cine-chatter-data-source');
         localStorage.setItem('cine-chatter-cache-version', CACHE_VERSION);
-        console.log('✅ Cache cleared, using fresh data');
+        localStorage.setItem('cine-chatter-data-source', 'sheets-only');
+        setDataSource('sheets-only');
+        console.log('✅ Cache cleared, using fresh data with sheets-only default');
         return; // Don't load old cached data
       }
 
@@ -630,12 +633,14 @@ const CineChatter = () => {
         console.log('📋 Loaded saved sheet URL');
       }
 
-      if (savedDataSource) {
+      // Always default to sheets-only if nothing saved
+      if (savedDataSource && (savedDataSource === 'sheets-only' || savedDataSource === 'both' || savedDataSource === 'admin-only')) {
         setDataSource(savedDataSource);
         console.log('📋 Loaded data source:', savedDataSource);
       } else {
-        // Set default to sheets-only if nothing saved
+        // Set default to sheets-only
         setDataSource('sheets-only');
+        localStorage.setItem('cine-chatter-data-source', 'sheets-only');
         console.log('📋 Using default data source: sheets-only');
       }
 
