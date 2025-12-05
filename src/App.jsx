@@ -689,7 +689,7 @@ const CineChatter = () => {
       await storageService.saveFeaturedImages(images);
       setFeaturedImages(images);
 
-      // Create articles for Untold Stories that have title and description
+      // Create articles for Did You Know that have title and description
       const newArticles = [];
       images.forEach(story => {
         if (story.articleTitle && story.articleDescription && story.image) {
@@ -705,7 +705,7 @@ const CineChatter = () => {
               category: story.link || 'hollywood-movies',
               image: story.image,
               status: 'published',
-              source: 'Untold Stories',
+              source: 'Did You Know',
               createdAt: new Date().toISOString(),
               updatedAt: new Date().toISOString()
             };
@@ -718,7 +718,7 @@ const CineChatter = () => {
       if (newArticles.length > 0) {
         const updatedArticles = [...articles, ...newArticles];
         await saveArticles(updatedArticles);
-        console.log(`Created ${newArticles.length} articles from Untold Stories`);
+        console.log(`Created ${newArticles.length} articles from Did You Know`);
       }
 
       console.log('Featured images saved successfully');
@@ -2584,14 +2584,14 @@ const CineChatter = () => {
                   Integration Settings
                 </button>
                 <button
-                  onClick={() => setActiveAdminTab('untold-stories')}
+                  onClick={() => setActiveAdminTab('did-you-know')}
                   className={`px-4 sm:px-6 py-3 text-sm font-medium whitespace-nowrap border-b-2 transition-colors ${
-                    activeAdminTab === 'untold-stories'
+                    activeAdminTab === 'did-you-know'
                       ? 'border-red-600 text-red-600 dark:text-red-400'
                       : 'border-transparent text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 hover:border-gray-300 dark:hover:border-gray-600'
                   }`}
                 >
-                  Untold Stories
+                  Did You Know
                 </button>
                 <button
                   onClick={() => setActiveAdminTab('agent')}
@@ -2735,7 +2735,7 @@ const CineChatter = () => {
 
                       // Determine source display
                       const sourceDisplay = article.source === 'google-sheets' ? 'Integration Setting' :
-                                          article.source === 'untold-story' ? 'Untold Stories' :
+                                          article.source === 'untold-story' ? 'Did You Know' :
                                           article.source === 'agent' ? 'Agent' : 'New Article';
 
                       // Check if editable (all articles can be edited)
@@ -2857,13 +2857,13 @@ const CineChatter = () => {
             </div>
           )}
 
-          {/* Untold Stories Tab */}
-          {activeAdminTab === 'untold-stories' && (
+          {/* Did You Know Tab */}
+          {activeAdminTab === 'did-you-know' && (
             <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
               <div className="flex justify-between items-center mb-6">
                 <div>
-                  <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Untold Stories</h2>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">Featured carousel stories for homepage</p>
+                  <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Did You Know</h2>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">Featured stories shown when users click the "Did You Know?" box</p>
                 </div>
                 <button onClick={() => setShowFeaturedManager(true)} className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 flex items-center gap-2 shadow-md">
                   <Upload className="w-5 h-5" />Manage Stories
@@ -3540,7 +3540,7 @@ const CineChatter = () => {
           <div className="min-h-screen py-8 px-4 flex items-start justify-center">
             <div className="bg-white dark:bg-gray-800 rounded-lg max-w-6xl w-full animate-slideUp shadow-2xl">
               <div className="sticky top-0 bg-white dark:bg-gray-800 border-b dark:border-gray-700 p-6 flex justify-between items-center z-10 rounded-t-lg">
-                <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Manage Untold Stories ({featuredImages.length} of 10)</h2>
+                <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Manage Did You Know ({featuredImages.length} of 10)</h2>
                 <button onClick={() => setShowFeaturedManager(false)} className="hover:bg-gray-100 dark:hover:bg-gray-700 p-2 rounded-full">
                   <X className="w-6 h-6 text-gray-700 dark:text-gray-300" />
                 </button>
