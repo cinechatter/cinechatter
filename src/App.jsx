@@ -2012,27 +2012,6 @@ const CineChatter = () => {
               );
             })()}
           </div>
-
-          {/* Treasure Box Section */}
-          <div className="max-w-2xl mx-auto py-8 sm:py-12 px-6 sm:px-8 mb-8 bg-gradient-to-br from-red-100 via-orange-100 to-yellow-100 dark:from-slate-900 dark:via-gray-800 dark:to-slate-900 rounded-2xl shadow-2xl border border-red-200 dark:border-gray-700">
-            <div className="flex flex-col items-center">
-              <div className="relative mb-4">
-                <div className="treasure-box w-32 h-32 sm:w-48 sm:h-48 bg-gradient-to-br from-yellow-600 via-yellow-500 to-yellow-400 rounded-lg shadow-2xl flex items-center justify-center cursor-pointer hover:shadow-3xl" onClick={async () => {
-                  await loadFeaturedImages();
-                  const validImages = featuredImages.filter(f => f.image);
-                  if (validImages.length > 0) {
-                    setCurrentTreasureIndex(Math.floor(Math.random() * validImages.length));
-                  }
-                  setTreasureBoxOpen(true);
-                }}>
-                  <span className="text-6xl sm:text-9xl">🎁</span>
-                </div>
-                <div className="absolute -top-2 -right-2 w-10 h-10 bg-red-600 rounded-full flex items-center justify-center text-white text-sm font-bold animate-pulse-glow">NEW</div>
-              </div>
-              <p className="text-center text-red-600 dark:text-red-400 font-bold text-xl sm:text-2xl mt-2">Untold Stories!</p>
-            </div>
-          </div>
-
           {/* Newsletter Section - Full Width Redesign */}
           <div className="relative overflow-hidden bg-gradient-to-br from-red-600 via-red-700 to-orange-600 dark:from-red-800 dark:via-red-900 dark:to-orange-800 py-16 sm:py-20">
             {/* Decorative Background Pattern */}
