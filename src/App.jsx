@@ -2188,7 +2188,7 @@ const CineChatter = () => {
                     e.stopPropagation();
                     setGiftBoxCollapsed(true);
                   }}
-                  className="absolute -top-2 -left-2 w-6 h-6 bg-gray-800 dark:bg-gray-700 text-white rounded-full flex items-center justify-center hover:bg-gray-700 dark:hover:bg-gray-600 transition-colors shadow-lg z-10"
+                  className="absolute -top-2 -left-2 w-6 h-6 bg-red-600 dark:bg-orange-600 text-white rounded-full flex items-center justify-center hover:bg-red-700 dark:hover:bg-orange-700 transition-colors shadow-lg z-10"
                   title="Collapse"
                 >
                   <ChevronDown className="w-4 h-4" />
