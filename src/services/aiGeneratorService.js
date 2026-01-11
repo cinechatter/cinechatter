@@ -342,73 +342,105 @@ export const generateArticle = async ({ movieName, scriptType, category, platfor
   console.log('Target Length:', articleLength, 'words');
 
   try {
-    // Import Anthropic SDK dynamically (for development)
-    const Anthropic = (await import('@anthropic-ai/sdk')).default;
+    // Check if we're in production (Vercel/Netlify) or have a custom API URL
+    const isProduction = import.meta.env.PROD || window.location.hostname !== 'localhost';
+    const useServerlessAPI = isProduction && !import.meta.env.VITE_ANTHROPIC_API_KEY;
 
-    // Initialize client with API key from environment
-    const anthropic = new Anthropic({
-      apiKey: import.meta.env.VITE_ANTHROPIC_API_KEY || import.meta.env.ANTHROPIC_API_KEY,
-      dangerouslyAllowBrowser: true // Enable for development
-    });
+    if (useServerlessAPI) {
+      // Production: Use serverless API endpoint
+      console.log('📡 Calling serverless API endpoint...');
 
-    console.log('📡 Calling Claude API directly...');
+      const response = await fetch('/api/claude/generate', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          prompt: prompt,
+          model: modelId,
+          maxTokens: scriptType === 'review' ? 3000 : 2500,
+          temperature: 0.7
+        })
+      });
 
-    // Call Claude API directly with extended thinking for better research
-    const message = await anthropic.messages.create({
-      model: modelId,
-      max_tokens: scriptType === 'review' ? 3000 : 2500, // Increased for better quality
-      temperature: 0.7, // Balanced creativity and accuracy
-      messages: [{
-        role: 'user',
-        content: prompt
-      }]
-    });
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.message || `API call failed with status ${response.status}`);
+      }
 
-    console.log('✅ Article generated successfully');
-    console.log(`Tokens used: ${message.usage.input_tokens} input + ${message.usage.output_tokens} output`);
+      const data = await response.json();
 
-    // Extract text content
-    const data = {
-      content: message.content[0].text,
-      usage: message.usage
-    };
+      console.log('✅ Article generated successfully (serverless)');
+      console.log(`Tokens used: ${data.usage.input_tokens} input + ${data.usage.output_tokens} output`);
 
-    // Extract title from content (first line or heading)
-    const extractedTitle = extractTitleFromContent(data.content) ||
-                          `${scriptType === 'review' ? 'Review' : 'Story'}: ${movieName}`;
+      // Extract title from content (first line or heading)
+      const extractedTitle = extractTitleFromContent(data.content) ||
+                            `${scriptType === 'review' ? 'Review' : 'Story'}: ${movieName}`;
 
-    return {
-      title: extractedTitle,
-      content: data.content,
-      category: category,
-      image: imageUrl || '',  // Don't use placeholder, let user add image if needed
-      source: 'AI Agent',
-      scriptType: scriptType,
-      movieName: movieName,
-      language: language
-    };
+      return {
+        title: extractedTitle,
+        content: data.content,
+        category: category,
+        image: imageUrl || '',
+        source: 'AI Agent',
+        scriptType: scriptType,
+        movieName: movieName,
+        language: language
+      };
+    } else {
+      // Development: Use direct API call with browser SDK
+      console.log('📡 Calling Claude API directly (development mode)...');
+
+      const Anthropic = (await import('@anthropic-ai/sdk')).default;
+
+      // Initialize client with API key from environment
+      const anthropic = new Anthropic({
+        apiKey: import.meta.env.VITE_ANTHROPIC_API_KEY || import.meta.env.ANTHROPIC_API_KEY,
+        dangerouslyAllowBrowser: true // Enable for development
+      });
+
+      // Call Claude API directly
+      const message = await anthropic.messages.create({
+        model: modelId,
+        max_tokens: scriptType === 'review' ? 3000 : 2500,
+        temperature: 0.7,
+        messages: [{
+          role: 'user',
+          content: prompt
+        }]
+      });
+
+      console.log('✅ Article generated successfully');
+      console.log(`Tokens used: ${message.usage.input_tokens} input + ${message.usage.output_tokens} output`);
+
+      // Extract text content
+      const data = {
+        content: message.content[0].text,
+        usage: message.usage
+      };
+
+      // Extract title from content (first line or heading)
+      const extractedTitle = extractTitleFromContent(data.content) ||
+                            `${scriptType === 'review' ? 'Review' : 'Story'}: ${movieName}`;
+
+      return {
+        title: extractedTitle,
+        content: data.content,
+        category: category,
+        image: imageUrl || '',
+        source: 'AI Agent',
+        scriptType: scriptType,
+        movieName: movieName,
+        language: language
+      };
+    }
 
   } catch (error) {
     console.error('❌ API call failed:', error);
 
-    // Fallback: Return simulation for development/testing
-    console.log('⚠️ Falling back to simulation mode');
-
-    await new Promise(resolve => setTimeout(resolve, 1500));
-
-    const articleTitle = `${scriptType === 'review' ? 'Review' : 'Story'}: ${movieName}`;
-    const articleContent = `[Simulated AI Content - API Not Connected]\n\nModel: ${modelId}\n\nThis article would be generated using Claude AI.\n\nPrompt:\n${prompt}\n\nTo enable real generation:\n1. Set up backend API at /api/claude/generate\n2. Add ANTHROPIC_API_KEY to environment\n3. Deploy backend server`;
-
-    return {
-      title: articleTitle,
-      content: articleContent,
-      category: category,
-      image: imageUrl || '',  // Don't use placeholder
-      source: 'AI Agent (Simulation)',
-      scriptType: scriptType,
-      movieName: movieName,
-      language: language
-    };
+    // Provide a helpful error message
+    const errorMessage = error.message || 'Unknown error occurred';
+    throw new Error(`AI generation failed: ${errorMessage}\n\nPlease ensure:\n1. ANTHROPIC_API_KEY is set in Vercel environment variables\n2. The API key is valid and has sufficient credits\n3. Network connection is stable`);
   }
 };
 

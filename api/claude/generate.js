@@ -17,7 +17,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { prompt, model, maxTokens = 2000 } = req.body;
+    const { prompt, model, maxTokens = 2000, temperature = 0.7 } = req.body;
 
     // Validate inputs
     if (!prompt) {
@@ -27,18 +27,20 @@ export default async function handler(req, res) {
     if (!process.env.ANTHROPIC_API_KEY) {
       return res.status(500).json({
         error: 'API key not configured',
-        message: 'Please set ANTHROPIC_API_KEY environment variable'
+        message: 'Please set ANTHROPIC_API_KEY environment variable in Vercel dashboard'
       });
     }
 
     console.log('🤖 Calling Claude API...');
     console.log('Model:', model);
     console.log('Max tokens:', maxTokens);
+    console.log('Temperature:', temperature);
 
     // Call Claude API
     const message = await anthropic.messages.create({
       model: model || 'claude-sonnet-4-5-20250929',
       max_tokens: maxTokens,
+      temperature: temperature,
       messages: [{
         role: 'user',
         content: prompt

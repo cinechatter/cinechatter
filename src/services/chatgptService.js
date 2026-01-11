@@ -217,37 +217,82 @@ export const generateChatGPTArticle = async ({
       language
     );
 
-    // Step 4: Call OpenAI API
-    const OpenAI = (await import('openai')).default;
-    const openai = new OpenAI({
-      apiKey: OPENAI_API_KEY,
-      dangerouslyAllowBrowser: true // For development
-    });
+    // Step 4: Call OpenAI API (production vs development)
+    const isProduction = import.meta.env.PROD || window.location.hostname !== 'localhost';
+    const useServerlessAPI = isProduction && !import.meta.env.VITE_OPENAI_API_KEY;
 
-    console.log('🤖 Calling ChatGPT API...');
-    console.log('Model:', model);
+    let content;
+    let usage;
 
-    const completion = await openai.chat.completions.create({
-      model: model,
-      messages: [
-        {
-          role: 'system',
-          content: 'You are an expert entertainment journalist writing professional movie reviews and story synopses for CineChatter.'
+    if (useServerlessAPI) {
+      // Production: Use serverless API endpoint
+      console.log('📡 Calling OpenAI serverless API endpoint...');
+      console.log('Model:', model);
+
+      const response = await fetch('/api/openai/generate', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
         },
-        {
-          role: 'user',
-          content: prompt
-        }
-      ],
-      temperature: 0.7,
-      max_tokens: scriptType === 'youtube' ? 4000 : scriptType === 'review' ? 3000 : 2500
-    });
+        body: JSON.stringify({
+          prompt: prompt,
+          model: model,
+          maxTokens: scriptType === 'youtube' ? 4000 : scriptType === 'review' ? 3000 : 2500,
+          temperature: 0.7,
+          systemPrompt: 'You are an expert entertainment journalist writing professional movie reviews and story synopses for CineChatter.'
+        })
+      });
 
-    console.log('✅ ChatGPT article generated successfully');
-    console.log(`Tokens used: ${completion.usage.prompt_tokens} input + ${completion.usage.completion_tokens} output`);
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.message || `API call failed with status ${response.status}`);
+      }
 
-    // Extract content
-    const content = completion.choices[0].message.content;
+      const data = await response.json();
+
+      console.log('✅ ChatGPT article generated successfully (serverless)');
+      console.log(`Tokens used: ${data.usage.input_tokens} input + ${data.usage.output_tokens} output`);
+
+      content = data.content;
+      usage = {
+        prompt_tokens: data.usage.input_tokens,
+        completion_tokens: data.usage.output_tokens,
+        total_tokens: data.usage.total_tokens
+      };
+    } else {
+      // Development: Use direct API call with browser SDK
+      console.log('📡 Calling ChatGPT API directly (development mode)...');
+
+      const OpenAI = (await import('openai')).default;
+      const openai = new OpenAI({
+        apiKey: OPENAI_API_KEY,
+        dangerouslyAllowBrowser: true // For development
+      });
+
+      console.log('Model:', model);
+
+      const completion = await openai.chat.completions.create({
+        model: model,
+        messages: [
+          {
+            role: 'system',
+            content: 'You are an expert entertainment journalist writing professional movie reviews and story synopses for CineChatter.'
+          },
+          {
+            role: 'user',
+            content: prompt
+          }
+        ],
+        temperature: 0.7,
+        max_tokens: scriptType === 'youtube' ? 4000 : scriptType === 'review' ? 3000 : 2500
+      });
+
+      console.log('✅ ChatGPT article generated successfully');
+      console.log(`Tokens used: ${completion.usage.prompt_tokens} input + ${completion.usage.completion_tokens} output`);
+
+      content = completion.choices[0].message.content;
+      usage = completion.usage;
+    }
 
     // Extract title
     const extractedTitle = extractTitleFromContent(content) ||
@@ -266,7 +311,7 @@ export const generateChatGPTArticle = async ({
         model: model,
         searchResultsUsed: searchResults.length,
         sources: searchResults.map(r => r.displayLink).join(', '),
-        tokensUsed: completion.usage.total_tokens,
+        tokensUsed: usage.total_tokens,
         language: language
       }
     };
