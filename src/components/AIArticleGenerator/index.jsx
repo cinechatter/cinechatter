@@ -426,7 +426,13 @@ const AIArticleGenerator = ({ categories, onPublish }) => {
               {/* Error Display */}
               {agentError && (
                 <div className="p-4 bg-red-50 dark:bg-red-900/20 border-2 border-red-200 dark:border-red-800 rounded-xl">
-                  <p className="text-sm text-red-600 dark:text-red-400 font-medium">{agentError}</p>
+                  <div className="flex items-start gap-3">
+                    <span className="text-red-600 dark:text-red-400 text-xl mt-0.5">⚠️</span>
+                    <div className="flex-1">
+                      <p className="text-sm font-semibold text-red-600 dark:text-red-400 mb-2">Generation Failed</p>
+                      <p className="text-sm text-red-600 dark:text-red-400 whitespace-pre-line">{agentError}</p>
+                    </div>
+                  </div>
                 </div>
               )}
 

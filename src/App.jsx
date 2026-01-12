@@ -60,7 +60,7 @@ const CineChatter = () => {
   const [sheetsEnabled, setSheetsEnabled] = useState(false);
   const [sheetUrl, setSheetUrl] = useState('');
   const [sheetStatus, setSheetStatus] = useState('not-connected');
-  const [dataSource, setDataSource] = useState('sheets-only');
+  const [dataSource, setDataSource] = useState('admin-only');
   const [sheetArticles, setSheetArticles] = useState([]);
   const [showIntegrationSettings, setShowIntegrationSettings] = useState(false);
 
@@ -616,9 +616,9 @@ const CineChatter = () => {
         localStorage.removeItem('cine-chatter-sheet-status');
         localStorage.removeItem('cine-chatter-data-source');
         localStorage.setItem('cine-chatter-cache-version', CACHE_VERSION);
-        localStorage.setItem('cine-chatter-data-source', 'sheets-only');
-        setDataSource('sheets-only');
-        console.log('✅ Cache cleared, using fresh data with sheets-only default');
+        localStorage.setItem('cine-chatter-data-source', 'admin-only');
+        setDataSource('admin-only');
+        console.log('✅ Cache cleared, using fresh data with admin-only default');
         return; // Don't load old cached data
       }
 
@@ -633,15 +633,15 @@ const CineChatter = () => {
         console.log('📋 Loaded saved sheet URL');
       }
 
-      // Always default to sheets-only if nothing saved
+      // Always default to admin-only if nothing saved
       if (savedDataSource && (savedDataSource === 'sheets-only' || savedDataSource === 'both' || savedDataSource === 'admin-only')) {
         setDataSource(savedDataSource);
         console.log('📋 Loaded data source:', savedDataSource);
       } else {
-        // Set default to sheets-only
-        setDataSource('sheets-only');
-        localStorage.setItem('cine-chatter-data-source', 'sheets-only');
-        console.log('📋 Using default data source: sheets-only');
+        // Set default to admin-only
+        setDataSource('admin-only');
+        localStorage.setItem('cine-chatter-data-source', 'admin-only');
+        console.log('📋 Using default data source: admin-only');
       }
 
       if (savedSheetArticles) {
@@ -1399,16 +1399,16 @@ const CineChatter = () => {
       if (!category) return '';
       return category.toLowerCase().trim().replace(/\s+/g, '-');
     };
-    
+
     const normalizedCat = normalizeCat(cat);
-    
-    let adminArticles = articles.filter(a => 
+
+    let adminArticles = articles.filter(a =>
       normalizeCat(a.category) === normalizedCat && a.status === 'published'
     );
-    let sheetsArticlesFiltered = sheetArticles.filter(a => 
+    let sheetsArticlesFiltered = sheetArticles.filter(a =>
       normalizeCat(a.category) === normalizedCat && a.status === 'published'
     );
-    
+
     console.log(`Category: ${cat}, Admin: ${adminArticles.length}, Sheets: ${sheetsArticlesFiltered.length}, DataSource: ${dataSource}`);
     
     // Merge based on data source setting

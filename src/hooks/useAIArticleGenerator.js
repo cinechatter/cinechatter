@@ -82,7 +82,26 @@ export const useAIArticleGenerator = (onPublish) => {
       setAgentPreview(preview);
     } catch (error) {
       console.error('❌ AI generation failed:', error);
-      setAgentError('Failed to generate article. Please try again.');
+
+      // Show detailed error message
+      let errorMessage = 'Failed to generate article. ';
+
+      if (error.message) {
+        errorMessage += error.message;
+      } else {
+        errorMessage += 'Please try again or contact support.';
+      }
+
+      // Add troubleshooting hints
+      if (error.message?.includes('API key') || error.message?.includes('401')) {
+        errorMessage += '\n\n💡 Tip: Check that API keys are configured in your hosting platform environment variables.';
+      } else if (error.message?.includes('429') || error.message?.includes('rate limit')) {
+        errorMessage += '\n\n💡 Tip: API rate limit exceeded. Please wait a few minutes and try again.';
+      } else if (error.message?.includes('fetch') || error.message?.includes('network')) {
+        errorMessage += '\n\n💡 Tip: Check your internet connection and try again.';
+      }
+
+      setAgentError(errorMessage);
     } finally {
       setAgentGenerating(false);
     }

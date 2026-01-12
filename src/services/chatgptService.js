@@ -227,7 +227,9 @@ export const generateChatGPTArticle = async ({
     if (useServerlessAPI) {
       // Production: Use serverless API endpoint
       console.log('📡 Calling OpenAI serverless API endpoint...');
+      console.log('Mode: PRODUCTION (serverless)');
       console.log('Model:', model);
+      console.log('Endpoint: /api/openai/generate');
 
       const response = await fetch('/api/openai/generate', {
         method: 'POST',
@@ -245,7 +247,9 @@ export const generateChatGPTArticle = async ({
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.message || `API call failed with status ${response.status}`);
+        const errorMsg = errorData.message || errorData.error || `API call failed with status ${response.status}`;
+        console.error('❌ OpenAI API error response:', errorData);
+        throw new Error(errorMsg);
       }
 
       const data = await response.json();

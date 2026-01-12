@@ -348,7 +348,10 @@ export const generateArticle = async ({ movieName, scriptType, category, platfor
 
     if (useServerlessAPI) {
       // Production: Use serverless API endpoint
-      console.log('📡 Calling serverless API endpoint...');
+      console.log('📡 Calling Claude serverless API endpoint...');
+      console.log('Mode: PRODUCTION (serverless)');
+      console.log('Model:', modelId);
+      console.log('Endpoint: /api/claude/generate');
 
       const response = await fetch('/api/claude/generate', {
         method: 'POST',
@@ -365,7 +368,9 @@ export const generateArticle = async ({ movieName, scriptType, category, platfor
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.message || `API call failed with status ${response.status}`);
+        const errorMsg = errorData.message || errorData.error || `API call failed with status ${response.status}`;
+        console.error('❌ Claude API error response:', errorData);
+        throw new Error(errorMsg);
       }
 
       const data = await response.json();

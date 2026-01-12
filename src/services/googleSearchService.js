@@ -15,16 +15,20 @@ const GOOGLE_CSE_ID = import.meta.env.VITE_GOOGLE_CSE_ID;
 export const performGoogleSearch = async (query, numResults = 5) => {
   if (!GOOGLE_API_KEY || !GOOGLE_CSE_ID) {
     console.warn('⚠️ Google Search API credentials not configured');
+    console.warn('   Articles will be generated without web search data');
     return [];
   }
 
   // Validate credentials are not placeholders
   if (GOOGLE_API_KEY.includes('your_') || GOOGLE_CSE_ID.includes('your_')) {
     console.warn('⚠️ Google Search API credentials are placeholder values');
+    console.warn('   Articles will be generated without web search data');
     return [];
   }
 
   console.log('🔍 Performing Google Search:', query);
+  console.log('   API Key configured:', GOOGLE_API_KEY ? 'Yes' : 'No');
+  console.log('   CSE ID configured:', GOOGLE_CSE_ID ? 'Yes' : 'No');
 
   try {
     // Google Custom Search JSON API endpoint
