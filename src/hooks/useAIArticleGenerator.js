@@ -114,7 +114,7 @@ export const useAIArticleGenerator = (onPublish) => {
     if (!agentPreview) return;
 
     const articleData = {
-      id: Date.now(),
+      // Don't set id - let database generate it
       title: agentPreview.title,
       content: agentPreview.content,
       // Route YouTube scripts to 'youtube-scripts' category, otherwise use selected category

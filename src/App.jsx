@@ -1288,16 +1288,25 @@ const CineChatter = () => {
     console.log('  - Category:', articleData.category);
     console.log('  - Current articles count:', articles.length);
 
-    const updatedArticles = [articleData, ...articles];
-    console.log('  - New articles count:', updatedArticles.length);
+    try {
+      // Use addArticle for new AI articles (lets DB generate ID)
+      console.log('💾 Adding new article to database...');
+      const savedArticle = await storageService.addArticle(articleData);
 
-    await saveArticles(updatedArticles);
+      console.log('✅ Article saved to storage with ID:', savedArticle.id);
+      console.log('  - Category:', savedArticle.category);
+      console.log('  - Status:', savedArticle.status);
 
-    console.log('✅ Article saved to storage');
+      // Force reload articles from storage to ensure state is fresh
+      console.log('🔄 Reloading all articles from storage...');
+      await loadArticles();
 
-    // Force reload articles from storage to ensure state is fresh
-    console.log('🔄 Reloading articles from storage to refresh state...');
-    await loadArticles();
+      console.log('✅ Article published successfully!');
+    } catch (error) {
+      console.error('❌ Failed to publish article:', error);
+      alert(`Failed to publish article: ${error.message}\n\nPlease check the console for details.`);
+      throw error;
+    }
   };
 
   // Render markdown formatting in content
