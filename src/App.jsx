@@ -568,6 +568,20 @@ const CineChatter = () => {
       const articles = await storageService.getArticles();
       setArticles(articles);
       console.log(`📚 Loaded ${articles.length} articles from ${storageService.getBackendType()}`);
+
+      // Log articles by category for debugging
+      if (articles.length > 0) {
+        const byCategory = articles.reduce((acc, a) => {
+          acc[a.category] = (acc[a.category] || 0) + 1;
+          return acc;
+        }, {});
+        console.log(`  - By category:`, byCategory);
+        console.log(`  - Recent articles:`, articles.slice(0, 3).map(a => ({
+          title: a.title?.substring(0, 40),
+          category: a.category,
+          status: a.status
+        })));
+      }
     } catch (error) {
       console.error('Error loading articles:', error);
       setArticles([]);
@@ -677,6 +691,14 @@ const CineChatter = () => {
       await storageService.saveArticles(updatedArticles);
       setArticles(updatedArticles);
       console.log(`✅ Articles saved to ${storageService.getBackendType()}. Total: ${updatedArticles.length}`);
+
+      // Log the most recent article (the one just added)
+      if (updatedArticles.length > 0) {
+        const latest = updatedArticles[0];
+        console.log(`  - Latest article: "${latest.title?.substring(0, 50)}"`);
+        console.log(`  - Category: "${latest.category}"`);
+        console.log(`  - Status: "${latest.status}"`);
+      }
     } catch (error) {
       console.error('❌ Failed to save articles:', error);
       throw error;
@@ -1260,7 +1282,7 @@ const CineChatter = () => {
   };
 
   // Handle AI Article Publishing
-  const handleAIArticlePublish = (articleData) => {
+  const handleAIArticlePublish = async (articleData) => {
     console.log('📝 handleAIArticlePublish called');
     console.log('  - Article:', articleData.title);
     console.log('  - Category:', articleData.category);
@@ -1269,9 +1291,13 @@ const CineChatter = () => {
     const updatedArticles = [articleData, ...articles];
     console.log('  - New articles count:', updatedArticles.length);
 
-    saveArticles(updatedArticles);
+    await saveArticles(updatedArticles);
 
     console.log('✅ Article saved to storage');
+
+    // Force reload articles from storage to ensure state is fresh
+    console.log('🔄 Reloading articles from storage to refresh state...');
+    await loadArticles();
   };
 
   // Render markdown formatting in content
@@ -1411,6 +1437,24 @@ const CineChatter = () => {
 
     const normalizedCat = normalizeCat(cat);
 
+    console.log(`🔍 getCategoryArticles called for: "${cat}"`);
+    console.log(`  - Normalized: "${normalizedCat}"`);
+    console.log(`  - Total articles in memory: ${articles.length}`);
+    console.log(`  - Current dataSource: ${dataSource}`);
+
+    // Log all articles with their categories
+    if (articles.length > 0) {
+      console.log(`  - All articles by category:`,
+        articles.map(a => ({
+          title: a.title?.substring(0, 50),
+          category: a.category,
+          normalized: normalizeCat(a.category),
+          status: a.status,
+          matches: normalizeCat(a.category) === normalizedCat
+        }))
+      );
+    }
+
     let adminArticles = articles.filter(a =>
       normalizeCat(a.category) === normalizedCat && a.status === 'published'
     );
@@ -1418,7 +1462,8 @@ const CineChatter = () => {
       normalizeCat(a.category) === normalizedCat && a.status === 'published'
     );
 
-    console.log(`Category: ${cat}, Admin: ${adminArticles.length}, Sheets: ${sheetsArticlesFiltered.length}, DataSource: ${dataSource}`);
+    console.log(`  - Matching admin articles: ${adminArticles.length}`);
+    console.log(`  - Matching sheets articles: ${sheetsArticlesFiltered.length}`);
     
     // Merge based on data source setting
     if (dataSource === 'admin-only') {
