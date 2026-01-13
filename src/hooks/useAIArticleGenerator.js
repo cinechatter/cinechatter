@@ -133,13 +133,36 @@ export const useAIArticleGenerator = (onPublish) => {
       }
     };
 
+    console.log('📝 Publishing AI Article:');
+    console.log('  - Title:', articleData.title);
+    console.log('  - Category:', articleData.category);
+    console.log('  - Status:', articleData.status);
+    console.log('  - ID:', articleData.id);
+
+    // Check current dataSource setting
+    const currentDataSource = localStorage.getItem('cine-chatter-data-source');
+    console.log('  - Current dataSource setting:', currentDataSource);
+
+    if (currentDataSource === 'sheets-only') {
+      console.warn('⚠️ WARNING: dataSource is set to "sheets-only"!');
+      console.warn('   This article will be saved but NOT displayed.');
+      console.warn('   To see AI articles, change to "admin-only" or "both" in Dashboard > Integration Settings');
+    } else {
+      console.log('✅ dataSource is set correctly:', currentDataSource);
+    }
+
     // Call parent's publish handler
     onPublish(articleData);
 
     // Reset form
     resetForm();
 
-    alert(`✅ ${agentPreview.scriptType === 'youtube' ? 'YouTube script' : 'Article'} published successfully!`);
+    // Show contextual message based on dataSource
+    if (currentDataSource === 'sheets-only') {
+      alert(`✅ ${agentPreview.scriptType === 'youtube' ? 'YouTube script' : 'Article'} published!\n\n⚠️ Note: Your Data Source is set to "Sheets Only".\nTo see this article, go to Dashboard > Integration Settings and select "Admin Only" or "Both Sources".`);
+    } else {
+      alert(`✅ ${agentPreview.scriptType === 'youtube' ? 'YouTube script' : 'Article'} published successfully!\n\nNavigate to ${articleData.category} to view it.`);
+    }
   };
 
   /**

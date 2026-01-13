@@ -1261,8 +1261,17 @@ const CineChatter = () => {
 
   // Handle AI Article Publishing
   const handleAIArticlePublish = (articleData) => {
+    console.log('📝 handleAIArticlePublish called');
+    console.log('  - Article:', articleData.title);
+    console.log('  - Category:', articleData.category);
+    console.log('  - Current articles count:', articles.length);
+
     const updatedArticles = [articleData, ...articles];
+    console.log('  - New articles count:', updatedArticles.length);
+
     saveArticles(updatedArticles);
+
+    console.log('✅ Article saved to storage');
   };
 
   // Render markdown formatting in content

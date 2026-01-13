@@ -23,6 +23,11 @@ const AIArticleGenerator = ({ categories, onPublish }) => {
   // Tooltip state
   const [showHelp, setShowHelp] = useState(false);
 
+  // Check dataSource setting
+  const [dataSource, setDataSource] = useState(() => {
+    return localStorage.getItem('cine-chatter-data-source') || 'admin-only';
+  });
+
   // Download YouTube script function
   const handleDownloadScript = () => {
     if (!agentPreview) return;
@@ -41,6 +46,37 @@ const AIArticleGenerator = ({ categories, onPublish }) => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-blue-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 -m-6 p-8">
+      {/* Data Source Warning Banner */}
+      {dataSource === 'sheets-only' && (
+        <div className="max-w-5xl mx-auto mb-6">
+          <div className="bg-yellow-50 dark:bg-yellow-900/20 border-2 border-yellow-400 dark:border-yellow-600 rounded-xl p-4">
+            <div className="flex items-start gap-3">
+              <span className="text-yellow-600 dark:text-yellow-400 text-2xl">⚠️</span>
+              <div className="flex-1">
+                <h3 className="font-bold text-yellow-900 dark:text-yellow-200 mb-1">Articles Won't Be Visible!</h3>
+                <p className="text-sm text-yellow-800 dark:text-yellow-300 mb-2">
+                  Your Data Source is set to <strong>"Sheets Only"</strong>. AI-generated articles will be saved but won't appear on your site.
+                </p>
+                <button
+                  onClick={() => {
+                    localStorage.setItem('cine-chatter-data-source', 'admin-only');
+                    setDataSource('admin-only');
+                    alert('✅ Data Source changed to "Admin Only".\n\nYour AI articles will now be visible!\n\nRefreshing page...');
+                    window.location.reload();
+                  }}
+                  className="bg-yellow-600 hover:bg-yellow-700 text-white px-4 py-2 rounded-lg text-sm font-semibold transition-colors"
+                >
+                  Fix Now - Switch to "Admin Only"
+                </button>
+                <span className="text-xs text-yellow-700 dark:text-yellow-400 ml-3">
+                  or go to Dashboard → Integration Settings
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Header Section */}
       <div className="max-w-5xl mx-auto mb-8">
         <div className="text-center mb-6">
