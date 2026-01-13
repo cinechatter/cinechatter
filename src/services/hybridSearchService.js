@@ -191,7 +191,22 @@ export const generateHybridArticle = async ({
 
   // Check if Google Search is configured
   if (!isGoogleSearchConfigured()) {
-    throw new Error('Google Search API is not configured. Please add VITE_GOOGLE_SEARCH_API_KEY and VITE_GOOGLE_CSE_ID to your .env file.');
+    console.warn('⚠️ Google Search API is not configured. Falling back to Claude-only mode.');
+    console.warn('   To enable web search, add VITE_GOOGLE_SEARCH_API_KEY and VITE_GOOGLE_CSE_ID to Vercel environment variables.');
+
+    // Fallback to regular Claude generation without search
+    const { generateArticle } = await import('./aiGeneratorService');
+    return generateArticle({
+      movieName,
+      scriptType,
+      category,
+      platform,
+      imageUrl,
+      model,
+      customInstructions,
+      articleLength,
+      language
+    });
   }
 
   try {
