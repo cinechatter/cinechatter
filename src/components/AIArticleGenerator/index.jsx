@@ -371,14 +371,19 @@ const AIArticleGenerator = ({ categories, onPublish }) => {
                     type="number"
                     value={agentForm.articleLength}
                     onChange={(e) => {
-                      const value = e.target.value === '' ? 500 : parseInt(e.target.value);
-                      if (!isNaN(value)) {
-                        updateFormField('articleLength', Math.min(Math.max(value, 100), 1000));
-                      }
+                      // Allow free typing - just update the value
+                      const value = e.target.value === '' ? '' : e.target.value;
+                      updateFormField('articleLength', value);
                     }}
                     onBlur={(e) => {
-                      if (e.target.value === '' || parseInt(e.target.value) < 100) {
+                      // Validate and constrain only when user is done typing
+                      const value = parseInt(e.target.value);
+                      if (isNaN(value) || value < 100) {
                         updateFormField('articleLength', 500);
+                      } else if (value > 1000) {
+                        updateFormField('articleLength', 1000);
+                      } else {
+                        updateFormField('articleLength', value);
                       }
                     }}
                     min="100"
